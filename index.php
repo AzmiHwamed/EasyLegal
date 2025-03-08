@@ -81,7 +81,7 @@
 
 <body>
     <!-- nav bar -->
-        <?php include('./nav') ?>
+        <?php include('./nav/index.php') ?>
     <!-- end of nav bar -->
 
     <!-- hero section -->

@@ -36,14 +36,14 @@
     </style>
 <nav>
         <a href="#">
-            <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
+            <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
         </a>
         <span>
             <a href="#">Rechercher</a>
             <a href="#">Forum</a>
             <a href="#">Disscuter</a>
         </span>
-        <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
+        <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
 </nav>
     
 
