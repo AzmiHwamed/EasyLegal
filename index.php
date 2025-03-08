@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,30 +14,13 @@
             background: #f8f4ef;
         }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: #f0e6d6;
-        }
-
-        .top-bar nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: black;
-            font-weight: bold;
-        }
 
         h1 {
             margin-top: 20px;
             font-size: 24px;
         }
 
-        .hero-image {
-            width: 100px;
-            margin-top: 10px;
-        }
+        
 
         .features {
             display: flex;
@@ -94,39 +78,44 @@
         }
     </style>
 </head>
+
 <body>
-    <header>
-        <div class="top-bar">
-            <span class="logo"><img src="logo.png.jpg" alt="Icône de la justice" class="hero-image"></span>
-            <nav>
-                <a href="#">Rechercher</a>
-                <a href="#">Forum</a>
-            </nav>
-            <span class="user-icon">⚫</span>
-        </div>
+    <!-- nav bar -->
+        <?php include('./nav') ?>
+    <!-- end of nav bar -->
+
+    <!-- hero section -->
+    <section class="Hero">
         <h1>Votre compagnon legal</h1>
-        <img src="logo.png.jpg" alt="Icône de la justice" class="hero-image">
-    </header>
-
-    <section class="features">
-        <div class="feature">Chercher</div>
-        <div class="feature">Discuter</div>
-        <div class="feature">Consulter</div>
+        <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
+        <div class="features">
+            <div class="feature">Chercher</div>
+            <div class="feature">Discuter</div>
+            <div class="feature">Consulter</div>
+        </div>
     </section>
-
+    <!-- end of hero section  -->
+    <!-- information boxes  -->
     <section class="info">
+        <!-- info box  -->
         <div class="info-box">
             <h2 class="highlight">Chercher les lois qui vous concernent</h2>
-            <p>Cherchez parmi des centaines des lois par catégorie, mots clés, et découvrez celles qui correspondent à vos besoins.</p>
+            <p>Cherchez parmi des centaines des lois par catégorie, mots clés, et découvrez celles qui correspondent à
+                vos besoins.</p>
             <img src="balance.png" alt="Balance de justice">
         </div>
+        <!-- end of info box  -->
 
+
+        <!-- info box  -->
         <div class="info-box">
             <h2 class="highlight">Discuter avec des experts</h2>
             <p>Trouvez le conseil juridique parfait fourni par un ensemble d’experts.</p>
             <img src="lawyer.png" alt="Avocat donnant des conseils">
         </div>
+        <!-- end of info box  -->
     </section>
+    <!-- end of information boxes -->
 
     <section class="explore">
         <h2>Plus que <span class="number">100</span> lois à explorer</h2>
@@ -137,4 +126,5 @@
         <p>Easy legal &copy; 2025 | All rights reserved</p>
     </footer>
 </body>
+
 </html>
