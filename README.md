@@ -1,2 +1,0 @@
-# EasyLegal
-un projet pfe
