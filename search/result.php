@@ -187,7 +187,7 @@
             <button type="submit">🔍 Rechercher</button>
         </form>
 
-        <h2>Résultats de recherche :</h2>
+        <?php if(isset($_GET['search']) ||isset($_GET['type'])) echo "<h2>Résultats de recherche :</h2>" ?>
       
             <div class="result">
             <?php while ($row = $result->fetch_assoc()): ?>
