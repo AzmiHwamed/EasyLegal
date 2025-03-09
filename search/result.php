@@ -84,7 +84,7 @@
     </header>
 
     <?php
-    include 'db.php';
+    include '../dbconfig/index.php';
 
     // Récupérer les valeurs GET de manière sécurisée
     $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
