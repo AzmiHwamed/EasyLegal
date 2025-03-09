@@ -1,5 +1,5 @@
 <?php  
-include('./dbconfig/index.php');
+include('../dbconfig/index.php');
 $sql = "SELECT * FROM textjuridique ORDER BY id DESC LIMIT 3";
 $result = $conn->query($sql);
 if($result->num_rows > 0){
@@ -9,4 +9,6 @@ if($result->num_rows > 0){
         $contenu = $row['Contenu'];
         echo "date : $date \n contenu : $contenu \n ";
     }
-} ?>
+} 
+?>
+
