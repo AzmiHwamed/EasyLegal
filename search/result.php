@@ -1,4 +1,3 @@
-@ -1,213 +1,213 @@
 <!DOCTYPE html> 
 <html lang="fr">
 <head>
@@ -128,6 +127,11 @@
         die("<p class='error'>Erreur de connexion à la base de données.</p>");
     }
 
+
+
+
+    //filtrage 
+
     // Récupérer et sécuriser les valeurs GET    // Database connection (make sure $conn is properly initialized)
     $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
     $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes'; // Default values
@@ -141,6 +145,56 @@
     // Ensure sorting is safe
     $allowed_sort_columns = ['id', 'Date', 'Titre', 'Type', 'Theme'];
     $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed_sort_columns) ? $_GET['sort'] : 'id';
+
+
+    //end 
+
+
+    //filtrage theme
+
+    // Récupérer et sécuriser les valeurs GET
+ $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
+ $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes'; // Valeur par défaut
+ $theme = isset($_GET['theme']) ? htmlspecialchars($_GET['theme']) : ''; // Filtre par thème
+
+ if ($type === 'tous') {
+    $type = 'avis,lois,arretes';
+ }
+
+ // Convertir les chaînes en tableaux
+ $typeArray = explode(',', $type);
+ $themeArray = !empty($theme) ? explode(',', $theme) : [];
+
+ // Assurer un tri sécurisé
+ $allowed_sort_columns = ['id', 'Date', 'Titre', 'Type', 'Theme'];
+ $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed_sort_columns) ? $_GET['sort'] : 'id';
+
+
+    //end theme
+    include '../dbconfig/index.php';
+
+    // Connexion sécurisée
+    if (!$conn) {
+        die("<p class='error'>Erreur de connexion à la base de données.</p>");
+    }
+
+    // Récupération et sécurisation des valeurs GET
+    $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
+    $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes';
+    $theme = isset($_GET['theme']) ? htmlspecialchars($_GET['theme']) : '';
+
+    if ($type === 'tous') {
+        $type = 'avis,lois,arretes';
+    }
+
+    // Convertir les chaînes en tableaux
+    $typeArray = explode(',', $type);
+    $themeArray = !empty($theme) ? explode(',',$theme) : '';
+
+
+//end new
+
+
     
     // Optional message display
     $subject = isset($_GET['subject']) ? htmlspecialchars($_GET['subject']) : '';
@@ -220,6 +274,7 @@ for (i = 0; i < coll.length; i++) {
     } 
   });
 }
+
 </script>
 </body>
 </html>
