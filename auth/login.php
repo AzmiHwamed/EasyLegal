@@ -3,7 +3,7 @@ session_start();
 include ('../dbconfig/index.php');
 if ( ! empty( $_POST ) ) {
     if ( isset( $_POST['username'] ) && isset( $_POST['password'] ) ) {
-        $stmt = $conn->prepare("SELECT * FROM user WHERE username = ?");
+        $stmt = $conn->prepare("SELECT * FROM personne WHERE username = ?");
         $stmt->bind_param('s', $_POST['username']);
         $stmt->execute();
         $result = $stmt->get_result();

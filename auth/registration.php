@@ -1,51 +1,42 @@
 <?php
 session_start();
 
-if ( ! empty( $_POST ) ) {
-    if ( isset( $_POST['username'] ) && isset( $_POST['password'] ) ) {
-        $con = new mysqli($db_host, $db_user, $db_pass, $db_name);
-        $stmt = $con->prepare("SELECT * FROM users WHERE username = ?");
+if (!empty($_POST)) {
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        $conn = new mysqli($servername, $username, $password, $dbname);        
+        if ($con->connect_error) {
+            die("Connection failed: " . $con->connect_error);
+        }
+
+        // Vérifier si l'utilisateur existe déjà
+        $stmt = $con->prepare("SELECT * FROM personne WHERE username = ?");
         $stmt->bind_param('s', $_POST['username']);
         $stmt->execute();
         $result = $stmt->get_result();
-    	$user = $result->fetch_object();
-    	if ( password_verify( $_POST['password'], $user->password ) ) {
-    		$_SESSION['user_id'] = $user->ID;
-    	}
+
+        if ($result->num_rows > 0) {
+            echo "Nom d'utilisateur déjà pris.";
+        } else {
+            // Hasher le mot de passe
+            $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            
+            // Insérer l'utilisateur dans la base de données
+            $stmt = $con->prepare("INSERT INTO personne (username, password) VALUES (?, ?)");
+            $stmt->bind_param('ss', $_POST['username'], $hashed_password);
+            
+            if ($stmt->execute()) {
+                $_SESSION['user_id'] = $stmt->insert_id;
+                echo "Inscription réussie.";
+            } else {
+                echo "Erreur lors de l'inscription.";
+            }
+        }
+        
+        $stmt->close();
+        $con->close();
     }
 }
-?> 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -103,8 +94,6 @@ if ( ! empty( $_POST ) ) {
     <div class="registration-container">
         <h2>Registration</h2>
         <form action="" method="post" autocomplete="off">
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" required><br>
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" required><br>
             <label for="password">Password:</label>
