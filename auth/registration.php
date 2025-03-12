@@ -1,31 +1,25 @@
 <?php
 session_start();
-
+include ('../dbconfig/index.php');
 if (!empty($_POST)) {
-    if (isset($_POST['username']) && isset($_POST['password'])) {
-        $conn = new mysqli($servername, $username, $password, $dbname);        
-        if ($con->connect_error) {
-            die("Connection failed: " . $con->connect_error);
-        }
+    if (isset($_POST['name']) && isset($_POST['password'])) {
+
 
         // Vérifier si l'utilisateur existe déjà
-        $stmt = $con->prepare("SELECT * FROM personne WHERE username = ?");
-        $stmt->bind_param('s', $_POST['username']);
+        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+        $stmt->bind_param('s', $_POST['email']);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             echo "Nom d'utilisateur déjà pris.";
         } else {
-            // Hasher le mot de passe
-            $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            
-            // Insérer l'utilisateur dans la base de données
-            $stmt = $con->prepare("INSERT INTO personne (username, password) VALUES (?, ?)");
-            $stmt->bind_param('ss', $_POST['username'], $hashed_password);
-            
+            $stmt = $conn->prepare("INSERT INTO personne (nom, email,motdepasse,telephone) VALUES (?, ? , ? , ?)");
+            $stmt->bind_param('ssss', $_POST['name'],$_POST['email'],$_POST['password'],$_POST['uphone']);
+
             if ($stmt->execute()) {
                 $_SESSION['user_id'] = $stmt->insert_id;
+                $_SESSION['type'] = 'user';
                 echo "Inscription réussie.";
             } else {
                 echo "Erreur lors de l'inscription.";
@@ -33,7 +27,7 @@ if (!empty($_POST)) {
         }
         
         $stmt->close();
-        $con->close();
+        $conn->close();
     }
 }
 ?>
@@ -94,12 +88,16 @@ if (!empty($_POST)) {
     <div class="registration-container">
         <h2>Registration</h2>
         <form action="" method="post" autocomplete="off">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required><br>
+        <label for="username">Nom:</label>
+        <input type="text" name="name" id="username" required><br>
+        <label for="username">Email:</label>
+            <input type="text" name="email" id="username" required><br>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required><br>
+
             <label for="phone">Téléphone:</label>
             <input type="number" name="uphone" id="phone" required><br>
+
             <button type="submit">Register</button>
         </form>
         <br>

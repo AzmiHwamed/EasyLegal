@@ -3,8 +3,9 @@ session_start();
 include ('../dbconfig/index.php');
 if ( ! empty( $_POST ) ) {
     if ( isset( $_POST['email'] ) && isset( $_POST['password'] ) ) {
+        echo "set";
         $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_POST['username']);
+        $stmt->bind_param('s', $_POST['email']);
         $stmt->execute();
         $result = $stmt->get_result();
         if($result->num_rows == 0) {
@@ -12,10 +13,11 @@ if ( ! empty( $_POST ) ) {
         }
         else{
         $user = $result->fetch_object();
-    	if ( $_POST['password'] == $user->password ) {
+    	if ( $_POST['password'] == $user->motdepasse ) {
+            echo 'success';
     		$_SESSION['user_id'] = $user->ID;
             $_SESSION['type'] = $user->role;     
-            header('Location: ../'.$user->role.'/index.php');    
+            header('Location: ../'.$user->Role.'/index.php');    
     	}
         else{
             echo 'password wrong';
@@ -101,7 +103,7 @@ if ( ! empty( $_POST ) ) {
         <h2>Login</h2>
         <form action="" method="post" autocomplete="off">
             <label for="username">Email:</label>
-            <input type="text" name="username" id="email" required><br>
+            <input type="text" name="email" id="email" required><br>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required><br>
             <button type="submit">Login</button>
