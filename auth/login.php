@@ -2,8 +2,8 @@
 session_start();
 include ('../dbconfig/index.php');
 if ( ! empty( $_POST ) ) {
-    if ( isset( $_POST['username'] ) && isset( $_POST['password'] ) ) {
-        $stmt = $conn->prepare("SELECT * FROM personne WHERE username = ?");
+    if ( isset( $_POST['email'] ) && isset( $_POST['password'] ) ) {
+        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
         $stmt->bind_param('s', $_POST['username']);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -100,10 +100,8 @@ if ( ! empty( $_POST ) ) {
     <div class="login-container">
         <h2>Login</h2>
         <form action="" method="post" autocomplete="off">
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" required><br>
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required><br>
+            <label for="username">Email:</label>
+            <input type="text" name="username" id="email" required><br>
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required><br>
             <button type="submit">Login</button>
