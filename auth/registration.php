@@ -33,11 +33,11 @@ if (!empty($_POST)) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
+    <title>Inscription</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -53,15 +53,38 @@ if (!empty($_POST)) {
             padding: 20px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            width: 300px;
+            width: 320px;
             text-align: center;
         }
         input[type="text"], input[type="password"], input[type="number"] {
-            width: 100%;
+            width: calc(100% - 24px);
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            display: block;
+        }
+        .input-group {
+            position: relative;
+            text-align: left;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: -8px;
+            margin-bottom: 8px;
+            display: none;
+        }
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 40%;
+            transform: translateY(-50%);
+            cursor: pointer;
         }
         button {
             background-color: #007bff;
@@ -85,23 +108,105 @@ if (!empty($_POST)) {
     </style>
 </head>
 <body>
+
     <div class="registration-container">
-        <h2>Registration</h2>
-        <form action="" method="post" autocomplete="off">
-        <label for="username">Nom:</label>
-        <input type="text" name="name" id="username" required><br>
-        <label for="username">Email:</label>
-            <input type="text" name="email" id="username" required><br>
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required><br>
+        <h2>Inscription</h2>
+        <form id="registrationForm" autocomplete="off">
+            
+            <div class="input-group">
+                <label for="name">Nom:</label>
+                <input type="text" id="name">
+                <div class="error-message" id="nameError">Veuillez entrer votre nom.</div>
+            </div>
 
-            <label for="phone">Téléphone:</label>
-            <input type="number" name="uphone" id="phone" required><br>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email">
+                <div class="error-message" id="emailError">Veuillez entrer une adresse e-mail valide.</div>
+            </div>
 
-            <button type="submit">Register</button>
+            <div class="input-group password-container">
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password">
+                <span class="toggle-password">👁️</span>
+                <div class="error-message" id="passwordError">Le mot de passe doit contenir au moins 6 caractères.</div>
+            </div>
+
+            <div class="input-group">
+                <label for="phone">Téléphone:</label>
+                <input type="number" id="phone">
+                <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
+            </div>
+
+            <button type="submit">S'inscrire</button>
         </form>
         <br>
-        <a href="login.php">Login</a>
+        <a href="login.php">Déjà un compte ? Connectez-vous</a>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("registrationForm");
+            const passwordField = document.getElementById("password");
+            const togglePassword = document.querySelector(".toggle-password");
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let name = document.getElementById("name").value.trim();
+                let email = document.getElementById("email").value.trim();
+                let password = passwordField.value.trim();
+                let phone = document.getElementById("phone").value.trim();
+
+                let isValid = true;
+
+                // Réinitialiser les messages d'erreur
+                document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
+
+                if (name === "") {
+                    document.getElementById("nameError").style.display = "block";
+                    isValid = false;
+                }
+
+                if (!validateEmail(email)) {
+                    document.getElementById("emailError").style.display = "block";
+                    isValid = false;
+                }
+
+                if (password.length < 6) {
+                    document.getElementById("passwordError").style.display = "block";
+                    isValid = false;
+                }
+
+                if (phone.length < 8 || phone.length > 15) {
+                    document.getElementById("phoneError").style.display = "block";
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    alert("Inscription réussie !");
+                    form.submit();
+                }
+            });
+
+            function validateEmail(email) {
+                const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return re.test(email);
+            }
+
+            // Afficher/Masquer le mot de passe
+            togglePassword.addEventListener("click", function () {
+                if (passwordField.type === "password") {
+                    passwordField.type = "text";
+                    togglePassword.textContent = "";
+                } else {
+                    passwordField.type = "password";
+                    togglePassword.textContent = "";
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
+

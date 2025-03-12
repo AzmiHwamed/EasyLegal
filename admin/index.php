@@ -7,5 +7,4 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
 if($_SESSION['type'] != 'admin'){
     header('Location: ../'.$_SESSION['type'].'/index.php');
 }
-
 ?>
