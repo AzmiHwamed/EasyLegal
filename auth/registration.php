@@ -1,15 +1,15 @@
 <?php
 session_start();
 include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
-echo"eeee";
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
-    echo"fff";
-    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['role']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])) 
+    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])) 
     {
         $nom = $_POST['nom'];
         $telephone = $_POST['telephone'];
-        $role = $_POST['role'];
+        $role = 'user';
         $Email = $_POST['Email'];
         $motdepasse =$_POST['motdepasse']; 
 
@@ -18,9 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
 
         if ($stmt->execute()) {
-            echo "Utilisateur ajouté avec succès.";
+            //TODO: navigation
         } else {
-            echo "Erreur lors de l'inscription : " . $conn->error;
+            //TODO : affichage de page de probleme saret    
         }
 
         $stmt->close();
@@ -112,12 +112,12 @@ $conn->close();
 
     <div class="registration-container">
         <h2>Inscription</h2>
-        <form id="registrationForm" autocomplete="off" method="Post" Action="#">
+        <form id="registrationForm" autocomplete="off" method="post" Action="#">
             
-            
+
             <div class="input-group">
                 <label for="name">Nom:</label>
-                <input type="text" id="name">
+                <input type="text" id="nom" name="nom">
                 <div class="error-message" id="nameError">Veuillez entrer votre nom.</div>
             </div>
 
@@ -140,14 +140,12 @@ $conn->close();
                 <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
             </div>
 
+
             <button type="submit">S'inscrire</button>
         </form>
         <br>
         <a href="login.php">Déjà un compte ? Connectez-vous</a>
     </div>
-
-
-
 
 
 <!-- js-->
@@ -161,9 +159,9 @@ $conn->close();
                 event.preventDefault();
 
                 let name = document.getElementById("nom").value.trim();
-                let email = document.getElementById("Email").value.trim();
+                let email = document.getElementById("email").value.trim();
                 let password = passwordField.value.trim();
-                let phone = document.getElementById("telephone").value.trim();
+                let phone = document.getElementById("phone").value.trim();
 
                 let isValid = true;
 
