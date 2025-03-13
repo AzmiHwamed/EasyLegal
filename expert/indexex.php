@@ -1,3 +1,16 @@
+Les experts 
+<?php
+session_start();
+if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
+    header('Location: ../auth/login.php');
+    exit();
+}
+if($_SESSION['type'] != 'expert'){
+    header('Location: ../'.$_SESSION['type'].'/index.php');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,48 +25,41 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
-        /* Barre de navigation */
-        .navbar {
-            background-color: #f8f1e4;
+    
+        nav {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            height: 5vh;
+            padding: 1%;
+            background-color: #F3EEE5;
+            box-shadow:  5px 12px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
         }
 
-        .logo img {
-            width: 50px;
-            border-radius: 50%;
-        }
+        nav a img {
+            width:  4vw !important;
+            max-height: 100%;
+            min-height: 100%;
 
-        .nav-links {
-            list-style: none;
+        }
+        nav span{
             display: flex;
-            align-items: center;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 20%;
         }
-
-        .nav-links li {
-            margin: 0 15px;
-        }
-
-        .nav-links a {
+        nav span a{
             text-decoration: none;
-            color: black;
-            font-weight: bold;
-            font-size: 16px;
+            color: #000;
+            font-weight: bolder;
         }
 
-        .logout {
-            display: flex;
-            align-items: center;
-        }
+    
 
-        .user-icon {
-            font-size: 18px;
-            margin-left: 5px;
-        }
 
         /* Contenu principal */
         .container {
@@ -128,18 +134,17 @@
 <body>
 
     <!-- Barre de navigation -->
-    <nav class="navbar">
-        <div class="logo">
-            <img src="logo.png" alt="Logo">
-        </div>
-        <ul class="nav-links">
-            <li><a href="#">Rechercher</a></li>
-            <li><a href="#">Forum</a></li>
-            <li><a href="#">Discuter</a></li>
-            <li><a href="#">Accueil</a></li>
-            <li class="logout"><a href="#">Déconnexion</a> <span class="user-icon">👤</span></li>
-        </ul>
-    </nav>
+    <nav>
+        <a href="#">
+            <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
+        </a>
+        <span>
+            <a href="#">Rechercher</a>
+            <a href="#">Forum</a>
+            <a href="#">Disscuter</a>
+        </span>
+        <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
+</nav>
 
     <!-- Contenu principal -->
     <div class="container">

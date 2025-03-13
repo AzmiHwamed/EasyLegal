@@ -4,10 +4,10 @@ include ('../dbconfig/index.php');
 if ( ! empty( $_POST ) ) {
     if ( isset( $_POST['username'] ) && isset( $_POST['password'] ) ) {
         $stmt = $conn->prepare("SELECT * FROM personne WHERE nom = ?");
-    if ( isset( $_POST['email'] ) && isset( $_POST['password'] ) ) {
+    if ( isset( $_POST['Email'] ) && isset( $_POST['password'] ) ) {
         echo "set";
         $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_POST['email']);
+        $stmt->bind_param('s', $_POST['Email']);
         $stmt->execute();
         $result = $stmt->get_result();
         if($result->num_rows == 0) {
@@ -17,9 +17,9 @@ if ( ! empty( $_POST ) ) {
         $user = $result->fetch_object();
     	if ( $_POST['password'] == $user->motdepasse ) {
             echo 'success';
-    		$_SESSION['user_id'] = $user->ID;
-            $_SESSION['type'] = $user->role;     
-            header('Location: ../'.$user->Role.'/index.php');    
+    		$_SESSION['id'] = $user->id;
+            $_SESSION['role'] = $user->role;     
+            header('Location: ../'.$user->role.'/index.php');    
     	}
         else{
             echo 'password wrong';
@@ -113,18 +113,6 @@ if ( ! empty( $_POST ) ) {
         <form id="loginForm" autocomplete="off">
             
             <div class="input-group">
-                <label for="name">Nom:</label>
-                <input type="text" id="name">
-                <div class="error-message" id="nameError">Veuillez entrer votre nom.</div>
-            </div>
-
-            <div class="input-group">
-                <label for="username">Nom d'utilisateur:</label>
-                <input type="text" id="username">
-                <div class="error-message" id="usernameError">Veuillez entrer un nom d'utilisateur.</div>
-            </div>
-
-            <div class="input-group">
                 <label for="email">Email:</label>
                 <input type="text" id="email">
                 <div class="error-message" id="emailError">Veuillez entrer une adresse e-mail valide.</div>
@@ -143,6 +131,11 @@ if ( ! empty( $_POST ) ) {
         <a href="registration.php">Créer un compte</a>
     </div>
 
+
+
+
+
+<!-- js-->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("loginForm");
@@ -152,8 +145,6 @@ if ( ! empty( $_POST ) ) {
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
 
-                let name = document.getElementById("name").value.trim();
-                let username = document.getElementById("username").value.trim();
                 let email = document.getElementById("email").value.trim();
                 let password = passwordField.value.trim();
 
@@ -162,16 +153,9 @@ if ( ! empty( $_POST ) ) {
                 // Réinitialiser les messages d'erreur
                 document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
 
-                if (name === "") {
-                    document.getElementById("nameError").style.display = "block";
-                    isValid = false;
-                }
+                
 
-                if (username === "") {
-                    document.getElementById("usernameError").style.display = "block";
-                    isValid = false;
-                }
-
+                
                 if (!validateEmail(email)) {
                     document.getElementById("emailError").style.display = "block";
                     isValid = false;

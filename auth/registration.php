@@ -1,36 +1,37 @@
 <?php
 session_start();
-include ('../dbconfig/index.php');
-if (!empty($_POST)) {
-    if (isset($_POST['name']) && isset($_POST['password'])) {
+include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
+echo"eeee";
+if ($_SERVER["REQUEST_METHOD"] == "POST") 
+{
+    echo"fff";
+    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['role']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])) 
+    {
+        $nom = $_POST['nom'];
+        $telephone = $_POST['telephone'];
+        $role = $_POST['role'];
+        $Email = $_POST['Email'];
+        $motdepasse =$_POST['motdepasse']; 
 
+        // Préparer et exécuter la requête sécurisée
+        $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
 
-        // Vérifier si l'utilisateur existe déjà
-        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_POST['email']);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            echo "Nom d'utilisateur déjà pris.";
+        if ($stmt->execute()) {
+            echo "Utilisateur ajouté avec succès.";
         } else {
-            $stmt = $conn->prepare("INSERT INTO personne (nom, email,motdepasse,telephone) VALUES (?, ? , ? , ?)");
-            $stmt->bind_param('ssss', $_POST['name'],$_POST['email'],$_POST['password'],$_POST['uphone']);
-
-            if ($stmt->execute()) {
-                $_SESSION['user_id'] = $stmt->insert_id;
-                $_SESSION['type'] = 'user';
-                echo "Inscription réussie.";
-            } else {
-                echo "Erreur lors de l'inscription.";
-            }
+            echo "Erreur lors de l'inscription : " . $conn->error;
         }
-        
+
         $stmt->close();
-        $conn->close();
+    } else {
+        echo "Tous les champs sont obligatoires.";
     }
 }
+
+$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -111,7 +112,8 @@ if (!empty($_POST)) {
 
     <div class="registration-container">
         <h2>Inscription</h2>
-        <form id="registrationForm" autocomplete="off">
+        <form id="registrationForm" autocomplete="off" method="Post" Action="#">
+            
             
             <div class="input-group">
                 <label for="name">Nom:</label>
@@ -121,20 +123,20 @@ if (!empty($_POST)) {
 
             <div class="input-group">
                 <label for="email">Email:</label>
-                <input type="text" id="email">
+                <input type="text" id="email" name="Email">
                 <div class="error-message" id="emailError">Veuillez entrer une adresse e-mail valide.</div>
             </div>
 
             <div class="input-group password-container">
                 <label for="password">Mot de passe:</label>
-                <input type="password" id="password">
+                <input type="password" id="password" name="motdepasse">
                 <span class="toggle-password">👁️</span>
                 <div class="error-message" id="passwordError">Le mot de passe doit contenir au moins 6 caractères.</div>
             </div>
 
             <div class="input-group">
                 <label for="phone">Téléphone:</label>
-                <input type="number" id="phone">
+                <input type="number" id="phone" name="telephone">
                 <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
             </div>
 
@@ -144,6 +146,11 @@ if (!empty($_POST)) {
         <a href="login.php">Déjà un compte ? Connectez-vous</a>
     </div>
 
+
+
+
+
+<!-- js-->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("registrationForm");
@@ -153,10 +160,10 @@ if (!empty($_POST)) {
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
 
-                let name = document.getElementById("name").value.trim();
-                let email = document.getElementById("email").value.trim();
+                let name = document.getElementById("nom").value.trim();
+                let email = document.getElementById("Email").value.trim();
                 let password = passwordField.value.trim();
-                let phone = document.getElementById("phone").value.trim();
+                let phone = document.getElementById("telephone").value.trim();
 
                 let isValid = true;
 
