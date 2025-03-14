@@ -56,25 +56,14 @@ nav {
     z-index: 1000;
 }
 
-
-
-
-
-/* Liens centraux */
-nav .nav-links {
-    display: flex;
-    gap: 20px;
-}
-
-nav .nav-links a {
+nav a {
     text-decoration: none;
     color: black;
     font-weight: bold;
     font-size: 16px;
 }
 
-/* Icône du compte à droite */
-nav .Male User.png   {
+nav img {
     height: 40px;
 }
 
@@ -86,14 +75,9 @@ body {
     background: #f8f4ef;
 }
 
-
-h1 {
-    margin-top: 20px;
-    font-size: 24px;
-}
-
+/* Conteneur d'inscription */
 .registration-container {
-    width: 350px; /* Adjust width as needed */
+    width: 350px;
     background: transparent;
     padding: 20px;
     border-radius: 10px;
@@ -102,11 +86,12 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-align:center;
+    text-align: center;
 }
 
+/* Formulaire et champs de saisie */
 input[type="text"], input[type="password"], input[type="number"] {
-    width: calc(100% - 24px);
+    width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -127,6 +112,7 @@ input[type="text"], input[type="password"], input[type="number"] {
     display: none;
 }
 
+/* Contenu du mot de passe */
 .password-container {
     position: relative;
     width: 100%;
@@ -140,6 +126,7 @@ input[type="text"], input[type="password"], input[type="number"] {
     cursor: pointer;
 }
 
+/* Bouton d'inscription */
 button {
     background: #e8a043;
     color: white;
@@ -155,6 +142,7 @@ button:hover {
     background: #d18f38;
 }
 
+/* Liens */
 a {
     text-decoration: none;
     color: #e8a043;
@@ -162,61 +150,6 @@ a {
 
 a:hover {
     text-decoration: underline;
-}
-
-.features {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
-    font-weight: bold;
-}
-
-.info {
-    padding: 20px;
-}
-
-.info-box {
-    background: white;
-    margin: 20px auto;
-    padding: 20px;
-    width: 80%;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.info-box img {
-    width: 80px;
-    display: block;
-    margin: 10px auto;
-}
-
-.highlight {
-    color: #e8a043;
-}
-
-.explore {
-    margin: 20px 0;
-}
-
-.number {
-    font-weight: bold;
-    color: #e8a043;
-}
-
-.explore-btn {
-    background: #e8a043;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-footer {
-    background: #f0e6d6;
-    padding: 10px;
-    margin-top: 20px;
 }
 
 /* Styles pour l'alerte personnalisée */
@@ -251,6 +184,7 @@ footer {
     font-size: 18px;
     cursor: pointer;
 }
+
 
 
 
@@ -320,110 +254,78 @@ footer {
 </div>
 
 
+<!-- JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("loginForm");
+        const passwordField = document.getElementById("password");
+        const togglePassword = document.querySelector(".toggle-password");
+        
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
 
+            let email = document.getElementById("email").value.trim();
+            let password = passwordField.value.trim();
 
+            let isValid = true;
 
+            // Réinitialiser les messages d'erreur
+            document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- js-->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("registrationForm");
-            const passwordField = document.getElementById("password");
-            const togglePassword = document.querySelector(".toggle-password");
-
-            form.addEventListener("submit", function (event) {
-                event.preventDefault();
-
-                let name = document.getElementById("nom").value.trim();
-                let email = document.getElementById("email").value.trim();
-                let password = passwordField.value.trim();
-                let phone = document.getElementById("phone").value.trim();
-
-                let isValid = true;
-
-                // Réinitialiser les messages d'erreur
-                document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
-
-                if (name === "") {
-                    document.getElementById("nameError").style.display = "block";
-                    isValid = false;
-                }
-
-                if (!validateEmail(email)) {
-                    document.getElementById("emailError").style.display = "block";
-                    isValid = false;
-                }
-
-                if (password.length < 6) {
-                    document.getElementById("passwordError").style.display = "block";
-                    isValid = false;
-                }
-
-                if (phone.length < 8 || phone.length > 15) {
-                    document.getElementById("phoneError").style.display = "block";
-                    isValid = false;
-                }
-
-                if (isValid) {
-                    alert("Inscription réussie !");
-                    form.submit();
-                }
-            });
-
-            function validateEmail(email) {
-                const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                return re.test(email);
+            // Validation de l'email
+            if (!validateEmail(email)) {
+                document.getElementById("emailError").style.display = "block";
+                isValid = false;
             }
 
-            // Afficher/Masquer le mot de passe
-            togglePassword.addEventListener("click", function () {
-                if (passwordField.type === "password") {
-                    passwordField.type = "text";
-                    togglePassword.textContent = "";
-                } else {
-                    passwordField.type = "password";
-                    togglePassword.textContent = "";
-                }
-            });
+            // Validation du mot de passe
+            if (password.length < 6) {
+                document.getElementById("passwordError").style.display = "block";
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Afficher l'alerte personnalisée en cas de réussite
+                showCustomAlert();
+                setTimeout(function() {
+                    form.submit();
+                }, 3000); // Délai pour masquer l'alerte avant l'envoi du formulaire
+            }
         });
 
+        // Fonction pour valider l'email
+        function validateEmail(email) {
+            const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return re.test(email);
+        }
 
+        // Afficher/Masquer le mot de passe
+        togglePassword.addEventListener("click", function () {
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                togglePassword.textContent = "🙈"; // Remplacer le texte par une icône
+            } else {
+                passwordField.type = "password";
+                togglePassword.textContent = "👁️"; // Remplacer le texte par l'icône "œil"
+            }
+        });
+    });
 
-// new
-        function showCustomAlert() {
-    const alertBox = document.getElementById("customAlert");
-    alertBox.classList.add("show");
+    // Afficher l'alerte personnalisée
+    function showCustomAlert() {
+        const alertBox = document.getElementById("customAlert");
+        alertBox.classList.add("show");
 
-    // Masquer automatiquement après 3 secondes
-    setTimeout(closeCustomAlert, 3000);
-}
+        // Masquer automatiquement après 3 secondes
+        setTimeout(closeCustomAlert, 3000);
+    }
 
-function closeCustomAlert() {
-    const alertBox = document.getElementById("customAlert");
-    alertBox.classList.remove("show");
-}
-
-
-
-
-    </script>
+    // Fermer l'alerte personnalisée
+    function closeCustomAlert() {
+        const alertBox = document.getElementById("customAlert");
+        alertBox.classList.remove("show");
+    }
+</script>
 
 </body>
 </html>
