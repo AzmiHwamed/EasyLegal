@@ -40,17 +40,52 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
     <style>
-        body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    background: #f8f4ef;
+        /* Styles pour la barre de navigation */
+nav {
+    width: 100%;
+    height: 60px;
+    background-color: #F3EEE5;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
+
+
+
+
+
+/* Liens centraux */
+nav .nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+nav .nav-links a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Icône du compte à droite */
+nav .Male User.png   {
+    height: 40px;
+}
+
+/* Ajustement du corps de la page */
+body {
+    margin: 0;
+    padding-top: 70px; /* Pour éviter que le contenu ne soit caché sous le nav */
+    font-family: Arial, sans-serif;
+    background: #f8f4ef;
+}
+
 
 h1 {
     margin-top: 20px;
@@ -58,12 +93,16 @@ h1 {
 }
 
 .registration-container {
-    background: #fff;
+    width: 350px; /* Adjust width as needed */
+    background: transparent;
     padding: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 320px;
-    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align:center;
 }
 
 input[type="text"], input[type="password"], input[type="number"] {
@@ -118,7 +157,7 @@ button:hover {
 
 a {
     text-decoration: none;
-    color: #007bff;
+    color: #e8a043;
 }
 
 a:hover {
@@ -216,47 +255,27 @@ footer {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </style>
 </head>
-
-
-
-
-
-
-
-
-
-
-
-
 <body>
+
+
+<nav>
+        <a href="#">
+            <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
+        </a>
+        <span>
+            <a href="#">Rechercher</a>
+            <a href="#">Forum</a>
+            <a href="#">Discuter</a>
+        </span>
+        <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
+    </nav>
+    
 
     <div class="registration-container">
         <h2>Inscription</h2>
-        <form id="registrationForm" autocomplete="off" method="post" Action="#">
+        <form id="registrationForm" autocomplete="off" method="post" action="#">
             
 
             <div class="input-group">
