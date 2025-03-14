@@ -1,42 +1,46 @@
 <?php
 session_start();
 include('../dbconfig/index.php');
-
+var_dump($_GET);
 // Initialisation des variables d'erreur
 $emailError = $passwordError = $loginError = "";
-
+echo '0';
 // Traitement de la connexion
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
+    echo"1";
+    if (isset($_GET['Email']) && isset($_GET['motdepasse'])) {
+        echo"2";
         // Préparer la requête pour vérifier l'existence de l'email
         $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_POST['Email']);
+        $stmt->bind_param('s', $_GET['Email']);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows == 0) {
+            echo"3";
             $loginError = "Utilisateur non trouvé"; // L'email n'existe pas dans la base de données
         } else {
+            echo"4";
             $user = $result->fetch_object();
-
-            // Vérifier si le mot de passe correspond
-            if ($_POST['motdepasse'] == $user->motdepasse) {
-                // Mot de passe correct
+            if ($_GET['motdepasse'] == $user->motdepasse) {
+                echo"5";
                 $_SESSION['id'] = $user->id;
-                $_SESSION['role'] = $user->role;
-                header('Location: ../' . $user->role . '/index.php');
-                exit();
+                $_SESSION['role'] = $user->Role;
+                header('Location: ../'.$user->Role.'/index.php');
+                exit;
+
             } else {
+                echo"6";
                 // Mot de passe incorrect
                 $loginError = "Mot de passe incorrect";
             }
         }
     } else {
+        echo"7";
         // Erreurs si le formulaire n'a pas été rempli correctement
         $emailError = "Veuillez entrer un email valide.";
         $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
     }
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -127,10 +131,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="error-message"><?php echo $loginError; ?></div>
         <?php endif; ?>
         
-        <form id="loginForm" method="POST" autocomplete="off">
+        <form id="loginForm" method="GET" autocomplete="off" >
             <div class="input-group">
                 <label for="email">Email:</label>
-                <input type="text" id="email" name="Email" value="<?php echo isset($_POST['Email']) ? $_POST['Email'] : ''; ?>">
+                <input type="text" id="email" name="Email" value="<?php echo isset($_GET['Email']) ? $_GET['Email'] : ''; ?>">
                 <?php if ($emailError): ?>
                     <div class="error-message"><?php echo $emailError; ?></div>
                 <?php endif; ?>
@@ -157,33 +161,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const passwordField = document.getElementById("password");
             const togglePassword = document.querySelector(".toggle-password");
 
-            form.addEventListener("submit", function (event) {
-                event.preventDefault();
+            // form.addEventListener("submit", function (event) {
+            //     event.preventDefault();
 
-                let email = document.getElementById("email").value.trim();
-                let password = passwordField.value.trim();
+            //     let email = document.getElementById("email").value.trim();
+            //     let password = passwordField.value.trim();
 
-                let isValid = true;
+            //     let isValid = true;
 
-                // Réinitialiser les messages d'erreur
-                document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
+            //     // Réinitialiser les messages d'erreur
+            //     document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
 
-                // Validation de l'email
-                if (!validateEmail(email)) {
-                    document.getElementById("emailError").style.display = "block";
-                    isValid = false;
-                }
+            //     // Validation de l'email
+            //     if (!validateEmail(email)) {
+            //         document.getElementById("emailError").style.display = "block";
+            //         isValid = false;
+            //     }
 
-                // Validation du mot de passe
-                if (password.length < 6) {
-                    document.getElementById("passwordError").style.display = "block";
-                    isValid = false;
-                }
+            //     // Validation du mot de passe
+            //     if (password.length < 6) {
+            //         document.getElementById("passwordError").style.display = "block";
+            //         isValid = false;
+            //     }
 
-                if (isValid) {
-                    form.submit();
-                }
-            });
+            //     if (isValid) {
+            //         form.submit();
+            //     }
+            // });
 
             function validateEmail(email) {
                 const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

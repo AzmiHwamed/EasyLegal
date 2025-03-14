@@ -18,7 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
 
         if ($stmt->execute()) {
-            //TODO: navigation
+            echo "<script>alert('done')</script>";
+            header('Location: login.php');
+            exit();
         } else {
             //TODO : affichage de page de probleme saret    
         }
