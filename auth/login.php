@@ -24,8 +24,8 @@ echo '0';
             if ($_GET['motdepasse'] == $user->motdepasse) {
                 echo"5";
                 $_SESSION['id'] = $user->id;
-                $_SESSION['role'] = $user->Role;
-                header('Location: ../'.$user->Role.'/index.php');
+                $_SESSION['role'] = $user->role;
+                header('Location: ../'.$user->role.'/index.php');
                 exit;
 
             } else {

@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             header('Location: login.php');
             exit();
         } else {
-            //TODO : affichage de page de probleme saret    
+            header('Location: regerreur.php');
         }
 
         $stmt->close();
