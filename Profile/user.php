@@ -29,43 +29,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $conn->close();
 ?>
 
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modification du Profil</title>
+    <title>Profil Utilisateur</title>
     <style>
         body {
-            margin: 0;
-            padding-top: 70px;
             font-family: Arial, sans-serif;
             background: #f8f4ef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        .form-container {
-            width: 350px;
+        .container {
+            display: flex;
             background: transparent;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        input[type="text"], input[type="password"], input[type="email"] {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: block;
         }
-
-        button {
+        .profile-card {
+            width: 250px;
+            text-align: center;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
+        .profile-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        .profile-card button {
             background: #e8a043;
             color: white;
             border: none;
@@ -73,80 +80,78 @@ $conn->close();
             width: 100%;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            margin-top: 10px;
         }
-
-        button:hover {
-            background: #d18f38;
+        .edit-profile {
+            flex: 1;
+            padding: 20px;
         }
-
-        .custom-alert {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+        .edit-profile h2 {
+            margin-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .update-btn {
             background: #e8a043;
             color: white;
-            padding: 15px 20px;
+            border: none;
+            padding: 10px;
+            width: 100%;
             border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .custom-alert.show {
-            opacity: 1;
-            visibility: visible;
+            cursor: pointer;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Modifier vos informations</h2>
-        <form id="updateForm" method="post" action="#">
-            <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" required>
-            
-            <label for="Email">Email :</label>
-            <input type="email" id="Email" name="Email" required>
-            
-            <label for="telephone">Téléphone :</label>
-            <input type="text" id="telephone" name="telephone" required>
-            
-            <label for="motdepasse">Mot de passe :</label>
-            <input type="password" id="motdepasse" name="motdepasse" required>
-            
-            <button type="submit">Mettre à jour</button>
-        </form>
+    <div class="container">
+        <div class="profile-card">
+            <img src="../assets/user.png" alt="Photo de Profil">
+            <h3>Jamed Allan</h3>
+            <p>@james</p>
+            <button>Téléverser une nouvelle photo </button>
+            <p>Member depuis: <strong>10 Mars 2025</strong></p>
+        </div>
+        <div class="edit-profile">
+            <h2>Modifier le profil</h2>
+            <div class="form-group">
+                <label>Votre nom</label>
+                <input type="text" value="James">
+            </div>
+            <div class="form-group">
+                <label>Nom d'utilisateur</label>
+                <input type="text" value="Allan">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" value="**********">
+            </div>
+            <div class="form-group">
+                <label>Confirmer le mot de passe </label>
+                <input type="password" value="**********">
+            </div>
+            <div class="form-group">
+                <label>Adresse e-mail </label>
+                <input type="email" value="demomail@mail.com">
+            </div>
+            <div class="form-group">
+                <label>Confirmer l'adresse e-mail </label>
+                <input type="email" value="demomail@mail.com">
+            </div>
+            <button class="update-btn">Mettre à jour les informations</button>
+        </div>
     </div>
-
-    <div id="customAlert" class="custom-alert">
-        ✅ Mise à jour réussie !
-        <button onclick="closeCustomAlert()">✖</button>
-    </div>
-
-    <script>
-        document.getElementById("updateForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            showCustomAlert();
-            setTimeout(() => this.submit(), 2000);
-        });
-
-        function showCustomAlert() {
-            const alertBox = document.getElementById("customAlert");
-            alertBox.classList.add("show");
-            setTimeout(closeCustomAlert, 2000);
-        }
-
-        function closeCustomAlert() {
-            const alertBox = document.getElementById("customAlert");
-            alertBox.classList.remove("show");
-        }
-    </script>
 </body>
 </html>
