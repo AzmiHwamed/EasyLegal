@@ -33,14 +33,8 @@
             padding: 20px;
         }
 
-        .info-box {
-            background: white;
-            margin: 20px auto;
-            padding: 20px;
-            width: 80%;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
+        
+        
 
         .info-box img {
             width: 80px;
@@ -50,6 +44,7 @@
 
         .highlight {
             color: #e8a043;
+            text-align :left ;
         }
 
         .explore {
@@ -76,6 +71,10 @@
             padding: 10px;
             margin-top: 20px;
         }
+        p{
+            text-align:left ;
+            size: 20px ;
+        }
     </style>
 </head>
 
@@ -98,20 +97,20 @@
     <!-- information boxes  -->
     <section class="info">
         <!-- info box  -->
-        <div class="info-box">
+        <div >
             <h2 class="highlight">Chercher les lois qui vous concernent</h2>
             <p>Cherchez parmi des centaines des lois par catégorie, mots clés, et découvrez celles qui correspondent à
                 vos besoins.</p>
-            <img src="balance.png" alt="Balance de justice">
+            <img src="./assets/balance.png" alt="Balance de justice">
         </div>
         <!-- end of info box  -->
 
 
         <!-- info box  -->
-        <div class="info-box">
+        <div >
             <h2 class="highlight">Discuter avec des experts</h2>
             <p>Trouvez le conseil juridique parfait fourni par un ensemble d’experts.</p>
-            <img src="lawyer.png" alt="Avocat donnant des conseils">
+            <img src="./assets/avocat.png" alt="Avocat donnant des conseils">
         </div>
         <!-- end of info box  -->
     </section>
