@@ -4,35 +4,49 @@ include('../dbconfig/index.php');
 var_dump($_GET);
 // Initialisation des variables d'erreur
 $emailError = $passwordError = $loginError = "";
-echo '0';
-// Traitement de la connexion
-    echo"1";
-    if (isset($_GET['Email']) && isset($_GET['motdepasse'])) {
-        echo"2";
-        // Préparer la requête pour vérifier l'existence de l'email
-        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_GET['Email']);
+
+// Vérifier si le formulaire est soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = trim($_POST['Email'] ?? '');
+    $password = $_POST['motdepasse'] ?? '';
+
+    // Validation des champs
+    if (empty($email)) {
+        $emailError = "Veuillez entrer un email valide.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailError = "L'email n'est pas valide.";
+    }
+
+    if (empty($password)) {
+        $passwordError = "Veuillez entrer un mot de passe.";
+    } elseif (strlen($password) < 6) {
+        $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
+    }
+
+    // Si aucune erreur, on tente la connexion
+    if (empty($emailError) && empty($passwordError)) {
+        // Vérifier si l'utilisateur existe
+        $stmt = $conn->prepare("SELECT id, role, motdepasse FROM personne WHERE Email = ?");
+        $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows == 0) {
-            echo"3";
-            $loginError = "Utilisateur non trouvé"; // L'email n'existe pas dans la base de données
-        } else {
-            echo"4";
-            $user = $result->fetch_object();
-            if ($_GET['motdepasse'] == $user->motdepasse) {
-                echo"5";
-                $_SESSION['id'] = $user->id;
-                $_SESSION['role'] = $user->role;
-                header('Location: ../'.$user->role.'/index.php');
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
+
+            // Vérifier le mot de passe haché
+            if (password_verify($password, $user['motdepasse'])) {
+                // Démarrer la session utilisateur
+                $_SESSION['id'] = $user['id'];
+                $_SESSION['role'] = $user['role'];
+                header("Location: ../{$user['role']}/index.php");
                 exit;
 
             } else {
-                echo"6";
-                // Mot de passe incorrect
-                $loginError = "Mot de passe incorrect";
+                $loginError = "Email ou mot de passe incorrect.";
             }
+        } else {
+            $loginError = "Email ou mot de passe incorrect.";
         }
     } else {
         echo"7";
@@ -43,6 +57,7 @@ echo '0';
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -50,16 +65,14 @@ echo '0';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
     <style>
-        /* Styles pour la page de connexion */
         body {
-            margin: 0;
-            padding-top: 70px; /* Pour éviter que le contenu soit caché sous le nav */
             font-family: Arial, sans-serif;
             background: #f8f4ef;
+            text-align: center;
         }
         .login-container {
             width: 350px;
-            background: transparent;
+            background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -67,7 +80,6 @@ echo '0';
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            text-align: center;
         }
         input[type="text"], input[type="password"] {
             width: 100%;
@@ -75,46 +87,26 @@ echo '0';
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            display: block;
-        }
-        .input-group {
-            position: relative;
-            text-align: left;
         }
         .error-message {
             color: red;
             font-size: 12px;
-            margin-top: -8px;
-            margin-bottom: 8px;
-            display: block;
-        }
-        .password-container {
-            position: relative;
-            width: 100%;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 40%;
-            transform: translateY(-50%);
-            cursor: pointer;
         }
         button {
-            background-color: #e8a043;
+            background: #e8a043;
             color: white;
-            border: none;
             padding: 10px;
             width: 100%;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
         button:hover {
-            background-color: #d18f38;
+            background: #d18f38;
         }
         a {
-            text-decoration: none;
             color: #e8a043;
+            text-decoration: none;
         }
         a:hover {
             text-decoration: underline;
@@ -125,26 +117,24 @@ echo '0';
 
     <div class="login-container">
         <h2>Connexion</h2>
-        
-        <!-- Affichage des erreurs de connexion -->
-        <?php if ($loginError): ?>
+
+        <?php if (!empty($loginError)): ?>
             <div class="error-message"><?php echo $loginError; ?></div>
         <?php endif; ?>
-        
-        <form id="loginForm" method="GET" autocomplete="off" >
-            <div class="input-group">
-                <label for="email">Email:</label>
-                <input type="text" id="email" name="Email" value="<?php echo isset($_GET['Email']) ? $_GET['Email'] : ''; ?>">
-                <?php if ($emailError): ?>
+
+        <form method="POST">
+            <div>
+                <label for="email">Email :</label>
+                <input type="text" id="email" name="Email" value="<?php echo htmlspecialchars($email ?? ''); ?>">
+                <?php if (!empty($emailError)): ?>
                     <div class="error-message"><?php echo $emailError; ?></div>
                 <?php endif; ?>
             </div>
 
-            <div class="input-group password-container">
-                <label for="password">Mot de passe:</label>
+            <div>
+                <label for="password">Mot de passe :</label>
                 <input type="password" id="password" name="motdepasse">
-                <span class="toggle-password">👁️</span>
-                <?php if ($passwordError): ?>
+                <?php if (!empty($passwordError)): ?>
                     <div class="error-message"><?php echo $passwordError; ?></div>
                 <?php endif; ?>
             </div>
@@ -154,55 +144,5 @@ echo '0';
         <br>
         <a href="registration.php">Créer un compte</a>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("loginForm");
-            const passwordField = document.getElementById("password");
-            const togglePassword = document.querySelector(".toggle-password");
-
-            // form.addEventListener("submit", function (event) {
-            //     event.preventDefault();
-
-            //     let email = document.getElementById("email").value.trim();
-            //     let password = passwordField.value.trim();
-
-            //     let isValid = true;
-
-            //     // Réinitialiser les messages d'erreur
-            //     document.querySelectorAll(".error-message").forEach(error => error.style.display = "none");
-
-            //     // Validation de l'email
-            //     if (!validateEmail(email)) {
-            //         document.getElementById("emailError").style.display = "block";
-            //         isValid = false;
-            //     }
-
-            //     // Validation du mot de passe
-            //     if (password.length < 6) {
-            //         document.getElementById("passwordError").style.display = "block";
-            //         isValid = false;
-            //     }
-
-            //     if (isValid) {
-            //         form.submit();
-            //     }
-            // });
-
-            function validateEmail(email) {
-                const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                return re.test(email);
-            }
-
-            // Afficher/Masquer le mot de passe
-            togglePassword.addEventListener("click", function () {
-                if (passwordField.type === "password") {
-                    passwordField.type = "text";
-                    togglePassword.textContent = "🙈";
-                } else {
-                    passwordField.type = "password";
-                    togglePassword.textContent = "👁️";
-                }
-            });
-        });
-    </scr
+</body>
+</html>
