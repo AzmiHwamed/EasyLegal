@@ -1,14 +1,23 @@
-Les users
 <?php
 session_start();
-if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
+
+// Vérification de la session utilisateur
+if (!isset($_SESSION['id']) || $_SESSION['id'] == null) {
     header('Location: ../auth/login.php');
     exit();
 }
-if($_SESSION['type'] != 'user'){
-    header('Location: ../'.$_SESSION['type'].'/index.php');
+
+// Redirection selon le rôle de l'utilisateur
+if ($_SESSION['role'] != 'user') {
+    header('Location: ../' . $_SESSION['role'] . '/index.php');
+    exit();
 }
 
+// Récupérer le nom de l'utilisateur (si disponible dans la session)
+$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Utilisateur';
+
+// Définir la base de l'URL (à modifier si nécessaire)
+$base_url = "http://127.0.0.1/pfe/EasyLegal";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,8 +34,6 @@ if($_SESSION['type'] != 'user'){
             font-family: Arial, sans-serif;
         }
 
-        <style>
-    
         nav {
             display: flex;
             flex-direction: row;
@@ -36,31 +43,29 @@ if($_SESSION['type'] != 'user'){
             height: 5vh;
             padding: 1%;
             background-color: #F3EEE5;
-            box-shadow:  5px 12px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 5px 12px 10px rgba(0, 0, 0, 0.2);
             position: sticky;
             top: 0;
         }
 
         nav a img {
-            width:  4vw !important;
+            width: 4vw !important;
             max-height: 100%;
             min-height: 100%;
-
         }
-        nav span{
+
+        nav span {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             width: 20%;
         }
-        nav span a{
+
+        nav span a {
             text-decoration: none;
             color: #000;
             font-weight: bolder;
         }
-
-   
-
 
         /* Contenu principal */
         .container {
@@ -133,7 +138,6 @@ if($_SESSION['type'] != 'user'){
     </style>
 </head>
 <body>
-
     <!-- Barre de navigation -->
     <nav>
         <a href="#">
@@ -141,16 +145,16 @@ if($_SESSION['type'] != 'user'){
         </a>
         <span>
             <a href="#">Rechercher</a>
-            <a href="#">Forum</a>
-            <a href="#">Disscuter</a>
+            <a href="<?= $base_url ?>/forum/index.php">Forum</a>
+            <a href="#">Discuter</a>
         </span>
-        <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-</nav>
+        <a><img src="./assets/Male User.png" alt="Compte utilisateur" style="width: 3vw !important;"></a>
+    </nav>
 
     <!-- Contenu principal -->
     <div class="container">
-        <h2 class="welcome-text">Bienvenue <span class="username">Expert X</span></h2>
-        
+        <h2 class="welcome-text">Bienvenue <span class="username"><?= $username ?></span></h2>
+
         <div class="cards">
             <!-- Messagerie -->
             <div class="card">
@@ -163,10 +167,9 @@ if($_SESSION['type'] != 'user'){
             <div class="card">
                 <div class="card-icon">🗨️</div>
                 <h3>Forum</h3>
-                <button class="btn">Voir</button>
+                <a href="<?= $base_url ?>/forum/index.php" class="btn">Voir</a>
             </div>
         </div>
     </div>
-
 </body>
 </html>

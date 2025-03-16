@@ -1,56 +1,35 @@
 <?php
 session_start();
 include('../dbconfig/index.php');
-var_dump($_GET);
-// Initialisation des variables d'erreur
+
 $emailError = $passwordError = $loginError = "";
+    if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
 
-// Vérifier si le formulaire est soumis
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['Email'] ?? '');
-    $password = $_POST['motdepasse'] ?? '';
-
-    // Validation des champs
-    if (empty($email)) {
-        $emailError = "Veuillez entrer un email valide.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $emailError = "L'email n'est pas valide.";
-    }
-
-    if (empty($password)) {
-        $passwordError = "Veuillez entrer un mot de passe.";
-    } elseif (strlen($password) < 6) {
-        $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
-    }
-
-    // Si aucune erreur, on tente la connexion
-    if (empty($emailError) && empty($passwordError)) {
-        // Vérifier si l'utilisateur existe
-        $stmt = $conn->prepare("SELECT id, role, motdepasse FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $email);
+        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+        $stmt->bind_param('s', $_POST['Email']);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows == 1) {
-            $user = $result->fetch_assoc();
-
-            // Vérifier le mot de passe haché
-            if (password_verify($password, $user['motdepasse'])) {
-                // Démarrer la session utilisateur
-                $_SESSION['id'] = $user['id'];
-                $_SESSION['role'] = $user['role'];
-                header("Location: ../{$user['role']}/index.php");
+        if ($result->num_rows == 0) {
+            echo"3";
+            $loginError = "Utilisateur non trouvé";
+        } else {
+            echo"4";
+            $user = $result->fetch_object();
+            if ($_POST['motdepasse'] == $user->motdepasse) {
+                echo"5";
+                $_SESSION['id'] = $user->id;
+                $_SESSION['role'] = $user->role;
+                header('Location: ../'.$user->role.'/index.php');
                 exit;
 
             } else {
-                $loginError = "Email ou mot de passe incorrect.";
+                echo"6";
+                // Mot de passe incorrect
+                $loginError = "Mot de passe incorrect";
             }
-        } else {
-            $loginError = "Email ou mot de passe incorrect.";
         }
     } else {
-        echo"7";
-        // Erreurs si le formulaire n'a pas été rempli correctement
         $emailError = "Veuillez entrer un email valide.";
         $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
     }
