@@ -1,43 +1,16 @@
 <?php
-// Connexion à la base de données
-try {
-    $dsn = 'mysql:host=localhost:4306;dbname=easylegal;charset=utf8';
-    $username = 'root'; 
-    $password = '';
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+session_start();
+include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
 
-    $pdo = new PDO($dsn, $username, $password, $options);
-} 
-catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-
-// Récupérer les posts avec le nombre de likes
-$forums = $pdo->query("
+if (isset($_POST['id_forum']) && isset($_POST['like'])) {
+    $id_forum = $_POST['id_forum'];
+    $id_personne = $_SESSION['id']; 
+    $forums = $conn->prepare("
     SELECT forum.*, 
            (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes 
     FROM forum 
     ORDER BY id DESC
-")->fetchAll(PDO::FETCH_ASSOC);
-// Gérer les likes (AJAX)
-if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = $_POST['id_forum'];
-    $id_personne = 1; // À modifier pour l'utilisateur connecté
-
-    $check = $pdo->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
-    $check->execute([$id_forum, $id_personne]);
-
-    if ($check->rowCount() == 0) {
-        $pdo->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)")->execute([$id_forum, $id_personne]);
-    } else {
-        $pdo->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?")->execute([$id_forum, $id_personne]);
-    }
-
-    // Retourner le nouveau nombre de likes
-    $likes = $pdo->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
-    $likes->execute([$id_forum]);
-    echo json_encode(["success" => true, "likes" => $likes->fetchColumn()]);
-    exit;
+")->execute()->get_result();
 }
 ?>
 
@@ -208,11 +181,7 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
                 <span class="like-btn">❤️ J'aime</span>
             </div>
 
-            <div class="response">
-                <p><strong>La Réponse de Madame Anonyme 1259:</strong></p>
-                <p>Une autre réponse...</p>
-                <span class="like-btn">❤️ J'aime</span>
-            </div>
+          
 
             <div class="response expert-response">
                 <p><strong>La Réponse de Expert 102:</strong></p>

@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,43 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            background-color: #f8f4ef;
             text-align: center;
             margin: 0;
             padding: 0;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 100%;
+            height: 5vh;
+            padding: 1%;
+            background-color: #F3EEE5;
+            box-shadow: 5px 12px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+        }
+
+        nav a img {
+            width: 4vw !important;
+            max-height: 100%;
+            min-height: 100%;
+        }
+
+        nav span {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 20%;
+        }
+
+        nav span a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bolder;
         }
 
         header {
@@ -40,6 +73,17 @@
             margin: 10px auto;
         }
 
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .filter-container select {
+            width: 150px;
+        }
+
         button {
             padding: 10px;
             background-color: #d38d2c;
@@ -47,234 +91,202 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            margin-top: 10px;
         }
-
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #d38d2c;
-            color: white;
-        }
-
-        .success {
-            color: green;
-        }
-
-        .error {
-            color: red;
-        }
-        .collapsible {
-            display:flex;
-            justify-content:space-between;
-            background-color: white;
-            border:1px black solid !important;
-            border-radius:15px;
-            color: black;
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 15px;
+        .header-box {
+    background-color: #f8f4ef; 
+    border: 2px solid #d38d2c;
+    border-radius: 5px; 
+    padding: 15px 20px; 
+    margin: 10px auto; 
+    width: 80%; 
+    text-align: left; 
 }
 
-.active, .collapsible:hover {
-  background-color: #EEE;
+h1 {
+    font-size: 1.5em; 
+    font-weight: bold; 
+    color: #d38d2c; 
+    margin: 0; 
+    padding-bottom: 5px; 
+    border-bottom: 2px solid #d38d2c; 
+    display: inline-block; 
 }
 
-.content {
-  padding: 0 18px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-  background-color: #f1f1f1;
+h2 {
+    font-size: 1em; 
+    color: #333; 
+    margin-top: 10px; 
+    font-weight: normal; 
 }
-.result {
-    display:flex;
-    flex-direction:column;
-}
-.result div{
-    margin:10px;
-    margin-top:20px;
 
+#search {
+    width: 60%; 
+    height: 30px; 
+    font-size: 1.2em;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+h3{
+    color:#d38d2c;
 }
     </style>
 </head>
 <body>
-
-    <header>
+    <nav>
+        <a href="#">
+            <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
+        </a>
+        <span>
+            <a href="#">Rechercher</a>
+            <a href="#">Forum</a>
+            <a href="#">Disscuter</a>
+        </span>
+        <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
+    </nav>
+    <div class="header-box">
         <h1>Bienvenue dans EasyLegal</h1>
-        <p>Cette bibliothèque numérique a pour objectif d'augmenter la visibilité et l'accessibilité au texte juridique.</p>
-    </header>
-
-    <?php
-    include '../dbconfig/index.php';
-
-    // Connexion sécurisée et gestion des erreurs
-    if (!$conn) {
-        die("<p class='error'>Erreur de connexion à la base de données.</p>");
-    }
-
-
-
-
-    //filtrage 
-
-    // Récupérer et sécuriser les valeurs GET    // Database connection (make sure $conn is properly initialized)
-    $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
-    $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes'; // Default values
-    if ($type === 'tous') {
-        $type = 'avis,lois,arretes';
-    }
-    
-    // Convert type string to an array
-    $typeArray = explode(',', $type);
-    
-    // Ensure sorting is safe
-    $allowed_sort_columns = ['id', 'Date', 'Titre', 'Type', 'Theme'];
-    $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed_sort_columns) ? $_GET['sort'] : 'id';
-
-
-    //end 
-
-
-    //filtrage theme
-
-    // Récupérer et sécuriser les valeurs GET
- $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
- $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes'; // Valeur par défaut
- $theme = isset($_GET['theme']) ? htmlspecialchars($_GET['theme']) : ''; // Filtre par thème
-
- if ($type === 'tous') {
-    $type = 'avis,lois,arretes';
- }
-
- // Convertir les chaînes en tableaux
- $typeArray = explode(',', $type);
- $themeArray = !empty($theme) ? explode(',', $theme) : [];
-
- // Assurer un tri sécurisé
- $allowed_sort_columns = ['id', 'Date', 'Titre', 'Type', 'Theme'];
- $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed_sort_columns) ? $_GET['sort'] : 'id';
-
-
-    //end theme
-    include '../dbconfig/index.php';
-
-    // Connexion sécurisée
-    if (!$conn) {
-        die("<p class='error'>Erreur de connexion à la base de données.</p>");
-    }
-
-    // Récupération et sécurisation des valeurs GET
-    $search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
-    $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : 'avis,lois,arretes';
-    $theme = isset($_GET['theme']) ? htmlspecialchars($_GET['theme']) : '';
-
-    if ($type === 'tous') {
-        $type = 'avis,lois,arretes';
-    }
-
-    // Convertir les chaînes en tableaux
-    $typeArray = explode(',', $type);
-    $themeArray = !empty($theme) ? explode(',',$theme) : '';
-
-
-//end new
-
-
-    
-    // Optional message display
-    $subject = isset($_GET['subject']) ? htmlspecialchars($_GET['subject']) : '';
-    $web = isset($_GET['web']) ? htmlspecialchars($_GET['web']) : '';
-    if (!empty($subject) && !empty($web)) {
-        echo "<p>Study $subject at $web</p>";
-    }
-    
-    // Dynamically create placeholders (?,?,?)
-    $placeholders = implode(',', array_fill(0, count($typeArray), '?'));
-    
-    $query = "SELECT id, Date, Titre, Type, Theme  , Contenu
-              FROM textjuridique 
-              WHERE Contenu LIKE ? 
-              AND Type IN ($placeholders) 
-              ORDER BY $sort ASC";
-    
-    $stmt = $conn->prepare($query);
-    
-    // Prepare parameters for binding
-    $search_param = "%$search%";
-    $params = array_merge([$search_param], $typeArray);
-    
-    // Prepare bind types (all strings)
-    $bind_types = str_repeat('s', count($params));
-    
-    // Bind parameters
-    $stmt->bind_param($bind_types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    ?>
+        <h2>Cette bibliothèque numérique a pour objectif d'augmenter la visibilité et l'accessibilité au texte juridique.</h2>
+    </div>
 
     <main>
         <form action="" method="GET">
-            <label for="search">Recherche :</label>
-            <input type="text" name="search" id="search" placeholder="Rechercher un texte juridique..." value="<?= htmlspecialchars($search) ?>">
-            <select name="type">
-            <option value="tous">tous</option>
-            <option value="avis">avis</option>
-            <option value="lois">lois</option>
-            <option value="arretes">arretes</option>
-            </select>
+            <h3>Rechercher :</h3>
+            <input type="text" name="search" id="search" placeholder="Rechercher un texte juridique...">
+            
+            <h3>Trier par :</h3>
+            <div class="filter-container">
+                <select name="type">
+                    <option value="">Type</option>
+                    <option value="avis">Avis</option>
+                    <option value="lois">Lois</option>
+                    <option value="arretes">Arrêtés</option>
+                </select>
+                
+                <input type="date" name="date">
 
+                <select name="annee">
+                    <option value="">Année</option>
+                    <?php
+                        for ($i = 2024; $i >= 1956; $i--) {
+                            echo "<option value=\"$i\">$i</option>";
+                        }
+                    ?>
+                </select>
+
+                <select name="numero">
+                    <option value="">Numéro</option>
+                    <?php
+                        for ($i = 1; $i <= 1000; $i++) {
+                            echo "<option value=\"$i\">$i</option>";
+                        }
+                    ?>
+                </select>
+            </div>
 
             <button type="submit">🔍 Rechercher</button>
         </form>
 
-        <h2>Résultats de recherche :</h2>
-        <?php if(isset($_GET['search']) ||isset($_GET['type'])) echo "<h2>Résultats de recherche :</h2>" ?>
-      
-            <div class="result">
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div>
-                    <button class="collapsible">
-                        <span><?= htmlspecialchars($row['Titre']) ?></span>
-                        <span><?= htmlspecialchars($row['Titre']) ?></span>
-                    </button>
-                    <div class="content">
-                        <p><?= htmlspecialchars($row['Contenu']) ?></p>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-            </div>
+        <?php
+        include '../dbconfig/index.php';
+
+        if ($conn) {
+            $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+            $type = isset($_GET['type']) ? trim($_GET['type']) : '';
+            $date = isset($_GET['date']) ? trim($_GET['date']) : '';
+            $annee = isset($_GET['annee']) ? trim($_GET['annee']) : '';
+            $numero = isset($_GET['numero']) ? trim($_GET['numero']) : '';
+
+            // Vérifier si une recherche est effectuée
+            if (!empty($search) || !empty($type) || !empty($date) || !empty($annee) || !empty($numero)) {
+                $query = "SELECT id, Date, Titre, Type, Theme, Contenu FROM textjuridique WHERE 1=1";
+
+                if (!empty($search)) {
+                    $query .= " AND (Contenu LIKE ? OR Titre LIKE ?)";
+                    $search = "%$search%";
+                }
+                if (!empty($type)) {
+                    $query .= " AND Type = ?";
+                }
+                if (!empty($date)) {
+                    $query .= " AND Date = ?";
+                }
+                if (!empty($annee)) {
+                    $query .= " AND YEAR(Date) = ?";
+                }
+                if (!empty($numero)) {
+                    $query .= " AND id = ?";
+                }
+
+                $stmt = $conn->prepare($query);
+
+                // Associer les paramètres dynamiquement
+                $params = [];
+                $types = '';
+                if (!empty($search)) {
+                    $types .= 'ss';
+                    $params[] = $search;
+                    $params[] = $search;
+                }
+                if (!empty($type)) {
+                    $types .= 's';
+                    $params[] = $type;
+                }
+                if (!empty($date)) {
+                    $types .= 's';
+                    $params[] = $date;
+                }
+                if (!empty($annee)) {
+                    $types .= 's';
+                    $params[] = $annee;
+                }
+                if (!empty($numero)) {
+                    $types .= 'i';
+                    $params[] = $numero;
+                }
+
+                if (!empty($params)) {
+                    $stmt->bind_param($types, ...$params);
+                }
+
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                echo "<h2>Résultats de recherche :</h2>";
+                echo "<div class='result'>";
+                while ($row = $result->fetch_assoc()) {
+                    echo "<div>
+                            <button class='collapsible'>
+                                <span>" . htmlspecialchars($row['Titre']) . "</span>
+                            </button>
+                            <div class='content'>
+                                <p>" . htmlspecialchars($row['Contenu']) . "</p>
+                            </div>
+                          </div>";
+                }
+                echo "</div>";
+            }
+        }
+        ?>
+
     </main>
-<script>
-    var coll = document.getElementsByClassName("collapsible");
-var i;
 
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.maxHeight){
-      content.style.maxHeight = null;
-    } else {
-      content.style.maxHeight = content.scrollHeight + "px";
-    } 
-  });
-}
-
-</script>
+    <script>
+        document.querySelectorAll(".collapsible").forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + "px";
+            });
+        });
+    </script>
 </body>
 </html>
