@@ -1,7 +1,7 @@
 <?php
 // Connexion à la base de données
 try {
-    $dsn = 'mysql:host=localhost:4306;dbname=easylegal;charset=utf8';
+    $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
     $username = 'root'; 
     $password = '';
     $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
@@ -144,6 +144,8 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
     </form>
 
     <?php foreach ($forums as $forum): ?>
+        
+    <a href=<?php echo"./detail.php?id_forum=".$forum['id'] ?>>
         <div class="card mb-3 p-3">
             <div class="card-body">
                 <h5 class="card-title"><?= $forum['anonyme'] ? 'Anonyme' : 'Utilisateur ' . $forum['id'] ?></h5>
@@ -151,6 +153,7 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
                 <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
             </div>
         </div>
+    </a>
     <?php endforeach; ?>
 </div>
 

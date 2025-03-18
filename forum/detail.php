@@ -2,15 +2,26 @@
 session_start();
 include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
 
-if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = $_POST['id_forum'];
-    $id_personne = $_SESSION['id']; 
-    $forums = $conn->prepare("
-    SELECT forum.*, 
-           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes 
-    FROM forum 
-    ORDER BY id DESC
-")->execute()->get_result();
+if (isset($_GET['msg'])) {
+    $stmt = $conn->prepare("INSERT INTO commentaire(contenu,id_personne,id_forum) values (? , ? , ?)");
+    $stmt->bind_param('sss', $_GET['msg'],$_SESSION['id'],$_GET['id_forum']);
+    $stmt->execute();
+    header('Location: ../forum/detail.php?id_forum=' . $_GET['id_forum']);
+    exit(); 
+        
+}
+if (isset($_GET['id_forum'])) {
+    $stmt = $conn->prepare("SELECT * FROM forum WHERE id = ?");
+    $stmt->bind_param('s', $_GET['id_forum']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $forum = $result->fetch_object();
+    $stmt = $conn->prepare("SELECT * FROM personne WHERE id = ?");
+    $stmt->bind_param('s', $forum->id_personne);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $personne = $result->fetch_object();
+
 }
 ?>
 
@@ -169,31 +180,60 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
 
         <div class="content">
             <div class="question">
-                <p>La Question de Madame Anonyme 1257:</p>
-                <p>Comment faire lorsque je veux faire une chose légale s'il vous plaît...</p>
+                <p>La Question de Madame <?php 
+                if($forum->anonyme){echo "Anonyme ";}
+                 else{
+                 echo $personne->nom ;
+                 }?></p>
+                <p><?php echo $forum->contenu ?></p>
                    <a  class="btn-retour" href="javascript:history.back()" >⬅</a>
                 
             </div>
-            
-            <div class="response">
-                <p><strong>La Réponse de Madame Anonyme 1258:</strong></p>
-                <p>Voici ma réponse...</p>
-                <span class="like-btn">❤️ J'aime</span>
-            </div>
 
-          
 
-            <div class="response expert-response">
-                <p><strong>La Réponse de Expert 102:</strong></p>
-                <p>Voici la réponse d'un expert...</p>
-                <span class="star">⭐</span>
-                <span class="like-btn">❤️ J'aime</span>
-            </div>
+            <?php
+// Assuming $conn is already defined and connected
 
-            <div class="comment-box">
-                <input type="text" placeholder="Ecrivez votre commentaire...">
-                <button class="send-btn">Envoyer</button>
-            </div>
+$stmt2 = $conn->prepare("SELECT * FROM commentaire WHERE id_forum = ?");
+$stmt2->bind_param('s', $_GET['id_forum']);
+$stmt2->execute();
+$result2 = $stmt2->get_result();
+while ($row = $result2->fetch_assoc()) {
+    $stmt1 = $conn->prepare("SELECT * FROM personne WHERE id = ?");
+    $stmt1->bind_param('s', $row['id_personne']);
+    $stmt1->execute();
+    $result1 = $stmt1->get_result();
+    $personne1 = $result1->fetch_object();
+
+    if ($personne1 && $personne1->role == "user") {
+        echo "<div class='response'>
+                <p><strong>La Réponse de Madame ".$personne1->nom."</strong></p>
+                <p>".$row['contenu']."</p>
+                <span class='like-btn'>❤️ J'aime</span>
+              </div>";
+    } else {
+        echo "<div class='response expert-response'>
+                <p><strong>La Réponse de Expert ".$personne1->nom.":</strong></p>
+                <p>".$row['contenu']."</p>
+                <span class='star'>⭐</span>
+                <span class='like-btn'>❤️ J'aime</span>
+              </div>";
+    }
+
+    // Close inner statement
+    $stmt1->close();
+}
+
+// Close outer statement
+$stmt2->close();
+?>
+
+
+            <form class="comment-box" method="get">
+                <input type="text" name="msg"  placeholder="Ecrivez votre commentaire...">
+                <input type="text" value=<?php echo $_GET['id_forum'] ?> name="id_forum" style="display:none">
+                <button type="sumbit" class="send-btn">Envoyer</button>
+            </form>
         </div>
     </div>
 </body>
