@@ -60,6 +60,7 @@ $stmt->bind_param('i', $id_forum);
 $stmt->execute();
 $forum = $stmt->get_result()->fetch_assoc();
 
+
 // Gérer les likes (AJAX)
 if (isset($_POST['id_forum']) && isset($_POST['like'])) {
     $id_forum = $_POST['id_forum'];

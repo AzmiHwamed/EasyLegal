@@ -1,5 +1,6 @@
 <?php
 // Connexion à la base de données
+session_start();
 try {
     $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
     $username = 'root'; 
@@ -24,7 +25,7 @@ $forums = $pdo->query("
 if (isset($_POST['contenu'])) {
     $contenu = $_POST['contenu'];
     $anonyme = isset($_POST['anonyme']) ? 1 : 0;
-    $pdo->prepare("INSERT INTO forum (contenu, anonyme) VALUES (?, ?)")->execute([$contenu, $anonyme]);
+    $pdo->prepare("INSERT INTO forum (contenu, anonyme,id_personne) VALUES (?,?, ?)")->execute([$contenu, $anonyme,$_SESSION['id']]);
     header("Location: index.php");
     exit;
 }
