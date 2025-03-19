@@ -2,6 +2,7 @@
 session_start();
 include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
 
+<<<<<<< HEAD
 if (isset($_GET['msg'])) {
     $stmt = $conn->prepare("INSERT INTO commentaire(contenu,id_personne,id_forum) values (? , ? , ?)");
     $stmt->bind_param('sss', $_GET['msg'],$_SESSION['id'],$_GET['id_forum']);
@@ -22,8 +23,43 @@ if (isset($_GET['id_forum'])) {
     $result = $stmt->get_result();
     $personne = $result->fetch_object();
 
+=======
+if (isset($_POST['id_forum']) && isset($_POST['like'])) {
+    $id_forum = $_POST['id_forum'];
+    $id_personne = $_SESSION['id'];
+
+    // Vérifier si l'utilisateur a déjà aimé ce forum
+    $check_like = $conn->prepare("
+        SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?
+    ");
+    $check_like->bind_param("ii", $id_forum, $id_personne);
+    $check_like->execute();
+    $result = $check_like->get_result();
+
+    if ($result->num_rows == 0) {
+        // Si l'utilisateur n'a pas encore aimé ce forum, on insère un like
+        $insert_like = $conn->prepare("
+            INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)
+        ");
+        $insert_like->bind_param("ii", $id_forum, $id_personne);
+        $insert_like->execute();
+    }
+>>>>>>> cf276182d18eb2cbaca8bb6c71074d69f849eef3
 }
+
+// Récupérer les forums avec le nombre de likes associés et les commentaires
+$forums = $conn->prepare("
+    SELECT forum.*, 
+           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes
+    FROM forum 
+    ORDER BY id DESC
+");
+$forums->execute();
+$result_forums = $forums->get_result();
 ?>
+
+
+
 
 
 <!DOCTYPE html>
@@ -83,29 +119,6 @@ if (isset($_GET['id_forum'])) {
             margin-bottom: 15px;
             font-weight: bold;
             transform: translateY(-5px);
-
-                }
-        .response {
-            background: #FFF;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        .expert-response {
-            background:rgb(215, 199, 155);
-        }
-        .response .like-btn {
-            color: red;
-            cursor: pointer;
-        }
-        .response .star {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 20px;
-            color: gold;
         }
         .comment-box {
             display: flex;
@@ -130,35 +143,24 @@ if (isset($_GET['id_forum'])) {
             border-radius: 5px;
             cursor: pointer;
         }
-        .btn-retour{
-            color :#E7A63D ;
-            align: right ;
+        .btn-retour {
+            color: #E7A63D;
             font-size: 25px;
+            position: absolute;
             top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+            left: 20px;
             background-color: white;
             text-align: center;
             line-height: 40px;
             border-radius: 50%;
             text-decoration: none;
         }
-       
-
-
-
-
-
-
-
-
-
     </style>
 </head>
 <body>
+
     <nav>
-        <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
+        <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
         <span>
             <a href="#">Rechercher</a>
             <a href="#">Forum</a>
@@ -179,7 +181,9 @@ if (isset($_GET['id_forum'])) {
         </div>
 
         <div class="content">
+            <!-- Question -->
             <div class="question">
+<<<<<<< HEAD
                 <p>La Question de Madame <?php 
                 if($forum->anonyme){echo "Anonyme ";}
                  else{
@@ -234,7 +238,23 @@ $stmt2->close();
                 <input type="text" value=<?php echo $_GET['id_forum'] ?> name="id_forum" style="display:none">
                 <button type="sumbit" class="send-btn">Envoyer</button>
             </form>
+=======
+                <p>La Question de Madame Anonyme 1257:</p>
+                <p>Comment faire lorsque je veux faire une chose légale s'il vous plaît...</p>
+                <a class="btn-retour" href="javascript:history.back()">⬅</a>
+            </div>
+
+            <!-- Formulaire de commentaire -->
+            <div class="comment-box">
+                <form method="POST" action="">
+                    <input type="text" name="commentaire" placeholder="Ecrivez votre commentaire..." required>
+                    <input type="hidden" name="id_forum" value="<?php echo isset($id_forum) ? $id_forum : ''; ?>"> <!-- ID du forum -->
+                    <button class="send-btn" type="submit">Envoyer</button>
+                </form>
+            </div>
+>>>>>>> cf276182d18eb2cbaca8bb6c71074d69f849eef3
         </div>
     </div>
+
 </body>
 </html>

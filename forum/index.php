@@ -1,7 +1,7 @@
 <?php
 // Connexion à la base de données
 try {
-    $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
+    $dsn = 'mysql:host=localhost:4306;dbname=easylegal;charset=utf8';
     $username = 'root'; 
     $password = '';
     $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
