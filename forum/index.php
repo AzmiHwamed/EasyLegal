@@ -125,8 +125,8 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
         <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
     </a>
     <span>
-    <a href="../search/index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
-    <a href="#">Forum</a>
+        <a href="#">Rechercher</a>
+        <a href="#">Forum</a>
         <a href="#">Disscuter</a>
     </span>
     <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
@@ -145,15 +145,16 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
 
     <?php foreach ($forums as $forum): ?>
         
-    <a href=<?php echo"./detail.php?id_forum=".$forum['id'] ?>>
         <div class="card mb-3 p-3">
             <div class="card-body">
                 <h5 class="card-title"><?= $forum['anonyme'] ? 'Anonyme' : 'Utilisateur ' . $forum['id'] ?></h5>
-                <p class="card-text question"><?= htmlspecialchars($forum['contenu']) ?></p>
+                <a href=<?php echo"./detail.php?id_forum=".$forum['id'] ?>>
+
+                <p class="card-text question"><?= htmlspecialchars($forum['contenu']) ?></p>    </a>
+
                 <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
             </div>
         </div>
-    </a>
     <?php endforeach; ?>
 </div>
 

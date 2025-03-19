@@ -1,55 +1,48 @@
 <?php
 session_start();
-include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
+include('../dbconfig/index.php'); // Assurez-vous que la connexion à la base de données est correcte.
 
-// Vérification si l'utilisateur est connecté et que l'ID de l'utilisateur est dans la session
+// Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['id'])) {
     die('Vous devez être connecté pour ajouter un commentaire.');
 }
 
 // Récupérer l'ID du forum à partir de l'URL (GET)
 if (isset($_GET['id_forum'])) {
-    $id_forum = $_GET['id_forum']; // Récupère l'ID du forum à partir de l'URL
+    $id_forum = $_GET['id_forum'];
 } else {
     die('ID du forum manquant.');
 }
 
-// Récupérer l'ID de la personne (utilisateur connecté) depuis la session
-$id_personne = $_SESSION['id']; // L'ID de l'utilisateur actuellement connecté
+// Récupérer l'ID de l'utilisateur depuis la session
+$id_personne = $_SESSION['id'];
 
-// Vérification si le formulaire a été soumis pour ajouter un commentaire
+// Ajout de commentaire
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['commentaire'])) {
-    $commentaire = $_POST['commentaire']; // Récupère le commentaire de l'utilisateur
+    $commentaire = $_POST['commentaire'];
 
-    // Vérifier si l'ID du forum existe dans la table `forum`
+    // Vérification de l'existence du forum
     $stmt = $conn->prepare("SELECT id FROM forum WHERE id = ?");
     $stmt->bind_param('i', $id_forum);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // L'ID du forum existe, procéder à l'insertion du commentaire
         $stmt = $conn->prepare("INSERT INTO commentaire (contenu, id_personne, id_forum) VALUES (?, ?, ?)");
-        
-        if (!$stmt) {
-            die('Erreur de préparation : ' . $conn->error);
-        }
-
         $stmt->bind_param('sii', $commentaire, $id_personne, $id_forum);
         
         if ($stmt->execute()) {
-            // Rediriger vers la page de détails du forum après l'insertion
-            header('Location: ../forum/detail.php?id_forum=' . $id_forum);
+            header('Location: detail.php?id_forum=' . $id_forum);
             exit();
         } else {
-            die('Erreur d\'exécution : ' . $stmt->error); // Afficher l'erreur d'exécution
+            die('Erreur d\'exécution : ' . $stmt->error);
         }
     } else {
-        die('L\'ID du forum est invalide ou n\'existe pas dans la base de données.');
+        die('L\'ID du forum est invalide.');
     }
 }
 
-// Récupérer les commentaires pour le forum spécifié
+// Récupérer les commentaires du forum
 $stmt = $conn->prepare("SELECT commentaire.contenu, personne.nom FROM commentaire 
                         JOIN personne ON commentaire.id_personne = personne.id 
                         WHERE commentaire.id_forum = ?");
@@ -57,6 +50,36 @@ $stmt->bind_param('i', $id_forum);
 $stmt->execute();
 $result = $stmt->get_result();
 $comments = $result->fetch_all(MYSQLI_ASSOC);
+
+// Récupérer les informations du forum et le nombre de likes
+$stmt = $conn->prepare("SELECT forum.*, 
+                               (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes 
+                        FROM forum 
+                        WHERE forum.id = ?");
+$stmt->bind_param('i', $id_forum);
+$stmt->execute();
+$forum = $stmt->get_result()->fetch_assoc();
+
+// Gérer les likes (AJAX)
+if (isset($_POST['id_forum']) && isset($_POST['like'])) {
+    $id_forum = $_POST['id_forum'];
+    $id_personne = 1; // À modifier pour l'utilisateur connecté
+
+    $check = $pdo->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
+    $check->execute([$id_forum, $id_personne]);
+
+    if ($check->rowCount() == 0) {
+        $pdo->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)")->execute([$id_forum, $id_personne]);
+    } else {
+        $pdo->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?")->execute([$id_forum, $id_personne]);
+    }
+
+    // Retourner le nouveau nombre de likes
+    $likes = $pdo->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
+    $likes->execute([$id_forum]);
+    echo json_encode(["success" => true, "likes" => $likes->fetchColumn()]);
+    exit;
+}
 
 
 
@@ -70,6 +93,7 @@ $comments = $result->fetch_all(MYSQLI_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum Juridique</title>
     <style>
+        <style>
         body {
     font-family: Arial, sans-serif;
     background-color: #F8F4ED;
@@ -293,68 +317,89 @@ nav span a:hover {
     }
 }
 
+    
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
-        <span>
-        <a href="../search/result.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
-        <a href="../index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+<nav>
+    <a href="#"><img src="../assets/logo.png" alt="Logo"></a>
+    <span>
+        <a href="../search/result.php">Rechercher</a>
+        <a href="../forum/index.php">Forum</a>
         <a href="#">Discuter</a>
-        </span>
-        <a href="#"><img src="../assets/Male User.png" alt="Compte"></a>
-    </nav>
+    </span>
+    <a href="#"><img src="../assets/Male User.png" alt="Compte"></a>
+</nav>
 
-    <div class="container">
+<div class="container">
     <div class="sidebar">
-    <h3>Utilisateur TOP 5:</h3>
-    <ul class="ranking-list">
-        <li>1. Anonyme 12581</li>
-        <li>2. Anonyme 1247</li>
-        <li>3. Anonyme 52474</li>
-    </ul>
+        <h3>Utilisateur TOP 5:</h3>
+        <ul>
+            <li>1. Anonyme 12581</li>
+            <li>2. Anonyme 1247</li>
+            <li>3. Anonyme 52474</li>
+        </ul>
 
-    <h3>Expert TOP 5:</h3>
-    <ul class="ranking-list">
-        <li>1. Expert 1024</li>
-        <li>2. Expert 1027</li>
-    </ul>
-</div>
+        <h3>Expert TOP 5:</h3>
+        <ul>
+            <li>1. Expert 1024</li>
+            <li>2. Expert 1027</li>
+        </ul>
+    </div>
 
+    <div class="content">
+        <div class="question">
+            <p>La Question de <?php echo htmlspecialchars($forum['anonyme'] ? 'Anonyme' : $forum['nom']); ?>:</p>
+            <p><?php echo htmlspecialchars($forum['contenu']); ?></p>
+        </div>
 
-        <div class="content">
-            <!-- Question -->
-            <div class="question">
-                <p>La Question de Madame Anonyme 1257:</p>
-                <p>Comment faire lorsque je veux faire une chose légale s'il vous plaît...</p>
-                <a class="btn-retour" href="javascript:history.back()">⬅</a>
-            </div>
+        <div class="comment-box">
+            <form method="POST" action="">
+                <input type="text" name="commentaire" placeholder="Écrivez votre commentaire..." required>
+                <button class="send-btn" type="submit">Envoyer</button>
+            </form>
+        </div>
 
-            <!-- Formulaire de commentaire -->
-            <div class="comment-box">
-                <form method="POST" action="">
-                    <input type="text" name="commentaire" placeholder="Ecrivez votre commentaire..." required>
-                    <button class="send-btn" type="submit">Envoyer</button>
-                </form>
-            </div>
-
-            <!-- Affichage des commentaires -->
-            <div class="comments-section">
-                <?php if (isset($comments) && count($comments) > 0): ?>
-                    <?php foreach ($comments as $comment): ?>
-                        <div class="comment">
-                            <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
-                            <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>Aucun commentaire pour ce forum.</p>
-                <?php endif; ?>
-            </div>
+        <div class="comments-section">
+            <?php if (isset($comments) && count($comments) > 0): ?>
+                <?php foreach ($comments as $comment): ?>
+                    <div class="comment">
+                        <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
+                        <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
+                        <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Aucun commentaire pour ce forum.</p>
+            <?php endif; ?>
         </div>
     </div>
+</div>
+
+<script>
+    // Script pour gérer les likes avec AJAX
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const forumId = this.dataset.id;
+            const likeCountElement = this.querySelector('.like-count');
+
+            fetch('like.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id_forum: forumId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    likeCountElement.textContent = data.likes;
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
