@@ -201,9 +201,9 @@ a:hover {
             <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
         </a>
         <span>
-            <a href="#">Rechercher</a>
-            <a href="#">Forum</a>
-            <a href="#">Discuter</a>
+        <a href="../search/index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+        <a href="../forum/index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+        <a href="#">Discuter</a>
         </span>
         <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
     </nav>

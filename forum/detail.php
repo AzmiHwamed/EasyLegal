@@ -2,65 +2,66 @@
 session_start();
 include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
 
-<<<<<<< HEAD
-if (isset($_GET['msg'])) {
-    $stmt = $conn->prepare("INSERT INTO commentaire(contenu,id_personne,id_forum) values (? , ? , ?)");
-    $stmt->bind_param('sss', $_GET['msg'],$_SESSION['id'],$_GET['id_forum']);
-    $stmt->execute();
-    header('Location: ../forum/detail.php?id_forum=' . $_GET['id_forum']);
-    exit(); 
-        
+// Vérification si l'utilisateur est connecté et que l'ID de l'utilisateur est dans la session
+if (!isset($_SESSION['id'])) {
+    die('Vous devez être connecté pour ajouter un commentaire.');
 }
+
+// Récupérer l'ID du forum à partir de l'URL (GET)
 if (isset($_GET['id_forum'])) {
-    $stmt = $conn->prepare("SELECT * FROM forum WHERE id = ?");
-    $stmt->bind_param('s', $_GET['id_forum']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $forum = $result->fetch_object();
-    $stmt = $conn->prepare("SELECT * FROM personne WHERE id = ?");
-    $stmt->bind_param('s', $forum->id_personne);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $personne = $result->fetch_object();
-
-=======
-if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = $_POST['id_forum'];
-    $id_personne = $_SESSION['id'];
-
-    // Vérifier si l'utilisateur a déjà aimé ce forum
-    $check_like = $conn->prepare("
-        SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?
-    ");
-    $check_like->bind_param("ii", $id_forum, $id_personne);
-    $check_like->execute();
-    $result = $check_like->get_result();
-
-    if ($result->num_rows == 0) {
-        // Si l'utilisateur n'a pas encore aimé ce forum, on insère un like
-        $insert_like = $conn->prepare("
-            INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)
-        ");
-        $insert_like->bind_param("ii", $id_forum, $id_personne);
-        $insert_like->execute();
-    }
->>>>>>> cf276182d18eb2cbaca8bb6c71074d69f849eef3
+    $id_forum = $_GET['id_forum']; // Récupère l'ID du forum à partir de l'URL
+} else {
+    die('ID du forum manquant.');
 }
 
-// Récupérer les forums avec le nombre de likes associés et les commentaires
-$forums = $conn->prepare("
-    SELECT forum.*, 
-           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes
-    FROM forum 
-    ORDER BY id DESC
-");
-$forums->execute();
-$result_forums = $forums->get_result();
+// Récupérer l'ID de la personne (utilisateur connecté) depuis la session
+$id_personne = $_SESSION['id']; // L'ID de l'utilisateur actuellement connecté
+
+// Vérification si le formulaire a été soumis pour ajouter un commentaire
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['commentaire'])) {
+    $commentaire = $_POST['commentaire']; // Récupère le commentaire de l'utilisateur
+
+    // Vérifier si l'ID du forum existe dans la table `forum`
+    $stmt = $conn->prepare("SELECT id FROM forum WHERE id = ?");
+    $stmt->bind_param('i', $id_forum);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // L'ID du forum existe, procéder à l'insertion du commentaire
+        $stmt = $conn->prepare("INSERT INTO commentaire (contenu, id_personne, id_forum) VALUES (?, ?, ?)");
+        
+        if (!$stmt) {
+            die('Erreur de préparation : ' . $conn->error);
+        }
+
+        $stmt->bind_param('sii', $commentaire, $id_personne, $id_forum);
+        
+        if ($stmt->execute()) {
+            // Rediriger vers la page de détails du forum après l'insertion
+            header('Location: ../forum/detail.php?id_forum=' . $id_forum);
+            exit();
+        } else {
+            die('Erreur d\'exécution : ' . $stmt->error); // Afficher l'erreur d'exécution
+        }
+    } else {
+        die('L\'ID du forum est invalide ou n\'existe pas dans la base de données.');
+    }
+}
+
+// Récupérer les commentaires pour le forum spécifié
+$stmt = $conn->prepare("SELECT commentaire.contenu, personne.nom FROM commentaire 
+                        JOIN personne ON commentaire.id_personne = personne.id 
+                        WHERE commentaire.id_forum = ?");
+$stmt->bind_param('i', $id_forum);
+$stmt->execute();
+$result = $stmt->get_result();
+$comments = $result->fetch_all(MYSQLI_ASSOC);
+
+
+
+
 ?>
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -70,91 +71,228 @@ $result_forums = $forums->get_result();
     <title>Forum Juridique</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #F8F4ED;
-            margin: 0;
-            padding: 0;
-        }
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #F3EEE5;
-            padding: 10px 20px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        nav a img {
-            width: 50px;
-        }
-        nav span {
-            display: flex;
-            gap: 20px;
-        }
-        nav span a {
-            text-decoration: none;
-            font-weight: bold;
-            color: black;
-        }
-        .container {
-            display: flex;
-            margin: 20px;
-        }
-        .sidebar {
-            width: 10%;
-            background: #F3EEE5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-right: 20px;
-        }
-        .content {
-            width: 75%;
-        }
-        .question {
-            background: #F8E2BE;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            transform: translateY(-5px);
-        }
-        .comment-box {
-            display: flex;
-            align-items: center;
-            background: #FFF;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 15px;
-        }
-        .comment-box input {
-            flex: 1;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .send-btn {
-            background: #E7A63D;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn-retour {
-            color: #E7A63D;
-            font-size: 25px;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: white;
-            text-align: center;
-            line-height: 40px;
-            border-radius: 50%;
-            text-decoration: none;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #F8F4ED;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F3EEE5;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav a img {
+    width: 50px;
+}
+
+nav span {
+    display: flex;
+    gap: 20px;
+}
+
+nav span a {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+    transition: color 0.3s;
+}
+
+nav span a:hover {
+    color: #E7A63D; /* Changer la couleur au survol */
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap; /* Ajout de flex-wrap pour les petits écrans */
+    margin: 20px;
+}
+
+.sidebar {
+    width: 20%;
+    background: #F3EEE5; /* Couleur de fond douce */
+    padding: 20px;
+    border-radius: 12px;
+    margin-right: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Ombre plus subtile pour un effet de profondeur */
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Transition douce pour les effets */
+}
+
+.sidebar:hover {
+    transform: translateY(-5px); /* Légère élévation de la sidebar au survol */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus marquée au survol */
+}
+
+/* Titres des sections dans la sidebar */
+.sidebar h3 {
+    font-size: 1.3em;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: bold;
+    border-bottom: 2px solid #E7A63D;
+    padding-bottom: 10px;
+    letter-spacing: 0.5px; /* Ajout de l'espacement des lettres pour un effet plus aéré */
+}
+
+/* Listes dans la sidebar */
+.sidebar ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.sidebar ul li {
+    padding: 12px 0;
+    font-size: 1.1em;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease, padding-left 0.3s ease; /* Effet au survol */
+}
+
+.sidebar ul li:hover {
+    background-color: #F8E2BE; /* Couleur de survol plus visible */
+    padding-left: 15px; /* Décalage des éléments au survol */
+    cursor: pointer;
+}
+
+/* Réactif pour les petits écrans */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Prend toute la largeur sur les petits écrans */
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .sidebar h3 {
+        font-size: 1.1em; /* Réduction de la taille du texte sur petits écrans */
+    }
+
+    .sidebar ul li {
+        font-size: 1em; /* Réduction de la taille du texte sur petits écrans */
+        padding: 10px 0; /* Espacement réduit sur les petits écrans */
+    }
+}
+
+
+.content {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.question {
+    background: #F8E2BE;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-box {
+    display: flex;
+    align-items: center;
+    background: #FFF;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 15px;
+}
+
+.comment-box input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: box-shadow 0.3s;
+}
+
+.comment-box input:focus {
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(231, 166, 61, 0.6);
+}
+
+.send-btn {
+    background: #E7A63D;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    align:"right";
+}
+
+.send-btn:hover {
+    background-color: #D28C2A; /* Changement de couleur au survol */
+    
+}
+
+.btn-retour {
+    color: #E7A63D;
+    font-size: 25px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: white;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-retour:hover {
+    background-color: #F3EEE5;
+}
+
+.comment {
+    margin-top: 10px;
+    padding: 10px;
+    background: #FFF;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.comment:hover {
+    transform: translateY(-5px);
+    background-color: #F8F4ED; /* Légère modification de couleur au survol */
+}
+
+.comment strong {
+    font-size: 1.1em;
+    color: #E7A63D;
+}
+
+.comments-section p {
+    font-style: italic;
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .content {
+        width: 100%;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -162,83 +300,33 @@ $result_forums = $forums->get_result();
     <nav>
         <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
         <span>
-            <a href="#">Rechercher</a>
-            <a href="#">Forum</a>
-            <a href="#">Discuter</a>
+        <a href="../search/result.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+        <a href="../index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+        <a href="#">Discuter</a>
         </span>
         <a href="#"><img src="../assets/Male User.png" alt="Compte"></a>
     </nav>
 
     <div class="container">
-        <div class="sidebar">
-            <h3>Utilisateur TOP 5:</h3>
-            <p>1. Anonyme 12581</p>
-            <p>2. Anonyme 1247</p>
-            <p>3. Anonyme 52474</p>
-            <h3>Expert TOP 5:</h3>
-            <p>1. Expert 1024</p>
-            <p>2. Expert 1027</p>
-        </div>
+    <div class="sidebar">
+    <h3>Utilisateur TOP 5:</h3>
+    <ul class="ranking-list">
+        <li>1. Anonyme 12581</li>
+        <li>2. Anonyme 1247</li>
+        <li>3. Anonyme 52474</li>
+    </ul>
+
+    <h3>Expert TOP 5:</h3>
+    <ul class="ranking-list">
+        <li>1. Expert 1024</li>
+        <li>2. Expert 1027</li>
+    </ul>
+</div>
+
 
         <div class="content">
             <!-- Question -->
             <div class="question">
-<<<<<<< HEAD
-                <p>La Question de Madame <?php 
-                if($forum->anonyme){echo "Anonyme ";}
-                 else{
-                 echo $personne->nom ;
-                 }?></p>
-                <p><?php echo $forum->contenu ?></p>
-                   <a  class="btn-retour" href="javascript:history.back()" >⬅</a>
-                
-            </div>
-
-
-            <?php
-// Assuming $conn is already defined and connected
-
-$stmt2 = $conn->prepare("SELECT * FROM commentaire WHERE id_forum = ?");
-$stmt2->bind_param('s', $_GET['id_forum']);
-$stmt2->execute();
-$result2 = $stmt2->get_result();
-while ($row = $result2->fetch_assoc()) {
-    $stmt1 = $conn->prepare("SELECT * FROM personne WHERE id = ?");
-    $stmt1->bind_param('s', $row['id_personne']);
-    $stmt1->execute();
-    $result1 = $stmt1->get_result();
-    $personne1 = $result1->fetch_object();
-
-    if ($personne1 && $personne1->role == "user") {
-        echo "<div class='response'>
-                <p><strong>La Réponse de Madame ".$personne1->nom."</strong></p>
-                <p>".$row['contenu']."</p>
-                <span class='like-btn'>❤️ J'aime</span>
-              </div>";
-    } else {
-        echo "<div class='response expert-response'>
-                <p><strong>La Réponse de Expert ".$personne1->nom.":</strong></p>
-                <p>".$row['contenu']."</p>
-                <span class='star'>⭐</span>
-                <span class='like-btn'>❤️ J'aime</span>
-              </div>";
-    }
-
-    // Close inner statement
-    $stmt1->close();
-}
-
-// Close outer statement
-$stmt2->close();
-?>
-
-
-            <form class="comment-box" method="get">
-                <input type="text" name="msg"  placeholder="Ecrivez votre commentaire...">
-                <input type="text" value=<?php echo $_GET['id_forum'] ?> name="id_forum" style="display:none">
-                <button type="sumbit" class="send-btn">Envoyer</button>
-            </form>
-=======
                 <p>La Question de Madame Anonyme 1257:</p>
                 <p>Comment faire lorsque je veux faire une chose légale s'il vous plaît...</p>
                 <a class="btn-retour" href="javascript:history.back()">⬅</a>
@@ -248,11 +336,23 @@ $stmt2->close();
             <div class="comment-box">
                 <form method="POST" action="">
                     <input type="text" name="commentaire" placeholder="Ecrivez votre commentaire..." required>
-                    <input type="hidden" name="id_forum" value="<?php echo isset($id_forum) ? $id_forum : ''; ?>"> <!-- ID du forum -->
                     <button class="send-btn" type="submit">Envoyer</button>
                 </form>
             </div>
->>>>>>> cf276182d18eb2cbaca8bb6c71074d69f849eef3
+
+            <!-- Affichage des commentaires -->
+            <div class="comments-section">
+                <?php if (isset($comments) && count($comments) > 0): ?>
+                    <?php foreach ($comments as $comment): ?>
+                        <div class="comment">
+                            <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
+                            <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Aucun commentaire pour ce forum.</p>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 

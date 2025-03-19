@@ -1,7 +1,7 @@
 <?php
 // Connexion à la base de données
 try {
-    $dsn = 'mysql:host=localhost:4306;dbname=easylegal;charset=utf8';
+    $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
     $username = 'root'; 
     $password = '';
     $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
@@ -125,8 +125,8 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
         <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
     </a>
     <span>
-        <a href="#">Rechercher</a>
-        <a href="#">Forum</a>
+    <a href="../search/index.php">Rechercher</a> <!-- Lien vers le dossier 'search' à la racine -->
+    <a href="#">Forum</a>
         <a href="#">Disscuter</a>
     </span>
     <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
