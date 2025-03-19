@@ -1,50 +1,51 @@
 <?php
-// Connexion à la base de données
-try {
-    $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
-    $username = 'root'; 
-    $password = '';
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-    $pdo = new PDO($dsn, $username, $password, $options);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
+session_start();
+include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
+
+if (isset($_POST['id_forum']) && isset($_POST['like'])) {
+    $id_forum = $_POST['id_forum'];
+    $id_personne = $_SESSION['id'];
+
+    // Vérifier si l'utilisateur a déjà aimé ce forum
+    $check_like = $conn->prepare("
+        SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?
+    ");
+    $check_like->bind_param("ii", $id_forum, $id_personne);
+    $check_like->execute();
+    $result = $check_like->get_result();
+
+    if ($result->num_rows == 0) {
+        // Si l'utilisateur n'a pas encore aimé ce forum, on insère un like
+        $insert_like = $conn->prepare("
+            INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)
+        ");
+        $insert_like->bind_param("ii", $id_forum, $id_personne);
+        $insert_like->execute();
+    }
 }
 
-// Récupérer la question et les réponses
-$id_forum = isset($_GET['id']) ? (int)$_GET['id'] : 1; // Validation sécurisée de l'ID
-$question = $pdo->prepare("SELECT forum.*, personne.nom AS auteur_nom FROM forum 
-                            JOIN personne ON forum.id_personne = personne.id
-                            WHERE forum.id = ?");
-$question->execute([$id_forum]);
-$question = $question->fetch(PDO::FETCH_ASSOC);
-
-$reponses = $pdo->prepare("SELECT reponse.*, personne.role, personne.nom FROM reponse 
-JOIN personne ON reponse.id_personne = personne.id
-WHERE id_forum = ? ORDER BY reponse.id DESC");
-$reponses->execute([$id_forum]);
-$reponses = $reponses->fetchAll(PDO::FETCH_ASSOC);
-
-// Ajouter une réponse
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
-    $reponse = htmlspecialchars($_POST['reponse']); // Éviter les injections XSS
-    $id_personne = 1; // Exemple: Remplacer par l'ID réel de l'utilisateur connecté
-
-    $stmt = $pdo->prepare("INSERT INTO reponse (id_forum, id_personne, contenu) VALUES (?, ?, ?)");
-    $stmt->execute([$id_forum, $id_personne, $reponse]);
-
-    header("Location: " . $_SERVER['PHP_SELF'] . "?id=$id_forum"); // Redirection pour éviter la soumission multiple
-    exit();
-}
+// Récupérer les forums avec le nombre de likes associés et les commentaires
+$forums = $conn->prepare("
+    SELECT forum.*, 
+           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes
+    FROM forum 
+    ORDER BY id DESC
+");
+$forums->execute();
+$result_forums = $forums->get_result();
 ?>
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails Forum</title>
+    <title>Forum Juridique</title>
     <style>
-        /* style.css */
         body {
             font-family: Arial, sans-serif;
             background-color: #F8F4ED;
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
             margin: 20px;
         }
         .sidebar {
-            width: 20%;
+            width: 10%;
             background: #F3EEE5;
             padding: 15px;
             border-radius: 10px;
@@ -94,21 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
             border-radius: 10px;
             margin-bottom: 15px;
             font-weight: bold;
-        }
-        .response {
-            background: #FFF;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        .expert-response {
-            background: rgb(215, 199, 155);
-        }
-        .response .like-btn {
-            color: red;
-            cursor: pointer;
+            transform: translateY(-5px);
         }
         .comment-box {
             display: flex;
@@ -136,6 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
         .btn-retour {
             color: #E7A63D;
             font-size: 25px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
             background-color: white;
             text-align: center;
             line-height: 40px;
@@ -145,8 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
     </style>
 </head>
 <body>
+
     <nav>
-        <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
+        <a href="#"><img src="../assets/logo.png" alt="Icône de la justice"></a>
         <span>
             <a href="#">Rechercher</a>
             <a href="#">Forum</a>
@@ -167,43 +158,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reponse'])) {
         </div>
 
         <div class="content">
+            <!-- Question -->
             <div class="question">
-                <p>La Question de <?php echo htmlspecialchars($question['auteur_nom'] ?? 'Auteur inconnu'); ?>:</p>
-                <p><?php echo nl2br(htmlspecialchars($question['contenu'])); ?></p>
+                <p>La Question de Madame Anonyme 1257:</p>
+                <p>Comment faire lorsque je veux faire une chose légale s'il vous plaît...</p>
                 <a class="btn-retour" href="javascript:history.back()">⬅</a>
             </div>
 
-            <?php foreach ($reponses as $reponse): ?>
-                <div class="response <?php echo ($reponse['role'] === 'expert') ? 'expert-response' : ''; ?>">
-                    <p><strong>La Réponse de <?php echo htmlspecialchars($reponse['role']) . ' ' . htmlspecialchars($reponse['nom']); ?>:</strong></p>
-                    <p><?php echo nl2br(htmlspecialchars($reponse['contenu'])); ?></p>
-                    <span class="like-btn" data-id="<?php echo $reponse['id']; ?>">❤ J'aime</span>
-                </div>
-            <?php endforeach; ?>
-
-            <!-- Formulaire pour ajouter une réponse -->
-            <form method="POST" action="">
-                <div class="comment-box">
-                    <input type="text" name="reponse" placeholder="Écrivez votre réponse..." required>
+            <!-- Formulaire de commentaire -->
+            <div class="comment-box">
+                <form method="POST" action="">
+                    <input type="text" name="commentaire" placeholder="Ecrivez votre commentaire..." required>
+                    <input type="hidden" name="id_forum" value="<?php echo isset($id_forum) ? $id_forum : ''; ?>"> <!-- ID du forum -->
                     <button class="send-btn" type="submit">Envoyer</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
-    <script>
-        // script.js
-        document.addEventListener('DOMContentLoaded', function () {
-            // Gérer le clic sur le bouton "J'aime"
-            document.querySelectorAll('.like-btn').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    const reponseId = this.getAttribute('data-id');
-                    if (reponseId) {
-                        alert("Vous avez aimé la réponse " + reponseId); // Remplacer par l'appel AJAX pour enregistrer le like
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 </html>
