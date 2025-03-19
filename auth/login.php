@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('../dbconfig/index.php');
-
+include('../validateur.php');
 $emailError = $passwordError = $loginError = "";
     if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
 

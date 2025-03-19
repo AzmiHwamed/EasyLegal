@@ -15,9 +15,10 @@ catch (PDOException $e) {
 
 // Récupérer les posts avec le nombre de likes
 $forums = $pdo->query("
-    SELECT forum.*, 
+    SELECT forum.*, personne.nom ,
            (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes 
-    FROM forum 
+    FROM forum , personne
+    where forum.id_personne = personne.id
     ORDER BY id DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -148,7 +149,7 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
         
         <div class="card mb-3 p-3">
             <div class="card-body">
-                <h5 class="card-title"><?= $forum['anonyme'] ? 'Anonyme' : 'Utilisateur ' . $forum['id'] ?></h5>
+                <h5 class="card-title"><?= $forum['anonyme'] ? 'Anonyme' : $forum['nom'] ?></h5>
                 <a href=<?php echo"./detail.php?id_forum=".$forum['id'] ?>>
 
                 <p class="card-text question"><?= htmlspecialchars($forum['contenu']) ?></p>    </a>

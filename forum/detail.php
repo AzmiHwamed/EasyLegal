@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['commentaire'])) {
 }
 
 // Récupérer les commentaires du forum
-$stmt = $conn->prepare("SELECT commentaire.contenu, personne.nom FROM commentaire 
+$stmt = $conn->prepare("SELECT commentaire.contenu, personne.nom, personne.role FROM commentaire 
                         JOIN personne ON commentaire.id_personne = personne.id 
                         WHERE commentaire.id_forum = ?");
 $stmt->bind_param('i', $id_forum);
@@ -81,6 +81,13 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
     echo json_encode(["success" => true, "likes" => $likes->fetchColumn()]);
     exit;
 }
+
+
+$stmt = $conn->prepare("SELECT * FROM personne WHERE id = ?");
+$stmt->bind_param('s', $forum['id_personne']);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_object();
 
 
 
@@ -296,6 +303,10 @@ nav span a:hover {
     transform: translateY(-5px);
     background-color: #F8F4ED; /* Légère modification de couleur au survol */
 }
+.expert_comment{
+    background: #EEE;
+
+}
 
 .comment strong {
     font-size: 1.1em;
@@ -351,7 +362,7 @@ nav span a:hover {
 
     <div class="content">
         <div class="question">
-            <p>La Question de <?php echo htmlspecialchars($forum['anonyme'] ? 'Anonyme' : $forum['nom']); ?>:</p>
+            <p>La Question de <?php echo htmlspecialchars($forum['anonyme'] ? 'Anonyme' : $user->nom); ?>:</p>
             <p><?php echo htmlspecialchars($forum['contenu']); ?></p>
         </div>
 
@@ -363,18 +374,19 @@ nav span a:hover {
         </div>
 
         <div class="comments-section">
-            <?php if (isset($comments) && count($comments) > 0): ?>
-                <?php foreach ($comments as $comment): ?>
-                    <div class="comment">
-                        <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
-                        <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
-                        <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>Aucun commentaire pour ce forum.</p>
-            <?php endif; ?>
-        </div>
+    <?php if (isset($comments) && count($comments) > 0): ?>
+        <?php foreach ($comments as $comment): ?>
+            <div class="comment <?= ($comment['role'] == 'expert') ? 'expert_comment' : '' ?>">
+                <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
+                <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
+                <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>Aucun commentaire pour ce forum.</p>
+    <?php endif; ?>
+</div>
+
     </div>
 </div>
 

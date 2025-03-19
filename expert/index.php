@@ -1,7 +1,7 @@
 Les experts 
 <?php
 session_start();
-if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
+if(!isset($_SESSION['id']) || $_SESSION['id'] == null){
     header('Location: ../auth/login.php');
     exit();
 }
