@@ -22,7 +22,7 @@
             height: 5vh;
             padding: 1%;
             background-color: #F3EEE5;
-            box-shadow: 5px 12px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.2);
             position: sticky;
             top: 0;
         }
@@ -47,13 +47,23 @@
         }
 
         header {
-            background-color: #f4dfb6;
-            padding: 20px;
-        }
+    background-color: #f4dfb6;
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 3px solid #d38d2c;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 15px 15px;
+}
 
-        h1 {
-            color: #d38d2c;
-        }
+h1 {
+    color: #d38d2c;
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 
         p {
             font-size: 16px;
@@ -85,14 +95,33 @@
         }
 
         button {
-            padding: 10px;
-            background-color: #d38d2c;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
+    padding: 12px 20px;
+    background-color: #d38d2c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Effet au survol */
+button:hover {
+    background-color: #b37424;
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Effet au clic */
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
         .header-box {
     background-color: #f8f4ef; 
     border: 2px solid #d38d2c;
@@ -138,6 +167,60 @@ form {
 h3{
     color:#d38d2c;
 }
+.result {
+    width: 80%;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f8f4ef;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result h2 {
+    color: #d38d2c;
+    text-align: center;
+}
+
+.result div {
+    margin-bottom: 10px;
+}
+
+.collapsible {
+    background-color: #d38d2c;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.collapsible:hover {
+    background-color: #b37424;
+}
+
+.content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #fff;
+    padding: 0 15px;
+    border-left: 3px solid #d38d2c;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.content p {
+    padding: 10px 0;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
     </style>
 </head>
 <body>

@@ -61,26 +61,6 @@ $stmt->execute();
 $forum = $stmt->get_result()->fetch_assoc();
 
 
-// Gérer les likes (AJAX)
-if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = $_POST['id_forum'];
-    $id_personne = 1; // À modifier pour l'utilisateur connecté
-
-    $check = $pdo->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
-    $check->execute([$id_forum, $id_personne]);
-
-    if ($check->rowCount() == 0) {
-        $pdo->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)")->execute([$id_forum, $id_personne]);
-    } else {
-        $pdo->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?")->execute([$id_forum, $id_personne]);
-    }
-
-    // Retourner le nouveau nombre de likes
-    $likes = $pdo->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
-    $likes->execute([$id_forum]);
-    echo json_encode(["success" => true, "likes" => $likes->fetchColumn()]);
-    exit;
-}
 
 
 $stmt = $conn->prepare("SELECT * FROM personne WHERE id = ?");
@@ -379,7 +359,6 @@ nav span a:hover {
             <div class="comment <?= ($comment['role'] == 'expert') ? 'expert_comment' : '' ?>">
                 <strong><?php echo htmlspecialchars($comment['nom']); ?>:</strong>
                 <p><?php echo htmlspecialchars($comment['contenu']); ?></p>
-                <span class="like-btn" data-id="<?= $forum['id'] ?>">❤️ J'aime (<span class="like-count"><?= $forum['likes'] ?></span>)</span>
             </div>
         <?php endforeach; ?>
     <?php else: ?>

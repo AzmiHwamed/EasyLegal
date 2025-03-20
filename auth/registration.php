@@ -42,7 +42,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
     <style>
-        /* Styles pour la barre de navigation */
+ /* Styles pour la barre de navigation */
 nav {
     width: 100%;
     height: 60px;
@@ -51,11 +51,12 @@ nav {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
+    transition: background 0.3s ease-in-out;
 }
 
 nav a {
@@ -63,6 +64,11 @@ nav a {
     color: black;
     font-weight: bold;
     font-size: 16px;
+    transition: color 0.3s ease-in-out;
+}
+
+nav a:hover {
+    color: #d38d2c;
 }
 
 nav img {
@@ -72,33 +78,42 @@ nav img {
 /* Ajustement du corps de la page */
 body {
     margin: 0;
-    padding-top: 70px; /* Pour éviter que le contenu ne soit caché sous le nav */
+    padding-top: 70px; /* Évite que le contenu soit caché sous le nav */
     font-family: Arial, sans-serif;
     background: #f8f4ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 /* Conteneur d'inscription */
 .registration-container {
-    width: 350px;
-    background: transparent;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 /* Formulaire et champs de saisie */
 input[type="text"], input[type="password"], input[type="number"] {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    display: block;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border 0.3s ease-in-out;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
+    border-color: #d38d2c;
+    outline: none;
+    box-shadow: 0px 0px 6px rgba(211, 141, 44, 0.5);
 }
 
 .input-group {
@@ -122,36 +137,57 @@ input[type="text"], input[type="password"], input[type="number"] {
 
 .toggle-password {
     position: absolute;
-    right: 10px;
-    top: 40%;
+    right: 15px;
+    top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
+    font-size: 18px;
+    color: #888;
+    transition: color 0.3s ease-in-out;
+}
+
+.toggle-password:hover {
+    color: #d38d2c;
 }
 
 /* Bouton d'inscription */
 button {
-    background: #e8a043;
+    background: #d38d2c;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 12px;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
-    background: #d18f38;
+    background: #b37424;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Liens */
 a {
     text-decoration: none;
-    color: #e8a043;
+    color: #d38d2c;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
 }
 
 a:hover {
     text-decoration: underline;
+    color: #b37424;
 }
 
 /* Styles pour l'alerte personnalisée */
@@ -160,10 +196,10 @@ a:hover {
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #e8a043;
+    background: #d38d2c;
     color: white;
     padding: 15px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-size: 16px;
     display: flex;
@@ -185,7 +221,36 @@ a:hover {
     color: white;
     font-size: 18px;
     cursor: pointer;
+    transition: color 0.3s ease-in-out;
 }
+
+.custom-alert button:hover {
+    color: #f8f4ef;
+}
+
+/* Animation d’apparition */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+    nav {
+        padding: 0 10px;
+    }
+
+    .registration-container {
+        max-width: 90%;
+    }
+}
+
 
 
 
