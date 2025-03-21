@@ -1,6 +1,7 @@
 <?php
+include('../validateur.php');isAuthentiacted();
+
 // Connexion à la base de données
-session_start();
 try {
     $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
     $username = 'root'; 
@@ -12,6 +13,7 @@ try {
 catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
+
 
 // Récupérer les posts avec le nombre de likes
 $forums = $pdo->query("

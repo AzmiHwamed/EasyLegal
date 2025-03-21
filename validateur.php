@@ -4,7 +4,7 @@ function isAuthentiacted(){
     session_start(); // Démarrer la session si elle n'est pas encore démarrée
     
     if (!isset($_SESSION['id'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");//
     exit();
     }
     
@@ -13,14 +13,16 @@ function isAuthentiacted(){
 
 function isAdmin(){
     
-return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-    
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        header("Location: ../auth/login.php");//
+        exit();
+    }     
     
 }
 
 function isExpert(){
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'expert') {
-        header("Location: login.php");
+        header("Location: ../auth/login.php");//
         exit();
     } 
 }
@@ -28,7 +30,7 @@ function isExpert(){
 
 function isUser(){
     if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
-        header("Location: login.php");
+        header("Location: ../auth/login.php");//
         exit();
     }
 }

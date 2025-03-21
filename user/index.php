@@ -13,6 +13,9 @@ if ($_SESSION['role'] != 'user') {
     exit();
 }
 
+
+
+
 // Récupérer le nom de l'utilisateur (si disponible dans la session)
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Utilisateur';
 

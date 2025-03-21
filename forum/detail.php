@@ -1,6 +1,6 @@
 <?php
-session_start();
 include('../dbconfig/index.php'); // Assurez-vous que la connexion à la base de données est correcte.
+include('../validateur.php');isAuthentiacted();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['id'])) {

@@ -1,6 +1,7 @@
 Les experts 
 <?php
-session_start();
+
+include('../validateur.php');isExpert();
 if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
     header('Location: ../auth/login.php');
     exit();
@@ -8,6 +9,9 @@ if(!isset($_SESSION['user_id']) || $_SESSION['user_id'] == null){
 if($_SESSION['type'] != 'expert'){
     header('Location: ../'.$_SESSION['type'].'/index.php');
 }
+
+
+
 
 ?>
 

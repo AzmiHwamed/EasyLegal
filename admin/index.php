@@ -8,3 +8,4 @@ if($_SESSION['type'] != 'admin'){
     header('Location: ../'.$_SESSION['type'].'/index.php');
 }
 ?>
+//validateur
