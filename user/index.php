@@ -6,6 +6,8 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] == null) {
     header('Location: ../auth/login.php');
     exit();
 }
+include('../validateur.php');isUser();
+
 
 // Redirection selon le rôle de l'utilisateur
 if ($_SESSION['role'] != 'user') {

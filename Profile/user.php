@@ -3,6 +3,7 @@ session_start();
 include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Vérification que tous les champs nécessaires sont remplis
     if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse']) && !empty($_POST['id'])) {
         
         $nom = htmlspecialchars($_POST['nom']);
@@ -10,18 +11,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Email = htmlspecialchars($_POST['Email']);
         $motdepasse = password_hash($_POST['motdepasse'], PASSWORD_DEFAULT); // Hachage du mot de passe
         $id = intval($_POST['id']); // Sécurisation de l'ID
-        
-        // Préparer et exécuter la requête sécurisée
-        $stmt = $conn->prepare("UPDATE personne SET nom = ?, telephone = ?, Email = ?, motdepasse = ? WHERE id = ?");
-        $stmt->bind_param("ssssi", $nom, $telephone, $Email, $motdepasse, $id);
-        
-        if ($stmt->execute()) {
-            echo "<script>alert('Mise à jour réussie !');</script>";
+
+        // Vérifier si l'ID existe dans la base de données
+        $stmt = $conn->prepare("SELECT 1 FROM personne WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $id); // "i" pour integer
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // L'ID existe, on peut procéder à la mise à jour
+            $stmt = $conn->prepare("UPDATE personne SET nom = ?, telephone = ?, Email = ?, motdepasse = ? WHERE id = ?");
+            if ($stmt === false) {
+                die('Erreur de préparation de la requête : ' . $conn->error);
+            }
+
+            // Lier les paramètres et exécuter la mise à jour
+            $stmt->bind_param("ssssi", $nom, $telephone, $Email, $motdepasse, $id);
+            
+            if ($stmt->execute()) {
+                // Si la mise à jour réussit, afficher l'alerte de succès
+                echo "<script>alert('Mise à jour réussie !');</script>";
+            } else {
+                echo "<script>alert('Erreur lors de la mise à jour.');</script>";
+            }
+            
+            $stmt->close();
         } else {
-            echo "<script>alert('Erreur lors de la mise à jour.');</script>";
+            // Si l'ID n'existe pas, afficher un message d'erreur
+            echo "<script>alert('ID non trouvé.');</script>";
         }
-        
-        $stmt->close();
     } else {
         echo "<script>alert('Veuillez remplir tous les champs.');</script>";
     }
@@ -29,6 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
