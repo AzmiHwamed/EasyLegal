@@ -1,53 +1,48 @@
 <?php
 session_start();
-include('../dbconfig/index.php'); // Vérifiez que la connexion est bien établie
+include('../dbconfig/index.php'); // Connexion à la base de données
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Vérification que tous les champs nécessaires sont remplis
-    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse']) && !empty($_POST['id'])) {
+
+function mettreAJourProfil($id, $nom, $Email, $motdepasse, $telephone, $role) {
+    global $conn;
+
+    if (!empty($motdepasse)) {
         
-        $nom = htmlspecialchars($_POST['nom']);
-        $telephone = htmlspecialchars($_POST['telephone']);
-        $Email = htmlspecialchars($_POST['Email']);
-        $motdepasse = password_hash($_POST['motdepasse'], PASSWORD_DEFAULT); // Hachage du mot de passe
-        $id = intval($_POST['id']); // Sécurisation de l'ID
-
-        // Vérifier si l'ID existe dans la base de données
-        $stmt = $conn->prepare("SELECT 1 FROM personne WHERE id = ? LIMIT 1");
-        $stmt->bind_param("i", $id); // "i" pour integer
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            // L'ID existe, on peut procéder à la mise à jour
-            $stmt = $conn->prepare("UPDATE personne SET nom = ?, telephone = ?, Email = ?, motdepasse = ? WHERE id = ?");
-            if ($stmt === false) {
-                die('Erreur de préparation de la requête : ' . $conn->error);
-            }
-
-            // Lier les paramètres et exécuter la mise à jour
-            $stmt->bind_param("ssssi", $nom, $telephone, $Email, $motdepasse, $id);
-            
-            if ($stmt->execute()) {
-                // Si la mise à jour réussit, afficher l'alerte de succès
-                echo "<script>alert('Mise à jour réussie !');</script>";
-            } else {
-                echo "<script>alert('Erreur lors de la mise à jour.');</script>";
-            }
-            
-            $stmt->close();
-        } else {
-            // Si l'ID n'existe pas, afficher un message d'erreur
-            echo "<script>alert('ID non trouvé.');</script>";
-        }
+        $sql = "UPDATE personne SET nom=?, Email=?, motdepasse=?, telephone=?, role=? WHERE id=?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "sssssi", $nom, $Email, $motdepasse, $telephone, $role, $id);
     } else {
-        echo "<script>alert('Veuillez remplir tous les champs.');</script>";
+        $sql = "UPDATE personne SET nom=?, Email=?, telephone=?, role=? WHERE id=?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "ssssi", $nom, $Email, $telephone, $role, $id);
     }
+
+    $result = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    
+    return $result;
 }
 
-$conn->close();
-?>
+// Vérification si le formulaire a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $id = $_SESSION['id'] ?? null;
+    $nom = $_POST['nom'];
+    $email = $_POST['Email'];
+    $motdepasse = $_POST['motdepasse'];
+    $telephone = $_POST['telephone'];
+    $role = $_POST['role'];
 
+    if ($id) {
+        if (mettreAJourProfil($id, $nom, $email, $motdepasse, $telephone, $role)) {
+            $_SESSION['success_message'] = "Profil mis à jour avec succès !";
+        } else {
+            $_SESSION['error_message'] = "Erreur lors de la mise à jour.";
+        }
+    }
+    header("Location: ".$_SERVER['PHP_SELF']); // Rafraîchir la page après la mise à jour
+    exit();
+}
+?>
 
 
 
@@ -168,18 +163,33 @@ $conn->close();
     </style>
 </head>
 <body>
+
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="custom-alert" style="display: block; background: #4CAF50;">
+            ✅ <?= $_SESSION['success_message']; ?>
+        </div>
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <div class="custom-alert" style="display: block; background: #E74C3C;">
+            ❌ <?= $_SESSION['error_message']; ?>
+        </div>
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+
     <div class="container">
         <div class="profile-card">
             <img src="../assets/user.png" alt="Photo de Profil">
-            <h3>James Allan</h3>
-            <p>@james</p>
+            <h3>Najib</h3>
+            <p>@Najibb</p>
             <button>Téléverser une nouvelle photo</button>
             <p>Membre depuis : <strong>10 Mars 2025</strong></p>
         </div>
         <div class="edit-profile">
             <h2>Modifier le profil</h2>
-            <form id="updateForm" method="post" action="">
-                <input type="hidden" name="id" value="<?= $_SESSION['user_id'] ?? '' ?>"> <!-- Assurez-vous que la session contient l'ID -->
+            <form id="updateForm" method="post">
+                <input type="hidden" name="id" value="<?= $_SESSION['user_id'] ?? '' ?>">
 
                 <div class="form-group">
                     <label for="nom">Nom :</label>
@@ -197,36 +207,19 @@ $conn->close();
                 </div>
 
                 <div class="form-group">
-                    <label for="motdepasse">Mot de passe :</label>
-                    <input type="password" id="motdepasse" name="motdepasse" required>
+                    <label for="motdepasse">Mot de passe (laisser vide pour ne pas changer) :</label>
+                    <input type="password" id="motdepasse" name="motdepasse">
                 </div>
 
-                <button type="submit" class="update-btn">Mettre à jour</button>
+                <div class="form-group">
+                    <label for="role">Rôle :</label>
+                    <input type="text" id="role" name="role" required>
+                </div>
+
+                <button type="submit" name="update" class="update-btn">Mettre à jour</button>
             </form>
         </div>
     </div>
 
-    <div id="customAlert" class="custom-alert">
-        ✅ Mise à jour réussie !
-        <button onclick="closeCustomAlert()">✖</button>
-    </div>
-
-    <script>
-        document.getElementById("updateForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            showCustomAlert();
-            setTimeout(() => this.submit(), 2000);
-        });
-
-        function showCustomAlert() {
-            const alertBox = document.getElementById("customAlert");
-            alertBox.style.display = "block";
-            setTimeout(closeCustomAlert, 2000);
-        }
-
-        function closeCustomAlert() {
-            document.getElementById("customAlert").style.display = "none";
-        }
-    </script>
 </body>
 </html>
