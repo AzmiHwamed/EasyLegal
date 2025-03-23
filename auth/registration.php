@@ -5,11 +5,11 @@ include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien éta
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
-    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])) 
+    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])&& !empty($_POST['role'])) 
     {
         $nom = $_POST['nom'];
         $telephone = $_POST['telephone'];
-        $role = 'user';
+        $role = $_POST['role'];
         $Email = $_POST['Email'];
         $motdepasse =$_POST['motdepasse']; 
 
@@ -284,6 +284,12 @@ a:hover {
                 <input type="text" id="nom" name="nom">
                 <div class="error-message" id="nameError">Veuillez entrer votre nom.</div>
             </div>
+            <div class="input-group">
+                <label for="name">Role:</label>
+                <input type="text" id="role" name="role">
+                <div class="error-message" id="nameError">Veuillez entrer votre role.</div>
+            </div>
+
 
             <div class="input-group">
                 <label for="email">Email:</label>

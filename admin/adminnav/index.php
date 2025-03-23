@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     top: 0;
     left: 0;
     padding: 40px 30px;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
     transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
     font-family: 'Roboto', sans-serif;
 }
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 .sidebar ul li a {
-    color: #ecf0f1;
+    color:rgb(11, 108, 132);
     text-decoration: none;
     font-size: 18px;
     padding: 12px 20px;
