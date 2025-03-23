@@ -1,14 +1,8 @@
 Les experts 
 <?php
-
+session_start();
 include('../validateur.php');isExpert();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'expert') {
-    header("Location: ../auth/login.php");//
-    exit();
-} 
-if($_SESSION['type'] != 'expert'){
-    header('Location: ../'.$_SESSION['type'].'/index.php');
-}
+
 
 
 
