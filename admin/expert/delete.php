@@ -12,26 +12,26 @@ if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
 }
 
-// Récupérer les utilisateurs
-$result_users = $conn->query("SELECT * FROM personne LIMIT 50");
-$utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+// Récupérer les experts uniquement
+$result_experts = $conn->query("SELECT * FROM personne WHERE role = 'expert' LIMIT 50");
+$experts = $result_experts->fetch_all(MYSQLI_ASSOC);
 
-// Fonction pour supprimer un utilisateur
-function supprimerUtilisateur($id) {
+// Fonction pour supprimer un expert
+function supprimerExpert($id) {
     global $conn;
-    $sql = "DELETE FROM personne WHERE id = ?";
+    $sql = "DELETE FROM personne WHERE id = ? AND role = 'expert'";  // Vérifier que l'utilisateur a le rôle 'expert'
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     return $stmt->execute();
 }
 
-// Gestion de la suppression de l'utilisateur
+// Gestion de la suppression de l'expert
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_utilisateur']) && isset($_POST['id'])) {
     $id = intval($_POST['id']); // S'assurer que l'ID est un entier
-    if (supprimerUtilisateur($id)) {
-        echo "<script>alert('Utilisateur supprimé avec succès.'); window.location.href = 'index.php';</script>";
+    if (supprimerExpert($id)) {
+        echo "<script>alert('Expert supprimé avec succès.'); window.location.href = 'index.php';</script>";
     } else {
-        echo "<script>alert('Erreur lors de la suppression de l\'utilisateur.');</script>";
+        echo "<script>alert('Erreur lors de la suppression de l\'expert.');</script>";
     }
 }
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_utilisateur
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Utilisateurs</title>
+    <title>Gestion des Experts</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <!-- CSS personnalisé -->
@@ -86,17 +86,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_utilisateur
     <script>
         // Fonction de confirmation avant suppression
         function confirmDelete() {
-            return confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?");
+            return confirm("Êtes-vous sûr de vouloir supprimer cet expert ?");
         }
     </script>
 </head>
 <body class="container mt-4">
 
-    <h2 class="text-center">Supprimer</h2>
+    <h2 class="text-center">Supprimer un Expert</h2>
 
-    <!-- Liste des utilisateurs -->
+    <!-- Liste des experts -->
     <div class="card mt-3">
-        <div class="card-header">Liste des utilisateurs</div>
+        <div class="card-header">Liste des Experts</div>
         <div class="card-body">
             <table class="table table-bordered">
                 <thead>
@@ -104,18 +104,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_utilisateur
                         <th>ID</th>
                         <th>Nom</th>
                         <th>Email</th>
-                        <th>Rôle</th>
                         <th>Téléphone</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($utilisateurs as $user): ?>
+                    <?php foreach ($experts as $user): ?>
                     <tr>
                         <td><?= htmlspecialchars($user['id']) ?></td>
                         <td><?= htmlspecialchars($user['nom']) ?></td>
                         <td><?= htmlspecialchars($user['Email']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
                         <td><?= htmlspecialchars($user['telephone']) ?></td>
                         <td>
                             <form method="POST" style="display:inline;" onsubmit="return confirmDelete();">

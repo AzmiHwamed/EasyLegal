@@ -12,11 +12,11 @@ if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
 }
 
-// Ajouter un utilisateur
+// Ajouter un expert
 if (isset($_POST['ajouter_utilisateur'])) {
     $nom = trim($_POST['nom']);
     $email = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL); // Validation de l'email
-    $role = trim($_POST['role']);
+    $role = 'expert'; // Définir le rôle sur "expert"
     $telephone = trim($_POST['telephone']);
     $motdepasse = password_hash($_POST['motdepasse'], PASSWORD_BCRYPT);
 
@@ -31,9 +31,10 @@ if (isset($_POST['ajouter_utilisateur'])) {
     }
 }
 
-// Récupérer les utilisateurs
-$result_users = $conn->query("SELECT * FROM personne LIMIT 50");
-$utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+// Récupérer les experts
+$sql = "SELECT * FROM personne WHERE role = 'expert' LIMIT 50";
+$result_users = $conn->query($sql);
+$experts = $result_users->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +42,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Utilisateurs</title>
+    <title>Gestion des Experts</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <!-- CSS personnalisé -->
@@ -73,7 +74,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 
     <!-- JavaScript personnalisé -->
     <script>
-        // Fonction de validation du formulaire d'ajout d'utilisateur
+        // Fonction de validation du formulaire d'ajout d'expert
         function validateForm() {
             var nom = document.forms["addUserForm"]["nom"].value;
             var email = document.forms["addUserForm"]["email"].value;
@@ -94,7 +95,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 
         // Fonction de confirmation avant suppression
         function confirmDelete(userId) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cet expert ?")) {
                 window.location.href = "delete.php?id=" + userId;
             }
         }
@@ -102,7 +103,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 </head>
 <body class="container mt-4">
 
-    <h2 class="text-center">Ajouter users</h2>
+    <h2 class="text-center">Ajouter un Expert</h2>
 
     <!-- Affichage du message d'erreur ou de succès -->
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -112,9 +113,9 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
 
-    <!-- Formulaire d'ajout d'utilisateur -->
+    <!-- Formulaire d'ajout d'expert -->
     <div class="card mt-3">
-        <div class="card-header">Ajouter un utilisateur</div>
+        <div class="card-header">Ajouter un expert</div>
         <div class="card-body">
             <form method="POST" name="addUserForm" onsubmit="return validateForm()">
                 <div class="mb-2">
@@ -124,13 +125,6 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
                 <div class="mb-2">
                     <label>Email :</label>
                     <input type="email" name="email" class="form-control" required>
-                </div>
-                <div class="mb-2">
-                    <label>Rôle :</label>
-                    <select name="role" class="form-select" required>
-                        <option value="utilisateur">Utilisateur</option>
-                        <option value="expert">Expert</option>
-                    </select>
                 </div>
                 <div class="mb-2">
                     <label>Mot de passe :</label>
@@ -145,34 +139,34 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <!-- Liste des utilisateurs -->
+    <!-- Liste des experts -->
     <div class="card mt-3">
-        <div class="card-header">Liste des utilisateurs</div>
+        <div class="card-header">Liste des Experts</div>
         <div class="card-body">
             <table class="table table-bordered">
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Rôle</th>
-                    <th>Téléphone</th>
-                    <th>Action</th>
-                </tr>
-                <?php foreach ($utilisateurs as $user): ?>
-                <tr>
-                    <td><?= htmlspecialchars($user['id']) ?></td>
-                    <td><?= htmlspecialchars($user['nom']) ?></td>
-                    <td><?= htmlspecialchars($user['Email']) ?></td>
-                    <td><?= htmlspecialchars($user['role']) ?></td>
-                    <td><?= htmlspecialchars($user['telephone']) ?></td>
-                    <td>
-                        <form method="POST" style="display:inline;">
-                            <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
-                            <button type="submit" name="supprimer_utilisateur" class="btn btn-danger btn-sm" onclick="confirmDelete(<?= htmlspecialchars($user['id']) ?>)">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($experts as $user): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($user['id']) ?></td>
+                        <td><?= htmlspecialchars($user['nom']) ?></td>
+                        <td><?= htmlspecialchars($user['Email']) ?></td>
+                        <td><?= htmlspecialchars($user['telephone']) ?></td>
+                        <td>
+                            <!-- Boutons d'action -->
+                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(<?= htmlspecialchars($user['id']) ?>)">Supprimer</button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         </div>
     </div>

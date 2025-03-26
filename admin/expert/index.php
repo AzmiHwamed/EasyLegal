@@ -12,9 +12,10 @@ if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
 }
 
-// Récupérer les utilisateurs
-$result_users = $conn->query("SELECT * FROM personne LIMIT 50");
-$utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+// Récupérer les utilisateurs avec le rôle "expert"
+$sql = "SELECT * FROM personne WHERE role = 'expert' LIMIT 50";
+$result_users = $conn->query($sql);
+$experts = $result_users->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +23,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Utilisateurs</title>
+    <title>Gestion des Experts</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <!-- CSS personnalisé -->
@@ -49,7 +50,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
     <script>
         // Fonction de confirmation avant suppression
         function confirmDelete(userId) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cet expert ?")) {
                 window.location.href = "delete.php?id=" + userId;
             }
         }
@@ -57,7 +58,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
 </head>
 <body class="container mt-4">
 
-    <h2 class="text-center">Gestion des Utilisateurs</h2>
+    <h2 class="text-center">Gestion des Experts</h2>
 
     <!-- Affichage des messages d'erreur ou de succès -->
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -67,9 +68,9 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
 
-    <!-- Liste des utilisateurs -->
+    <!-- Liste des experts -->
     <div class="card mt-3">
-        <div class="card-header">Liste des utilisateurs</div>
+        <div class="card-header">Liste des Experts</div>
         <div class="card-body">
             <table class="table table-bordered">
                 <thead>
@@ -77,18 +78,16 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
                         <th>ID</th>
                         <th>Nom</th>
                         <th>Email</th>
-                        <th>Rôle</th>
                         <th>Téléphone</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($utilisateurs as $user): ?>
+                    <?php foreach ($experts as $user): ?>
                     <tr>
                         <td><?= htmlspecialchars($user['id']) ?></td>
                         <td><?= htmlspecialchars($user['nom']) ?></td>
                         <td><?= htmlspecialchars($user['Email']) ?></td>
-                        <td><?= htmlspecialchars($user['role']) ?></td>
                         <td><?= htmlspecialchars($user['telephone']) ?></td>
                         <td>
                             <!-- Boutons d'action -->
@@ -103,6 +102,5 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <!-- Ajouter ici d'autres éléments de page si nécessaire -->
 </body>
 </html>

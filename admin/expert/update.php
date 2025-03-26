@@ -48,6 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     $role = $_POST['role'];
 
     if ($id) {
+        // Vérifier si l'utilisateur a les droits pour mettre à jour
+        // Si vous avez une session d'utilisateur, vous pouvez comparer l'ID avec l'ID de l'utilisateur connecté
+        // Exemple: if ($_SESSION['user_id'] == $id || $_SESSION['role'] == 'admin')
         if (mettreAJourProfil($id, $nom, $Email, $motdepasse, $telephone, $role)) {
             $_SESSION['success_message'] = "Profil mis à jour avec succès !";
         } else {
