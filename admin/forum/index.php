@@ -1,5 +1,10 @@
 <?php
 session_start();
+session_regenerate_id(true); // Sécurisation de la session
+
+// Vérification de connexion de l'utilisateur
+$nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -16,23 +21,90 @@ $sql = "SELECT id, contenu ,id_personne FROM forum ORDER BY id DESC LIMIT 50";
 $result = $conn->query($sql);
 $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Styles généraux */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #ecf0f1;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
             display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: #34495e;
+            color: white;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 40px 30px;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+            color: #ecf0f1;
+        }
+
+        .sidebar nav ul {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .sidebar nav ul li {
+            margin: 25px 0;
+        }
+
+        .sidebar nav ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 12px 20px;
+            display: block;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #1abc9c;
+            color: white;
+            padding-left: 25px;
+            transform: translateX(10px);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            width: calc(100% - 280px);
+            background-color: #fff;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 20px;
         }
 
         .container {
@@ -45,13 +117,6 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             text-align: center;
         }
 
-        h1 {
-            color: #2c3e50;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        /* Bouton Ajouter */
         .add-btn {
             background: #3498db;
             color: white;
@@ -70,7 +135,6 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             transform: scale(1.05);
         }
 
-        /* Affichage des posts */
         .posts-container {
             margin-top: 20px;
             text-align: left;
@@ -100,7 +164,6 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             padding-right: 10px;
         }
 
-        /* Bouton Supprimer */
         .delete-btn {
             background: #e74c3c;
             border: none;
@@ -116,43 +179,59 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             transform: scale(1.1);
         }
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
                 padding: 15px;
             }
 
-            .post {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .delete-btn {
-                margin-top: 8px;
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Forum</h1>
-
-    <!-- Bouton pour aller à la page create.php -->
-    <a href="create.php" class="add-btn">➕ Ajouter un post</a>
-
-    <!-- Affichage des posts -->
-    <div class="posts-container">
-        <h2>Discussions</h2>
-        <?php foreach ($posts as $post): ?>
-            <div class="post">
-                <p><?= htmlspecialchars($post['contenu']) ?></p>
-                <form action="delete.php" method="post">
-                    <input type="hidden" name="id" value="<?= $post['id'] ?>">
-                    <button type="submit" class="delete-btn">🗑 Supprimer</button>
-                </form>
-            </div>
-        <?php endforeach; ?>
+    <div class="sidebar">
+        <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
+        <nav role="navigation">
+            <ul>
+                <li><a href="../user/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les utilisateurs">Gérer les utilisateurs</a></li>
+                <li><a href="../forum/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer le forum">Gérer le forum</a></li>
+                <li><a href="../text/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les textes juridiques">Gérer les textes juridiques</a></li>
+                <li><a href="../expert/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les experts">Gérer les experts</a></li>
+            </ul>
+        </nav>
     </div>
-</div>
+
+    <div class="main-content">
+        <h1>Forum</h1>
+
+        <a href="create.php" class="add-btn">➕ Ajouter un post</a>
+
+        <div class="posts-container">
+            <h2>Discussions</h2>
+            <?php foreach ($posts as $post): ?>
+                <div class="post">
+                    <p><?= htmlspecialchars($post['contenu']) ?></p>
+                    <form action="delete.php" method="post">
+                        <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                        <button type="submit" class="delete-btn">🗑 Supprimer</button>
+                    </form>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <script>
+        function confirmNavigation(url) {
+            if (confirm("Voulez-vous vraiment accéder à cette page ?")) {
+                window.location.href = url;
+            }
+            return false;
+        }
+    </script>
 </body>
 </html>
