@@ -149,7 +149,7 @@ if (isset($_GET['id'])) {
                     <input type="password" name="motdepasse" class="form-control" placeholder="Mot de passe (laisser vide pour ne pas changer)">
                     <input type="text" name="telephone" class="form-control" value="<?= $utilisateur['telephone'] ?>" required>
                     <select name="role" class="form-select" required>
-                        <option value="utilisateur" <?= ($utilisateur['role'] == 'utilisateur') ? 'selected' : '' ?>>Utilisateur</option>
+                        <option value="user" <?= ($utilisateur['role'] == 'user') ? 'selected' : '' ?>>User</option>
                         <option value="expert" <?= ($utilisateur['role'] == 'expert') ? 'selected' : '' ?>>Expert</option>
                     </select>
                     <button type="submit" name="update" class="btn btn-primary mt-2">Mettre à jour</button>

@@ -29,55 +29,119 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-        }
-        .sidebar {
-            width: 280px;
-            background-color: #34495e;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 40px 30px;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
-        }
-        .sidebar h2 {
-            text-align: center;
-            color: #ecf0f1;
-            margin-bottom: 40px;
-        }
-        .sidebar nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar nav ul li {
-            margin: 20px 0;
-        }
-        .sidebar nav ul li a {
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 18px;
-            display: block;
-            padding: 12px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .sidebar nav ul li a:hover {
-            background-color: #1abc9c;
-            padding-left: 20px;
-        }
-        .main-content {
-            margin-left: 280px;
-            padding: 40px;
-            width: calc(100% - 280px);
-        }
-        .table th, .table td {
-            text-align: center;
-        }
+        /* Réinitialisation et styles globaux */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #2c3e50;
+}
+
+/* Barre latérale */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 40px 30px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+    text-align: center;
+    color: #ecf0f1;
+    margin-bottom: 40px;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+}
+
+.sidebar nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar nav ul li a:hover {
+    background-color: #1abc9c;
+    padding-left: 30px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenu principal */
+.main-content {
+    margin-left: 280px;
+    padding: 40px;
+    width: calc(100% - 280px);
+    background-color: white;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+h1, h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Tableau stylisé */
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px;
+}
+
+.table thead {
+    background-color: #34495e;
+    color: white;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* Media Queries pour écrans mobiles */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        padding: 20px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+}
+
     </style>
 
     <script>

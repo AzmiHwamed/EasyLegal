@@ -83,7 +83,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
             <input type="email" name="email" class="form-control" required>
             <label>Rôle :</label>
             <select name="role" class="form-select" required>
-                <option value="utilisateur">Utilisateur</option>
+                <option value="user">User</option>
                 <option value="expert">Expert</option>
             </select>
             <label>Mot de passe :</label>
