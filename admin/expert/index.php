@@ -68,6 +68,11 @@ $experts = $result_users->fetch_all(MYSQLI_ASSOC);
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
 
+    <!-- Bouton Ajouter en dehors du tableau -->
+    <div class="d-flex justify-content-end mb-3">
+        <a href="create.php" class="btn btn-primary">Ajouter</a>
+    </div>
+
     <!-- Liste des experts -->
     <div class="card mt-3">
         <div class="card-header">Liste des Experts</div>
@@ -90,8 +95,6 @@ $experts = $result_users->fetch_all(MYSQLI_ASSOC);
                         <td><?= htmlspecialchars($user['Email']) ?></td>
                         <td><?= htmlspecialchars($user['telephone']) ?></td>
                         <td>
-                            <!-- Boutons d'action -->
-                            <a href="create.php" class="btn btn-primary btn-sm">Ajouter</a> 
                             <button type="button" onclick="confirmDelete(<?= htmlspecialchars($user['id']) ?>)" class="btn btn-danger btn-sm">Supprimer</button>
                             <a href="update.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Modifier</a>
                         </td>
@@ -101,6 +104,5 @@ $experts = $result_users->fetch_all(MYSQLI_ASSOC);
             </table>
         </div>
     </div>
-
 </body>
 </html>

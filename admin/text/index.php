@@ -67,6 +67,11 @@ $textes_juridiques = $result_textes->fetch_all(MYSQLI_ASSOC);
         <?php unset($_SESSION['error_message']); ?>
     <?php endif; ?>
 
+    <!-- Bouton Ajouter en dehors du tableau -->
+    <div class="d-flex justify-content-end mb-3">
+        <a href="create.php" class="btn btn-primary">Ajouter</a>
+    </div>
+
     <!-- Liste des textes juridiques -->
     <div class="card mt-3">
         <div class="card-header">Liste des Textes Juridiques</div>
@@ -93,8 +98,6 @@ $textes_juridiques = $result_textes->fetch_all(MYSQLI_ASSOC);
                         <td><?= htmlspecialchars($texte['Type']) ?></td>
                         <td><?= htmlspecialchars($texte['Titre']) ?></td>
                         <td>
-                            <!-- Boutons d'action -->
-                            <a href="create.php" class="btn btn-primary btn-sm">Ajouter</a> 
                             <button type="button" onclick="confirmDelete(<?= htmlspecialchars($texte['id']) ?>)" class="btn btn-danger btn-sm">Supprimer</button>
                         </td>
                     </tr>
@@ -103,7 +106,5 @@ $textes_juridiques = $result_textes->fetch_all(MYSQLI_ASSOC);
             </table>
         </div>
     </div>
-
-    <!-- Ajouter ici d'autres éléments de page si nécessaire -->
 </body>
 </html>
