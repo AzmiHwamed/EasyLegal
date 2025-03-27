@@ -161,6 +161,8 @@ h1, h2 {
                 <li><a href="../forum/index.php">Gérer le forum</a></li>
                 <li><a href="../text/index.php">Gérer les textes juridiques</a></li>
                 <li><a href="../expert/index.php">Gérer les experts</a></li>
+                <li><a href="../adminnav/index.php">Accueil</a></li>
+
             </ul>
         </nav>
     </div>

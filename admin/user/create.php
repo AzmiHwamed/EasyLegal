@@ -28,14 +28,13 @@ if (isset($_POST['ajouter_utilisateur'])) {
         $stmt->bind_param("sssss", $nom, $email, $role, $motdepasse, $telephone);
         $stmt->execute();
         $stmt->close();
+        header("Location: ./index.php");
     } else {
         $_SESSION['error_message'] = "L'email n'est pas valide ou les champs sont manquants.";
     }
 }
 
-// Récupérer les utilisateurs
-$result_users = $conn->query("SELECT * FROM personne LIMIT 50");
-$utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -66,6 +65,8 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
                 <li><a href="../forum/index.php">Gérer le forum</a></li>
                 <li><a href="../text/index.php">Gérer les textes juridiques</a></li>
                 <li><a href="../expert/index.php">Gérer les experts</a></li>
+                <li><a href="../adminnav/index.php">Accueil</a></li>
+
             </ul>
         </nav>
     </div>
@@ -92,20 +93,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
             <input type="text" name="telephone" class="form-control" required>
             <button type="submit" name="ajouter_utilisateur" class="btn btn-primary mt-2">Ajouter</button>
         </form>
-        <h2 class="mt-4">Liste des utilisateurs</h2>
-        <table class="table table-bordered">
-            <tr><th>ID</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Téléphone</th><th>Action</th></tr>
-            <?php foreach ($utilisateurs as $user): ?>
-            <tr>
-                <td><?= htmlspecialchars($user['id']) ?></td>
-                <td><?= htmlspecialchars($user['nom']) ?></td>
-                <td><?= htmlspecialchars($user['Email']) ?></td>
-                <td><?= htmlspecialchars($user['role']) ?></td>
-                <td><?= htmlspecialchars($user['telephone']) ?></td>
-                <td><a href="delete.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-danger btn-sm">Supprimer</a></td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
+        
     </div>
 </body>
 </html>

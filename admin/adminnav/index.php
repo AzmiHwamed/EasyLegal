@@ -89,8 +89,8 @@ body {
 }
 
 h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
+    font-size: 40px;
+    margin-bottom:30px;
     font-weight: bold;
 }
 
@@ -126,7 +126,8 @@ h1 {
 
     <div class="main-content">
         <h1>Tableau de Bord</h1>
-        <p>Bienvenue sur votre tableau de bord administrateur.</p>
+        <h1>Bienvenue sur votre tableau de bord administrateur.
+</h1>
     </div>
 
     <script>
