@@ -1,12 +1,19 @@
-Les experts 
 <?php
 session_start();
+
+// Vérification de la session utilisateur
+if (!isset($_SESSION['id']) || $_SESSION['id'] == null) {
+    header('Location: ../auth/login.php');
+    exit();
+}
 include('../validateur.php');isExpert();
 
 
-
-
-
+// Redirection selon le rôle de l'utilisateur
+if ($_SESSION['role'] != 'expert') {
+    header('Location: ../' . $_SESSION['role'] . '/index.php');
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,22 +49,20 @@ include('../validateur.php');isExpert();
             width:  4vw !important;
             max-height: 100%;
             min-height: 100%;
-
         }
-        nav span{
+        
+        nav span {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             width: 20%;
         }
-        nav span a{
+        
+        nav span a {
             text-decoration: none;
             color: #000;
             font-weight: bolder;
         }
-
-    
-
 
         /* Contenu principal */
         .container {
@@ -137,36 +142,29 @@ include('../validateur.php');isExpert();
             <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
         </a>
         <span>
-        <a href="../search/index.php">Rechercher</a>
-    <a href="../forum/index.php">Forum</a>
-    <a href="../messaging/index.php">Discuter</a>
-
-
-
-
-
-            
+            <a href="../search/index.php">Rechercher</a>
+            <a href="../forum/index.php">Forum</a>
+            <a href="../messaging/index.php">Discuter</a>
         </span>
         <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-</nav>
+    </nav>
 
     <!-- Contenu principal -->
     <div class="container">
-        <h2 class="welcome-text">Bienvenue <span class="username">Expert X</span></h2>
-        
         <div class="cards">
             <!-- Messagerie -->
             <div class="card">
-                <div class="card-icon">💬</div>
-                <h3>message</h3>
-                <a href="<?= $base_url ?>/messaging/index.php" class="btn">Voir</a>
+            <h3>Messagerie</h3>
+                <a href="../messaging/index.php"
+                class="btn">Voir</a>
             </div>
 
             <!-- Forum -->
             <div class="card">
                 <div class="card-icon">🗨️</div>
                 <h3>Forum</h3>
-                <button class="btn">Voir</button>
+                <a href="../forum/index.php"
+                class="btn">Voir</a>
             </div>
         </div>
     </div>

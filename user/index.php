@@ -165,7 +165,7 @@ $base_url = "http://127.0.0.1/pfe/EasyLegal";
             <div class="card">
                 <div class="card-icon">💬</div>
                 <h3>Messagerie</h3>
-                <button class="btn">Voir</button>
+                <a href="<?= $base_url ?>/messaging/index.php" class="btn">Voir</a>
             </div>
 
             <!-- Forum -->
