@@ -142,6 +142,7 @@ $conn->close();
     </style>
 </head>
 <body>
+    
 
     <!-- Sidebar -->
     <div class="sidebar">

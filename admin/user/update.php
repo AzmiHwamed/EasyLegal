@@ -115,6 +115,7 @@ if (isset($_GET['id'])) {
     </style>
 </head>
 <body>
+    
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
         <nav>

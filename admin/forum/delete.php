@@ -160,6 +160,7 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     </style>
 </head>
 <body>
+    
 
     <!-- Sidebar intégrée -->
     <div class="sidebar">

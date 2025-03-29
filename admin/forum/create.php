@@ -191,6 +191,7 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     </style>
 </head>
 <body>
+    
     <!-- Sidebar intégrée -->
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>

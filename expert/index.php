@@ -137,9 +137,9 @@ include('../validateur.php');isExpert();
             <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
         </a>
         <span>
-            <a href="#">Rechercher</a>
-            <a href="#">Forum</a>
-            <a href="#">Disscuter</a>
+        <a href="../search/index.php">Rechercher</a>
+    <a href="../forum/index.php">Forum</a>
+    <a href="../messaging/index.php">Discuter</a>
 
 
 

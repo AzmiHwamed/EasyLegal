@@ -7,7 +7,7 @@ if ($conn->connect_error) {
 }
 
 // Vérification de la session de l'utilisateur
-if (!isset($_SESSION['id'])) { // Correction de 'user_id' en 'id'
+if (!isset($_SESSION['id'])) {
     die("Utilisateur non authentifié");
 }
 
@@ -22,7 +22,7 @@ if (empty($message)) {
 
 // Insertion du message dans la base de données
 $sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne) 
-        VALUES (?, NOW(), ?, ?)"; // Correction de 'createdAt' en 'created_at'
+        VALUES (?, NOW(), ?, ?)"; 
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sii", $message, $messagerie_id, $user_id);

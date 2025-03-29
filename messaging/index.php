@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 $conn = new mysqli("localhost", "root", "", "easylegal");
 
 if ($conn->connect_error) {
@@ -10,15 +9,23 @@ if ($conn->connect_error) {
 
 // Vérification si l'utilisateur est authentifié
 if (!isset($_SESSION['id'])) {
-    $result = $conn->query("SELECT id FROM personne LIMIT 1");
+    $stmt = $conn->prepare("SELECT id FROM personne LIMIT 1");
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $_SESSION['id'] = $row['id'];
     } else {
-        $conn->query("INSERT INTO personne (nom, role) VALUES ('Utilisateur par défaut', 'user')");
+        $stmt = $conn->prepare("INSERT INTO personne (nom, role) VALUES (?, ?)");
+        $nom = 'Utilisateur par défaut';
+        $role = 'user';
+        $stmt->bind_param("ss", $nom, $role);
+        $stmt->execute();
         $_SESSION['id'] = $conn->insert_id;
     }
+
+    $stmt->close();
 }
 
 $user_id = $_SESSION['id'];
@@ -28,9 +35,8 @@ if (isset($_GET['id_messagerie'])) {
     $id_messagerie = (int)$_GET['id_messagerie'];
 } else {
     $stmt = $conn->prepare("INSERT INTO messagerie (titre, id_personne, nom) VALUES (?, ?, ?)");
-    $stmt->bind_param("sis", $titre, $user_id, $titre);
-
     $titre = 'Nouvelle discussion';
+    $stmt->bind_param("sis", $titre, $user_id, $titre);
 
     if ($stmt->execute()) {
         $id_messagerie = $stmt->insert_id;
@@ -51,136 +57,188 @@ if (isset($_GET['id_messagerie'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messagerie Dynamique</title>
     <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
+                nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 8vh;
+            padding: 0 2%;
+            background-color: #F3EEE5;
+            box-shadow:  4px 10px 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            z-index: 10;
+        }
 
-body {
-    display: flex;
-    height: 100vh;
-    margin: 0;
-    background-color: #f8f5eb;
-}
+        nav a img {
+            width: 4vw;
+            max-height: 100%;
+            min-height: 100%;
+        }
 
-.sidebar {
-    width: 300px;
-    background-color: #ede0c4;
-    color: #333;
-    padding: 20px;
-    overflow-y: auto;
-    border-right: 2px solid #ccc;
-    border-radius: 10px;
-}
+        nav span {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 30%;
+        }
 
-.sidebar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #4a4a4a;
-}
+        nav span a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bolder;
+            transition: color 0.3s;
+        }
 
-.discussion {
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #dfd3b8;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
+        nav span a:hover {
+            color: #f4a836;
+        }
 
-.discussion:hover {
-    background-color: #f4a836;
-    color: white;
-}
+        body {
+            display: flex;
+            height: 90vh;
+            background-color: #f8f5eb;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            padding-top: 8vh;
+        }
 
-.chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #fdfaf3;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+        .sidebar {
+            width: 300px;
+            background-color: #ede0c4;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid #ccc;
+            border-radius: 10px;
+        }
 
-#chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4a4a4a;
+        }
 
-.message {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    max-width: 60%;
-    word-wrap: break-word;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
+        .discussion {
+            padding: 10px;
+            background-color: #dfd3b8;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 10px;
+        }
 
-.sent {
-    align-self: flex-end;
-    background-color: #d1f0d1;
-}
+        .discussion:hover {
+            background-color: #f4a836;
+            color: white;
+        }
 
-.received {
-    align-self: flex-start;
-    background-color: white;
-}
+        .discussion.active {
+            background-color: #555;
+            color: white;
+        }
 
-.input-area {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background-color: white;
-    border-top: 2px solid #ccc;
-    border-radius: 0 0 10px 10px;
-}
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #fdfaf3;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-left: 10px;
+        }
 
-.input-area input {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    outline: none;
-    border-radius: 20px;
-    background: #f0f0f0;
-    margin-right: 10px;
-}
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.input-area button {
-    padding: 10px 20px;
-    background-color: #f4a836;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            max-width: 60%;
+            word-wrap: break-word;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
 
-.input-area button:hover {
-    background-color: #d98e25;
-}
+        .sent {
+            align-self: flex-end;
+            background-color: #d1f0d1;
+        }
+
+        .received {
+            align-self: flex-start;
+            background-color: white;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            border-top: 2px solid #ccc;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .input-area button {
+            padding: 10px 20px;
+            background-color: #f4a836;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .input-area button:hover {
+            background-color: #d98e25;
+        }
 
     </style>
 </head>
 <body>
+<nav>
+        <a href="#">
+            <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
+        </a>
+        <span>
+        <a href="../search/index.php">Rechercher</a>
+    <a href="../forum/index.php">Forum</a>
+    <a href="../messaging/index.php">Discuter</a>
+        </span>
+        <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
+</nav>
+    
+
     <div class="sidebar">
         <h2>Discussions</h2>
         <button onclick="window.location.href='index.php'">+ Nouvelle Discussion</button>
         <div id="discussion-list">
             <?php
-            $result = $conn->query("SELECT * FROM messagerie WHERE id_personne = $user_id");
+            $stmt = $conn->prepare("SELECT * FROM messagerie WHERE id_personne = ?");
+            $stmt->bind_param("i", $user_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
             while ($row = $result->fetch_assoc()) {
                 $activeClass = ($row['id'] == $id_messagerie) ? 'style="background-color: #555;"' : '';
                 echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id']}'\">Discussion {$row['id']}</div>";
             }
+
+            $stmt->close();
             ?>
         </div>
     </div>

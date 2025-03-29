@@ -229,9 +229,9 @@ h3{
             <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
         </a>
         <span>
-            <a href="#">Rechercher</a>
-            <a href="#">Forum</a>
-            <a href="#">Disscuter</a>
+        <a href="../search/index.php">Rechercher</a>
+    <a href="../forum/index.php">Forum</a>
+    <a href="../messaging/index.php">Discuter</a>
         </span>
         <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
     </nav>

@@ -84,6 +84,7 @@ $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
     </script>
 </head>
 <body>
+    
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
         <nav>
