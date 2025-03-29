@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
     die("Utilisateur non authentifié");
 }
 
-$user_id = $_SESSION['user_id'];
-$messagerie_id = isset($_POST['messagerie_id']) ? $_POST['messagerie_id'] : 1; // ID de la messagerie
+$user_id = $_SESSION['id'];
+$messagerie_id = isset($_POST['id_messagerie']) ? $_POST['id_messagerie'] : 1; // ID de la messagerie
 $message = isset($_POST['message']) ? trim($_POST['message']) : "";
 
 // Si le message est vide, on arrête l'exécution
@@ -21,7 +21,7 @@ if (empty($message)) {
 }
 
 // Insertion du message dans la base de données
-$sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne) 
+$sql = "INSERT INTO message (contenu, createdAt, id_messagerie, id_personne) 
         VALUES (?, NOW(), ?, ?)";
 
 $stmt = $conn->prepare($sql);

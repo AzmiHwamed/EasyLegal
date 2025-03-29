@@ -8,24 +8,22 @@ if ($conn->connect_error) {
 }
 
 // Vérification si l'utilisateur est authentifié (utilisation de $_SESSION)
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id'])) {
     // On suppose que l'utilisateur existe déjà dans la table `personne`
     $result = $conn->query("SELECT id FROM personne LIMIT 1");
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $_SESSION['user_id'] = $row['id'];
+        $_SESSION['id'] = $row['id'];
     } else {
-        // Si aucun utilisateur n'existe dans `personne`, on en crée un
         $conn->query("INSERT INTO personne (nom, role) VALUES ('Utilisateur par défaut', 'user')");
-        $_SESSION['user_id'] = $conn->insert_id;
+        $_SESSION['id'] = $conn->insert_id;
     }
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['id'];
 
-// Vérifier si l'utilisateur existe avant d'insérer une nouvelle discussion
-$result = $conn->query("SELECT 1 FROM personne WHERE id = $user_id LIMIT 1");
+$result = $conn->query("SELECT * FROM personne WHERE id = $user_id LIMIT 1");
 if ($result->num_rows == 0) {
     die("Utilisateur non trouvé, l'opération a échoué.");
 }
@@ -35,8 +33,8 @@ if (isset($_GET['id_messagerie'])) {
     $id_messagerie = (int)$_GET['id_messagerie'];
 } else {
     // Utilisation d'une requête préparée pour l'insertion sécurisée
-    $stmt = $conn->prepare("INSERT INTO messagerie (titre, id_personne) VALUES (?, ?)");
-    $stmt->bind_param("si", $titre, $id_personne);
+    $stmt = $conn->prepare("INSERT INTO messagerie (titre, id_personne , nom) VALUES (?, ? , ?)");
+    $stmt->bind_param("sis", $titre, $id_personne,$titre);
     
     $titre = 'Nouvelle discussion';
     $id_personne = $user_id;
@@ -149,8 +147,8 @@ if (isset($_GET['id_messagerie'])) {
             $result = $conn->query("SELECT * FROM messagerie WHERE id_personne = $user_id");
 
             while ($row = $result->fetch_assoc()) {
-                $activeClass = ($row['id_messagerie'] == $id_messagerie) ? 'style="background-color: #555;"' : '';
-                echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id_messagerie']}'\">Discussion {$row['id_messagerie']}</div>";
+                $activeClass = ($row['id'] == $id_messagerie) ? 'style="background-color: #555;"' : '';
+                echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id']}'\">Discussion {$row['id']}</div>";
             }
             ?>
         </div>

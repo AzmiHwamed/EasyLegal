@@ -13,7 +13,7 @@ $dbname = "easylegal";
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
-}
+}   
 
 // Récupérer les utilisateurs
 $result_users = $conn->query("SELECT * FROM personne LIMIT 50");
