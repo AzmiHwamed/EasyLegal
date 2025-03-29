@@ -7,12 +7,12 @@ if ($conn->connect_error) {
 }
 
 // Vérification de la session de l'utilisateur
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id'])) { // Correction de 'user_id' en 'id'
     die("Utilisateur non authentifié");
 }
 
 $user_id = $_SESSION['id'];
-$messagerie_id = isset($_POST['id_messagerie']) ? $_POST['id_messagerie'] : 1; // ID de la messagerie
+$messagerie_id = isset($_POST['id_messagerie']) ? (int)$_POST['id_messagerie'] : 1;
 $message = isset($_POST['message']) ? trim($_POST['message']) : "";
 
 // Si le message est vide, on arrête l'exécution
@@ -21,11 +21,11 @@ if (empty($message)) {
 }
 
 // Insertion du message dans la base de données
-$sql = "INSERT INTO message (contenu, createdAt, id_messagerie, id_personne) 
-        VALUES (?, NOW(), ?, ?)";
+$sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne) 
+        VALUES (?, NOW(), ?, ?)"; // Correction de 'createdAt' en 'created_at'
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sii", $message, $messagerie_id, $user_id); // Bind des paramètres
+$stmt->bind_param("sii", $message, $messagerie_id, $user_id);
 
 if ($stmt->execute()) {
     echo "Message envoyé avec succès!";

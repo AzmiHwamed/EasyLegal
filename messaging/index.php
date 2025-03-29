@@ -1,5 +1,6 @@
 <?php
-include('../validateur.php');isAuthentiacted();
+session_start();
+
 
 $conn = new mysqli("localhost", "root", "", "easylegal");
 
@@ -7,9 +8,8 @@ if ($conn->connect_error) {
     die("Erreur de connexion : " . $conn->connect_error);
 }
 
-// Vérification si l'utilisateur est authentifié (utilisation de $_SESSION)
+// Vérification si l'utilisateur est authentifié
 if (!isset($_SESSION['id'])) {
-    // On suppose que l'utilisateur existe déjà dans la table `personne`
     $result = $conn->query("SELECT id FROM personne LIMIT 1");
 
     if ($result->num_rows > 0) {
@@ -23,22 +23,15 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-$result = $conn->query("SELECT * FROM personne WHERE id = $user_id LIMIT 1");
-if ($result->num_rows == 0) {
-    die("Utilisateur non trouvé, l'opération a échoué.");
-}
-
 // Création ou récupération de l'identifiant de messagerie
 if (isset($_GET['id_messagerie'])) {
     $id_messagerie = (int)$_GET['id_messagerie'];
 } else {
-    // Utilisation d'une requête préparée pour l'insertion sécurisée
-    $stmt = $conn->prepare("INSERT INTO messagerie (titre, id_personne , nom) VALUES (?, ? , ?)");
-    $stmt->bind_param("sis", $titre, $id_personne,$titre);
-    
+    $stmt = $conn->prepare("INSERT INTO messagerie (titre, id_personne, nom) VALUES (?, ?, ?)");
+    $stmt->bind_param("sis", $titre, $user_id, $titre);
+
     $titre = 'Nouvelle discussion';
-    $id_personne = $user_id;
-    
+
     if ($stmt->execute()) {
         $id_messagerie = $stmt->insert_id;
         header("Location: index.php?id_messagerie=$id_messagerie");
@@ -58,84 +51,122 @@ if (isset($_GET['id_messagerie'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messagerie Dynamique</title>
     <style>
-        body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .sidebar {
-            width: 300px;
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .discussion {
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #444;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .discussion:hover {
-            background-color: #555;
-        }
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #f0f0f0;
-        }
-        #chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            max-width: 60%;
-            word-wrap: break-word;
-        }
-        .sent {
-            align-self: flex-end;
-            background-color: #d1f0d1;
-        }
-        .received {
-            align-self: flex-start;
-            background-color: #f0f0f0;
-        }
-        .input-area {
-            display: flex;
-            padding: 10px;
-            background-color: white;
-        }
-        .input-area input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .input-area button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .input-area button:hover {
-            background-color: #45a049;
-        }
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    background-color: #f8f5eb;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #ede0c4;
+    color: #333;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+}
+
+.discussion {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #dfd3b8;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.discussion:hover {
+    background-color: #f4a836;
+    color: white;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fdfaf3;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-wrap: break-word;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sent {
+    align-self: flex-end;
+    background-color: #d1f0d1;
+}
+
+.received {
+    align-self: flex-start;
+    background-color: white;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    border-top: 2px solid #ccc;
+    border-radius: 0 0 10px 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    background: #f0f0f0;
+    margin-right: 10px;
+}
+
+.input-area button {
+    padding: 10px 20px;
+    background-color: #f4a836;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.input-area button:hover {
+    background-color: #d98e25;
+}
+
     </style>
 </head>
 <body>
@@ -190,7 +221,7 @@ if (isset($_GET['id_messagerie'])) {
             xhr.send();
         }
 
-        setInterval(fetchMessages, 500);
+        setInterval(fetchMessages, 1000);
     </script>
 </body>
 </html>
