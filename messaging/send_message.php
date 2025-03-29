@@ -3,40 +3,36 @@ session_start();
 $conn = new mysqli("localhost", "root", "", "easylegal");
 
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Erreur de connexion : " . $conn->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["message"])) {
-    // if (!isset($_SESSION["id"])) {
-    //     echo "User not authenticated";
-    //     exit;
-    // }
-
-    $message = trim($_POST["message"]);
-    if (empty($message)) {
-        echo "Message is empty";
-        exit;
-    }
-
-    $user_id = 1;
-    //$_SESSION["id"];
-    $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
-
-    $stmt = $conn->prepare("INSERT INTO messages (user_id, message) VALUES (?, ?)");
-    if (!$stmt) {
-        die("Prepare failed: " . $conn->error);
-    }
-
-    $stmt->bind_param("is", $user_id, $message);
-    
-    if ($stmt->execute()) {
-        echo "Message sent successfully";
-    } else {
-        echo "Error sending message: " . $stmt->error;
-    }
-
-    $stmt->close();
+// Vérification de la session de l'utilisateur
+if (!isset($_SESSION['user_id'])) {
+    die("Utilisateur non authentifié");
 }
 
+$user_id = $_SESSION['user_id'];
+$messagerie_id = isset($_POST['messagerie_id']) ? $_POST['messagerie_id'] : 1; // ID de la messagerie
+$message = isset($_POST['message']) ? trim($_POST['message']) : "";
+
+// Si le message est vide, on arrête l'exécution
+if (empty($message)) {
+    die("Le message est vide");
+}
+
+// Insertion du message dans la base de données
+$sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne) 
+        VALUES (?, NOW(), ?, ?)";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sii", $message, $messagerie_id, $user_id); // Bind des paramètres
+
+if ($stmt->execute()) {
+    echo "Message envoyé avec succès!";
+} else {
+    echo "Erreur lors de l'envoi du message: " . $stmt->error;
+}
+
+$stmt->close();
 $conn->close();
 ?>

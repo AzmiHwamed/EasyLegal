@@ -140,6 +140,12 @@ include('../validateur.php');isExpert();
             <a href="#">Rechercher</a>
             <a href="#">Forum</a>
             <a href="#">Disscuter</a>
+
+
+
+
+
+            
         </span>
         <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
 </nav>
@@ -152,8 +158,8 @@ include('../validateur.php');isExpert();
             <!-- Messagerie -->
             <div class="card">
                 <div class="card-icon">💬</div>
-                <h3>Messagerie</h3>
-                <button class="btn">Voir</button>
+                <h3>message</h3>
+                <a href="<?= $base_url ?>/messaging/index.php" class="btn">Voir</a>
             </div>
 
             <!-- Forum -->
