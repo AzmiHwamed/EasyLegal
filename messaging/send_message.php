@@ -7,13 +7,13 @@ if ($conn->connect_error) {
 }
 
 // Vérification de la session de l'utilisateur
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
     die("Utilisateur non authentifié");
 }
 
 $user_id = $_SESSION['id'];
 $role = $_SESSION['role']; // Récupération du rôle de l'utilisateur (user ou expert)
-$messagerie_id = isset($_POST['id_messagerie']) ? (int)$_POST['id_messagerie'] : 1;
+$messagerie_id = isset($_POST['id_messagerie']) ? (int)$_POST['id_messagerie'] : 0;
 $message = isset($_POST['message']) ? trim($_POST['message']) : "";
 
 // Si le message est vide, on arrête l'exécution
@@ -21,24 +21,29 @@ if (empty($message)) {
     die("Le message est vide");
 }
 
-// Vérification du rôle de l'utilisateur pour contrôler l'envoi de message
-if ($role === 'user') {
-    // Logic spécifique pour les utilisateurs (par exemple, empêcher l'envoi dans certaines messageries)
-    // Exemple : limiter l'envoi de messages dans certaines discussions aux experts
-    $stmt = $conn->prepare("SELECT id_personne FROM messagerie WHERE id = ?");
-    $stmt->bind_param("i", $messagerie_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+// Vérification si l'utilisateur a accès à la messagerie
+$stmt = $conn->prepare("SELECT id_personne, participant_expert_id FROM messagerie WHERE id = ?");
+$stmt->bind_param("i", $messagerie_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    // Vérifier si la messagerie est accessible par l'utilisateur
-    if ($row['id_personne'] != $user_id) {
+if ($result->num_rows === 0) {
+    die("Discussion non trouvée.");
+}
+
+$row = $result->fetch_assoc();
+$id_personne = $row['id_personne'];
+$participant_expert_id = $row['participant_expert_id'];
+
+// Vérification de l'accès selon le rôle
+if ($role === 'user') {
+    if ($id_personne != $user_id) {
         die("Vous n'avez pas accès à cette discussion.");
     }
 } elseif ($role === 'expert') {
-    // Logic spécifique pour les experts
-    // Exemple : Les experts peuvent envoyer des messages dans toutes les discussions
-    // Ou peut-être donner des privilèges spéciaux pour certaines messageries
+    if ($participant_expert_id != $user_id) {
+        die("Vous n'avez pas accès à cette discussion.");
+    }
 } else {
     die("Rôle utilisateur non reconnu.");
 }
