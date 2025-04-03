@@ -264,15 +264,6 @@ h3{
                         }
                     ?>
                 </select>
-
-                <select name="numero">
-                    <option value="">Numéro</option>
-                    <?php
-                        for ($i = 1; $i <= 1000; $i++) {
-                            echo "<option value=\"$i\">$i</option>";
-                        }
-                    ?>
-                </select>
             </div>
 
             <button type="submit">🔍 Rechercher</button>
@@ -287,7 +278,7 @@ h3{
             $date = isset($_GET['date']) ? trim($_GET['date']) : '';
             $annee = isset($_GET['annee']) ? trim($_GET['annee']) : '';
             $numero = isset($_GET['numero']) ? trim($_GET['numero']) : '';
-
+            
             // Vérifier si une recherche est effectuée
             if (!empty($search) || !empty($type) || !empty($date) || !empty($annee) || !empty($numero)) {
                 $query = "SELECT id, Date, Titre, Type, Theme, Contenu FROM textjuridique WHERE 1=1";
@@ -305,9 +296,7 @@ h3{
                 if (!empty($annee)) {
                     $query .= " AND YEAR(Date) = ?";
                 }
-                if (!empty($numero)) {
-                    $query .= " AND id = ?";
-                }
+
 
                 $stmt = $conn->prepare($query);
 
@@ -331,10 +320,7 @@ h3{
                     $types .= 's';
                     $params[] = $annee;
                 }
-                if (!empty($numero)) {
-                    $types .= 'i';
-                    $params[] = $numero;
-                }
+
 
                 if (!empty($params)) {
                     $stmt->bind_param($types, ...$params);

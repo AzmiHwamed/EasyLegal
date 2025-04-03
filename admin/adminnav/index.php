@@ -1,6 +1,4 @@
 <?php
-session_start();
-session_regenerate_id(true); // Sécurisation de la session
 
 // Vérification de connexion de l'utilisateur
 $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";

@@ -10,10 +10,7 @@ if ($conn->connect_error) {
 
 // Vérification si l'utilisateur est authentifié
 if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
-
-    // Identification de l'utilisateur (User ou Expert)
-    $role = isset($_GET['role']) ? $_GET['role'] : 'user';  // Par défaut, c'est un user
-
+    $role = isset($_GET['role']) ? $_GET['role'] : 'user';  
     $stmt = $conn->prepare("SELECT id, role FROM personne WHERE role = ? LIMIT 1");
     $stmt->bind_param("s", $role);
     $stmt->execute();
@@ -38,23 +35,22 @@ if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
 $user_id = $_SESSION['id'];
 $role = $_SESSION['role'];
 
-// Création ou récupération de l'identifiant de messagerie
+
 if (isset($_GET['id_messagerie'])) {
     $id_messagerie = (int)$_GET['id_messagerie'];
 } else {
-    $stmt = $conn->prepare("INSERT INTO messagerie (id_personne, nom) VALUES (?, ?)");
-    $titre = 'Discussion par défaut';
-    $stmt->bind_param("is", $user_id, $titre);
-
-    if ($stmt->execute()) {
-        $id_messagerie = $stmt->insert_id;
-        header("Location: index.php?id_messagerie=$id_messagerie");
-        exit();
-    } else {
-        die("Erreur d'insertion dans messagerie.");
+    if($role=="expert"){
+        $stmt = $conn->prepare("SELECT id FROM messagerie WHERE participant_expert_id = ? LIMIT 1");}
+    else{
+        $stmt = $conn->prepare("SELECT id FROM messagerie WHERE id_personne = ? LIMIT 1");}
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $id_messagerie = $row['id'];
+            header("Location: index.php?id_messagerie=$id_messagerie");
     }
-
-    $stmt->close();
 }
 ?>
 
@@ -215,6 +211,39 @@ if (isset($_GET['id_messagerie'])) {
         .input-area button:hover {
             background-color: #d98e25;
         }
+        #myInput {
+  background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+}
+
+#myUL {
+  /* Remove default list styling */
+  list-style-type: none;
+  padding: 0;
+  display:none;
+  margin: 0;
+}
+
+#myUL li a {
+  border: 1px solid #ddd; /* Add a border to all links */
+  margin-top: -1px; /* Prevent double borders */
+  background-color: #f6f6f6; /* Grey background color */
+  padding: 12px; /* Add some padding */
+  text-decoration: none; /* Remove default text underline */
+  font-size: 18px; /* Increase the font-size */
+  color: black; /* Add a black text color */
+  display: block; /* Make it into a block element to fill the whole list */
+}
+
+#myUL li a:hover:not(.header) {
+  background-color: #eee; /* Add a hover effect to all links, except for headers */
+}
 
     </style>
 </head>
@@ -233,17 +262,52 @@ if (isset($_GET['id_messagerie'])) {
 
 <div class="sidebar">
     <h2>Discussions</h2>
-    <button onclick="window.location.href='index.php'">+ Nouvelle Discussion</button>
-    <div id="discussion-list">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+
+    <ul id="myUL">
         <?php
-        $stmt = $conn->prepare("SELECT * FROM messagerie WHERE id_personne = ?");
-        $stmt->bind_param("i", $user_id);
+        if ($role == "expert") {
+            $stmt = $conn->prepare("SELECT p.id, p.nom FROM personne p WHERE p.role = 'user' AND NOT EXISTS (
+                SELECT 1 FROM messagerie m WHERE m.id_personne = p.id AND m.participant_expert_id = ?
+            )");
+            $stmt->bind_param("i", $user_id);
+        } else {
+            $stmt = $conn->prepare("SELECT p.id, p.nom FROM personne p WHERE p.role = 'expert' AND NOT EXISTS (
+                SELECT 1 FROM messagerie m WHERE m.participant_expert_id = p.id AND m.id_personne = ?
+            )");
+            $stmt->bind_param("i", $user_id);
+        }
+
         $stmt->execute();
         $result = $stmt->get_result();
 
         while ($row = $result->fetch_assoc()) {
+            $id_personne = ($role == "expert") ? $row['id'] : $user_id;
+            $id_expert = ($role == "expert") ? $user_id : $row['id'];
+            echo "<li><a href='create_messagerie.php?id_personne=$id_personne&id_expert=$id_expert'>{$row['nom']}</a></li>";
+        }
+
+        $stmt->close();
+        ?>
+
+    </ul>
+        <div id="discussion-list">
+        <?php
+        if($role=="expert"){
+            $stmt = $conn->prepare("SELECT m.id,created_at,id_personne,p.id as pid, p.nom as nom FROM messagerie m , personne p  WHERE participant_expert_id = ? AND p.id = id_personne");
+        }
+        else{
+            $stmt = $conn->prepare("SELECT  m.id,created_at,participant_expert_id,p.id as pid, p.nom as nom FROM messagerie m , personne p  WHERE id_personne = ? AND p.id = participant_expert_id");
+        }
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+            while ($row = $result->fetch_assoc()) {
+
             $activeClass = ($row['id'] == $id_messagerie) ? 'style="background-color: #555;"' : '';
-            echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id']}'\">Discussion {$row['id']}</div>";
+            echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id']}'\">{$row['nom']}</div>";
         }
 
         $stmt->close();
@@ -288,6 +352,43 @@ if (isset($_GET['id_messagerie'])) {
     }
 
     setInterval(fetchMessages, 1000);
+
+
+    
+</script>
+<script>
+function myFunction() {
+  // Declare variables
+  var input, filter, ul, li, a, i, txtValue;
+  input = document.getElementById('myInput');
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("myUL");
+  li = ul.getElementsByTagName('li');
+  
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("a")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+  
+}
+
+
+
+var myInput = document.getElementById("myInput");
+myInput.addEventListener("focus", function() {
+    document.getElementById("myUL").style.display = "block";
+});
+
+myInput.addEventListener("blur", function() {
+    setTimeout(function() {
+        document.getElementById("myUL").style.display = "none";
+    }, 200); // Delay to allow click events on list items
+});
 </script>
 </body>
 </html>
