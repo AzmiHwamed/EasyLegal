@@ -50,19 +50,19 @@
   </div>
 
   <div class="nav-center">
-    <a href="localhost/pfe/search/index.php">Rechercher</a>
-    <a href="localhost/pfe/forum/index.php">Forum</a>
-    <a href="localhost/pfe/messaging/index.php">Discuter</a>
+    <a href="http://127.0.0.1/pfe/EASYLEGAL/search">Rechercher</a>
+    <a href="http://127.0.0.1/pfe/EASYLEGAL/forum">Forum</a>
+    <a href="http://127.0.0.1/pfe/EASYLEGAL/messaging">Discuter</a>
   </div>
 
   <div class="nav-right">
-    <a href="localhost/pfe/Profile/index.php">
-      <img src="localhost/pfe/assets/Male User.png" alt="Profil">
+    <a href="http://127.0.0.1/pfe/EASYLEGAL/Profile">
+      <img src="http://127.0.0.1/pfe/EASYLEGAL/assets/Male User.png" alt="Profil">
     </a>
     <?php if (isset($_SESSION['id'])): ?>
-      <a href="localhost/pfe/auth/Logout.php">Déconnexion</a>
+      <a href="http://127.0.0.1/pfe/EASYLEGAL/auth/Logout.php">Déconnexion</a>
     <?php else: ?>
-      <a href="localhost/pfe/auth/login.php">Connexion</a>
+      <a href="http://127.0.0.1/pfe/EASYLEGAL/auth/login.php">Connexion</a>
     <?php endif; ?>
   </div>
 </nav>
