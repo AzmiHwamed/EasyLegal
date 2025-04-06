@@ -112,11 +112,10 @@ if (isset($_GET['id_messagerie'])) {
 
         .content {
             display: flex;
-            height: 90vh;
+            height: 85vh;
             background-color: #f8f5eb;
             margin: 0;
             font-family: Arial, sans-serif;
-            padding-top: 8vh;
         }
 
         .sidebar {
@@ -256,8 +255,9 @@ if (isset($_GET['id_messagerie'])) {
 
     </style>
 </head>
-<body><div class="content">
-    <?php include('../nav/index.php'); ?>
+<body>
+<?php include('../nav/index.php'); ?>
+<div class="content">
 
 <!-- <nav>
 <div class="nav-left">

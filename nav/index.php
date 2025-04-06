@@ -50,19 +50,19 @@
   </div>
 
   <div class="nav-center">
-    <a href="../search/index.php">Rechercher</a>
-    <a href="../forum/index.php">Forum</a>
-    <a href="../messaging/index.php">Discuter</a>
+    <a href="localhost/pfe/search/index.php">Rechercher</a>
+    <a href="localhost/pfe/forum/index.php">Forum</a>
+    <a href="localhost/pfe/messaging/index.php">Discuter</a>
   </div>
 
   <div class="nav-right">
-    <a href="../Profile/index.php">
-      <img src="../assets/Male User.png" alt="Profil">
+    <a href="localhost/pfe/Profile/index.php">
+      <img src="localhost/pfe/assets/Male User.png" alt="Profil">
     </a>
     <?php if (isset($_SESSION['id'])): ?>
-      <a href="../auth/Logout.php">Déconnexion</a>
+      <a href="localhost/pfe/auth/Logout.php">Déconnexion</a>
     <?php else: ?>
-      <a href="../auth/login.php">Connexion</a>
+      <a href="localhost/pfe/auth/login.php">Connexion</a>
     <?php endif; ?>
   </div>
 </nav>
