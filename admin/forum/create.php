@@ -54,14 +54,14 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
         /* Sidebar */
         .sidebar {
             width: 280px;
-            background-color: #34495e;
+            background-color:hsl(42, 98.50%, 74.10%);
             color: white;
             height: 100%;
             position: fixed;
             top: 0;
             left: 0;
             padding: 40px 30px;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
+            box-shadow: 2px 0 20px hsla(49, 77.50%, 68.60%, 0.70);
         }
 
         .sidebar h2 {

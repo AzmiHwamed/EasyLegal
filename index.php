@@ -85,14 +85,17 @@
 
     <!-- hero section -->
     <section class="Hero">
-        <h1>Votre compagnon legal</h1>
-        <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
-        <div class="features">
-            <div class="feature">Chercher</div>
-            <div class="feature">Discuter</div>
-            <div class="feature">Consulter</div>
-        </div>
-    </section>
+    <h1>Votre compagnon légal</h1>
+    <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
+    <div class="features">
+        <span>
+            <a href="./search/index.php">Rechercher</a>
+            <a href="./forum/index.php">Forum</a>
+            <a href="./messaging/index.php">Discuter</a>
+        </span>
+    </div>
+</section>
+
     <!-- end of hero section  -->
     <!-- information boxes  -->
     <section class="info">

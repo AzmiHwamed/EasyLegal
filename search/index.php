@@ -13,38 +13,7 @@
             padding: 0;
         }
 
-        nav {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 100%;
-            height: 5vh;
-            padding: 1%;
-            background-color: #F3EEE5;
-            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
-        }
-
-        nav a img {
-            width: 4vw !important;
-            max-height: 100%;
-            min-height: 100%;
-        }
-
-        nav span {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 20%;
-        }
-
-        nav span a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bolder;
-        }
+    
 
         header {
     background-color: #f4dfb6;
@@ -224,17 +193,8 @@ h3{
     </style>
 </head>
 <body>
-    <nav>
-        <a href="#">
-            <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
-        </a>
-        <span>
-        <a href="../search/index.php">Rechercher</a>
-    <a href="../forum/index.php">Forum</a>
-    <a href="../messaging/index.php">Discuter</a>
-        </span>
-        <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-    </nav>
+<?php include('../nav/index.php'); ?>
+
     <div class="header-box">
         <h1>Bienvenue dans EasyLegal</h1>
         <h2>Cette bibliothèque numérique a pour objectif d'augmenter la visibilité et l'accessibilité au texte juridique.</h2>

@@ -30,33 +30,34 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     
     <!-- CSS personnalisé -->
     <style>
-      * {
+       /* Réinitialisation et styles globaux */
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
     background-color: #f4f6f9;
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color: #333;
+    color:#f0e6d6;
 }
 
-/* Sidebar */
+/* Barre latérale */
 .sidebar {
     width: 280px;
-    background-color: #34495e;
+    background: linear-gradient(135deg,#e8a043,#e8a043);
     color: white;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     padding: 40px 30px;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    box-shadow: 4px 0 15px #f0e6d6;
+    transition: width 0.3s ease;
 }
 
 .sidebar h2 {
@@ -65,11 +66,9 @@ body {
     font-weight: 700;
     text-align: center;
     letter-spacing: 1px;
-    color: #ecf0f1;
-    text-transform: uppercase;
+    color: #f0e6d6;
 }
 
-/* Sidebar navigation */
 .sidebar nav ul {
     list-style: none;
     padding: 0;
@@ -85,137 +84,49 @@ body {
     font-size: 18px;
     padding: 12px 20px;
     display: block;
-    border-radius: 25px;
-    transition: background-color 0.3s, padding-left 0.3s, transform 0.3s;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
 }
 
 .sidebar nav ul li a:hover {
-    background-color: #1abc9c;
+    background-color:rgb(203, 173, 38);
     color: white;
-    padding-left: 25px;
-    transform: translateX(10px);
-    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+    padding-left: 30px;
+    box-shadow: 2px 2px 10px #f0e6d6;
 }
 
-/* Main Content */
+/* Contenu principal */
 .main-content {
     margin-left: 280px;
     padding: 40px;
     width: calc(100% - 280px);
-    background-color: #fff;
+    background-color: white;
     min-height: 100vh;
-    transition: margin-left 0.3s ease, padding 0.3s ease;
+    transition: margin-left 0.3s ease;
 }
 
 h1 {
-    color: #2c3e50;
-    font-size: 30px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    text-align: center;
-    text-transform: uppercase;
+    font-size: 40px;
+    margin-bottom:30px;
+    font-weight: bold;
 }
 
-/* Button and interactive elements */
-button, .add-btn {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: transform 0.3s, background 0.3s;
-}
-
-button:hover, .add-btn:hover {
-    background: #2980b9;
-    transform: scale(1.05);
-}
-
-button:focus, .add-btn:focus {
-    outline: none;
-}
-
-/* Post and Card styling */
-.posts-container {
-    margin-top: 20px;
-    text-align: left;
-}
-
-.post {
-    background: #f9fafc;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.post:hover {
-    transform: translateY(-3px);
-}
-
-.post p {
-    margin: 0;
-    color: #333;
-    font-size: 14px;
-    flex: 1;
-    padding-right: 10px;
-}
-
-.delete-btn {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    padding: 7px 12px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: transform 0.3s, background 0.3s;
-}
-
-.delete-btn:hover {
-    background: #c0392b;
-    transform: scale(1.1);
-}
-
-/* Card shadows */
-.card {
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Typography */
-h2, h3, p {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.5;
-}
-
-/* Responsive Sidebar */
-@media screen and (max-width: 1024px) {
-    .sidebar {
-        width: 250px;
-    }
-}
-
+/* Media Queries pour écrans mobiles */
 @media screen and (max-width: 768px) {
     .sidebar {
         width: 100%;
         position: relative;
-        padding: 15px;
+        padding: 20px;
     }
 
     .main-content {
         margin-left: 0;
+        width: 100%;
         padding: 20px;
     }
 }
 
-
     </style>
-
     <!-- JavaScript personnalisé -->
     <script>
         // Fonction de confirmation avant suppression

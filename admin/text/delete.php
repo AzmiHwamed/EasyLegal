@@ -49,128 +49,102 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     
     <!-- CSS personnalisé -->
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+       /* Réinitialisation et styles globaux */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+body {
+    background-color: #f4f6f9;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color:#f0e6d6;
+}
 
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background-color: #34495e;
-            color: white;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 40px 30px;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
-        }
+/* Barre latérale */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg,#e8a043,#e8a043);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 40px 30px;
+    box-shadow: 4px 0 15px #f0e6d6;
+    transition: width 0.3s ease;
+}
 
-        .sidebar h2 {
-            margin-bottom: 40px;
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: 1px;
-            color: #ecf0f1;
-        }
+.sidebar h2 {
+    margin-bottom: 40px;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #f0e6d6;
+}
 
-        .sidebar nav ul {
-            padding-left: 0;
-            list-style: none;
-        }
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
 
-        .sidebar nav ul li {
-            margin: 25px 0;
-        }
+.sidebar nav ul li {
+    margin: 20px 0;
+}
 
-        .sidebar nav ul li a {
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 18px;
-            padding: 12px 20px;
-            display: block;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-        }
+.sidebar nav ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 12px 20px;
+    display: block;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
 
-        .sidebar nav ul li a:hover {
-            background-color: #1abc9c;
-            color: white;
-            padding-left: 25px;
-            transform: translateX(10px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
+.sidebar nav ul li a:hover {
+    background-color:rgb(203, 173, 38);
+    color: white;
+    padding-left: 30px;
+    box-shadow: 2px 2px 10px #f0e6d6;
+}
 
-        .main-content {
-            margin-left: 280px;
-            padding: 40px;
-            width: calc(100% - 280px);
-            background-color: #fff;
-            min-height: 100vh;
-        }
+/* Contenu principal */
+.main-content {
+    margin-left: 280px;
+    padding: 40px;
+    width: calc(100% - 280px);
+    background-color: white;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
 
-        h1 {
-            color: #2c3e50;
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
+h1 {
+    font-size: 40px;
+    margin-bottom:30px;
+    font-weight: bold;
+}
 
-        @media screen and (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                position: relative;
-                padding: 15px;
-            }
+/* Media Queries pour écrans mobiles */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+        padding: 20px;
+    }
 
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+}
 
-        .container {
-            max-width: 1200px;
-        }
-
-        .card-header {
-            background-color: #007bff;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .card-body {
-            background-color: white;
-            padding: 20px;
-        }
-
-        table th, table td {
-            text-align: center;
-        }
-
-        .btn-sm {
-            margin-right: 5px;
-        }
-
-        .btn-danger {
-            background-color: #e3342f;
-            border-color: #e3342f;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
     </style>
 </head>
 <body>

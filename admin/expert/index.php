@@ -29,7 +29,7 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
     <style>
-        /* Réinitialisation et styles globaux */
+       /* Réinitialisation et styles globaux */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -38,31 +38,34 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 }
 
 body {
-    background-color: #f8f9fa;
+    background-color: #f4f6f9;
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color: #2c3e50;
+    color:#f0e6d6;
 }
 
 /* Barre latérale */
 .sidebar {
     width: 280px;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
+    background: linear-gradient(135deg,#e8a043,#e8a043);
     color: white;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     padding: 40px 30px;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 0 15px #f0e6d6;
     transition: width 0.3s ease;
 }
 
 .sidebar h2 {
-    text-align: center;
-    color: #ecf0f1;
     margin-bottom: 40px;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #f0e6d6;
 }
 
 .sidebar nav ul {
@@ -78,16 +81,17 @@ body {
     color: #ecf0f1;
     text-decoration: none;
     font-size: 18px;
+    padding: 12px 20px;
     display: block;
-    padding: 12px;
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
 }
 
 .sidebar nav ul li a:hover {
-    background-color: #1abc9c;
+    background-color:rgb(203, 173, 38);
+    color: white;
     padding-left: 30px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 10px #f0e6d6;
 }
 
 /* Contenu principal */
@@ -100,31 +104,10 @@ body {
     transition: margin-left 0.3s ease;
 }
 
-h1, h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
+h1 {
+    font-size: 40px;
+    margin-bottom:30px;
     font-weight: bold;
-    text-align: center;
-}
-
-/* Tableau stylisé */
-.table th, .table td {
-    text-align: center;
-    vertical-align: middle;
-    padding: 12px;
-}
-
-.table thead {
-    background-color: #34495e;
-    color: white;
-}
-
-.btn {
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: scale(1.05);
 }
 
 /* Media Queries pour écrans mobiles */

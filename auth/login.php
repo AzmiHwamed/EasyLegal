@@ -44,6 +44,8 @@ $emailError = $passwordError = $loginError = "";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
     <style>
+ 
+
     body {
     font-family: Arial, sans-serif;
     background: #f8f4ef;
@@ -58,7 +60,7 @@ $emailError = $passwordError = $loginError = "";
 
 .login-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     background: white;
     padding: 25px;
     border-radius: 12px;
@@ -72,7 +74,7 @@ h2 {
 }
 
 input[type="text"], input[type="password"] {
-    width: 100%;
+    width: 90%;
     padding: 12px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -146,6 +148,8 @@ a:hover {
 </style>
 </head>
 <body>
+
+
 
     <div class="login-container">
         <h2>Connexion</h2>

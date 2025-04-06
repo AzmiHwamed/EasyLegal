@@ -1,47 +1,68 @@
-
 <style>
   nav {
-           display: flex;
-           flex-direction: row;
-           justify-content: space-between;
-           align-items: center;
-           max-width: 100%;
-           height: 8vh;
-           padding: 1%;
-           background-color: #F3EEE5;
-           box-shadow: 5px 12px 10px rgba(0, 0, 0, 0.2);
-           position: sticky;
-           top: 0;
-           z-index: 1000;
-        }
-        nav a img {
-            width: 4vw !important;
-            max-height: 100%;
-            min-height: 100%;
-        }
-        nav span {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 20%;
-        }
-        nav span a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bolder;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 8vh;
+    padding: 0 2%;
+    background-color: #F3EEE5;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
 
-    </style>
+  .nav-left,
+  .nav-center,
+  .nav-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-left img,
+  .nav-right img {
+    width: 3.5vw;
+    height: auto;
+  }
+
+  .nav-center {
+    gap: 2vw;
+  }
+
+  .nav-center a,
+  .nav-right a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    margin-left: 1vw;
+  }
+
+  .nav-right {
+    gap: 1vw;
+  }
+</style>
+
 <nav>
+  <div class="nav-left">
     <a href="#">
-        <img src="../assets/logo.png" alt="Icône de la justice" class="hero-image">
+      <img src="../assets/logo.png" alt="Logo">
     </a>
-    <span>
-        <a href="../search/">Rechercher</a>
-        <a href="../forum">Forum</a>
-        <a href="../messaging">Disscuter</a>
-    </span>
-    <a><img src="../assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-</nav>
-    
+  </div>
 
+  <div class="nav-center">
+    <a href="../search/index.php">Rechercher</a>
+    <a href="../forum/index.php">Forum</a>
+    <a href="../messaging/index.php">Discuter</a>
+  </div>
+
+  <div class="nav-right">
+    <a href="../Profile/index.php">
+      <img src="../assets/Male User.png" alt="Profil">
+    </a>
+    <?php if (isset($_SESSION['id'])): ?>
+      <a href="../auth/Logout.php">Déconnexion</a>
+    <?php else: ?>
+      <a href="../auth/login.php">Connexion</a>
+    <?php endif; ?>
+  </div>
+</nav>

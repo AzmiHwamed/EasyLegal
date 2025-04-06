@@ -21,8 +21,9 @@ if ($_SESSION['role'] != 'expert') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Expert</title>
     <style>
+      <style>
         /* Réinitialisation */
         * {
             margin: 0;
@@ -30,95 +31,64 @@ if ($_SESSION['role'] != 'expert') {
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-    
-        nav {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 100%;
-            height: 5vh;
-            padding: 1%;
-            background-color: #F3EEE5;
-            box-shadow:  5px 12px 10px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
+
+        body {
+            background-color: #fdfbf7;
+            color: #333;
         }
 
-        nav a img {
-            width:  4vw !important;
-            max-height: 100%;
-            min-height: 100%;
-        }
-        
-        nav span {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 20%;
-        }
-        
-        nav span a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bolder;
-        }
+
+
 
         /* Contenu principal */
         .container {
             text-align: center;
-            padding: 50px 20px;
-            background-color: #fdfbf7;
+            padding: 4rem 2rem;
             min-height: 90vh;
         }
 
-        .welcome-text {
-            font-size: 24px;
-            margin-bottom: 30px;
-        }
-
-        .username {
-            font-weight: bold;
-        }
-
-        /* Cartes */
         .cards {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
         .card {
             background-color: #fbc56c;
-            padding: 30px;
+            padding: 2rem;
             border-radius: 15px;
             width: 250px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 16px rgba(0, 0, 0, 0.15);
         }
 
         .card-icon {
             font-size: 50px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 1rem;
         }
 
-        /* Bouton */
         .btn {
-            background-color: black;
-            color: white;
+            display: inline-block;
+            background-color: #000;
+            color: #fff;
             padding: 10px 20px;
-            border: none;
             border-radius: 5px;
-            cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            margin-top: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s;
         }
 
         .btn:hover {
@@ -127,47 +97,37 @@ if ($_SESSION['role'] != 'expert') {
 
         /* Responsive */
         @media (max-width: 768px) {
-            .cards {
-                flex-direction: column;
-                align-items: center;
+            nav .nav-links {
+                gap: 1rem;
+            }
+
+            .card {
+                width: 80%;
             }
         }
+
     </style>
 </head>
 <body>
+<?php include('../nav/index.php'); ?>
 
-    <!-- Barre de navigation -->
-    <nav>
-        <a href="#">
-            <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
-        </a>
-        <span>
-            <a href="../search/index.php">Rechercher</a>
-            <a href="../forum/index.php">Forum</a>
-            <a href="../messaging/index.php">Discuter</a>
-        </span>
-        <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-    </nav>
-
-    <!-- Contenu principal -->
-    <div class="container">
+    <main class="container">
         <div class="cards">
             <!-- Messagerie -->
             <div class="card">
-            <h3>Messagerie</h3>
-                <a href="../messaging/index.php"
-                class="btn">Voir</a>
+                <div class="card-icon">📬</div>
+                <h3>Messagerie</h3>
+                <a href="../messaging/index.php" class="btn">Voir</a>
             </div>
 
             <!-- Forum -->
             <div class="card">
                 <div class="card-icon">🗨️</div>
                 <h3>Forum</h3>
-                <a href="../forum/index.php"
-                class="btn">Voir</a>
+                <a href="../forum/index.php" class="btn">Voir</a>
             </div>
         </div>
-    </div>
+    </main>
 
 </body>
 </html>

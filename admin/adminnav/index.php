@@ -24,20 +24,20 @@ body {
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color: #2c3e50;
+    color:#f0e6d6;
 }
 
 /* Barre latérale */
 .sidebar {
     width: 280px;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
+    background: linear-gradient(135deg,#e8a043,#e8a043);
     color: white;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     padding: 40px 30px;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 0 15px #f0e6d6;
     transition: width 0.3s ease;
 }
 
@@ -47,7 +47,7 @@ body {
     font-weight: 700;
     text-align: center;
     letter-spacing: 1px;
-    color: #ecf0f1;
+    color: #f0e6d6;
 }
 
 .sidebar nav ul {
@@ -70,10 +70,10 @@ body {
 }
 
 .sidebar nav ul li a:hover {
-    background-color: #1abc9c;
+    background-color:rgb(203, 173, 38);
     color: white;
     padding-left: 30px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 10px #f0e6d6;
 }
 
 /* Contenu principal */
@@ -110,6 +110,7 @@ h1 {
     </style>
 </head>
 <body>
+
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
         <nav role="navigation">
@@ -118,6 +119,7 @@ h1 {
                 <li><a href="../forum/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer le forum">Gérer le forum</a></li>
                 <li><a href="../text/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les textes juridiques">Gérer les textes juridiques</a></li>
                 <li><a href="../expert/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les experts">Gérer les experts</a></li>
+                <li><a href="../../index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les experts">Page D'accueil</a></li>
             </ul>
         </nav>
     </div>

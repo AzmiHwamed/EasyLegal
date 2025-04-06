@@ -1,59 +1,86 @@
 <?php
-include('../validateur.php');isAuthentiacted();
+include('../dbconfig/index.php');
+include('../validateur.php');
+isAuthentiacted();
 
 // Connexion à la base de données
-try {
-    $dsn = 'mysql:host=localhost;dbname=easylegal;charset=utf8';
-    $username = 'root'; 
-    $password = '';
-    $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-
-    $pdo = new PDO($dsn, $username, $password, $options);
-} 
-catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
+$mysqli = new mysqli("localhost", "root", "", "easylegal");
+if ($mysqli->connect_error) {
+    die("Connexion échouée : " . $mysqli->connect_error);
 }
 
-
 // Récupérer les posts avec le nombre de likes
-$forums = $pdo->query("
-    SELECT forum.*, personne.nom ,
-           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) as likes 
-    FROM forum , personne
-    where forum.id_personne = personne.id
+$sql = "
+    SELECT forum.*, personne.nom, 
+           (SELECT COUNT(*) FROM aime WHERE aime.id_forum = forum.id) AS likes
+    FROM forum
+    JOIN personne ON forum.id_personne = personne.id
     ORDER BY id DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+";
+
+$result = $mysqli->query($sql);
+$forums = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $forums[] = $row;
+    }
+}
 
 // Ajouter un post
 if (isset($_POST['contenu'])) {
-    $contenu = $_POST['contenu'];
+    $contenu = $mysqli->real_escape_string($_POST['contenu']);
     $anonyme = isset($_POST['anonyme']) ? 1 : 0;
-    $pdo->prepare("INSERT INTO forum (contenu, anonyme,id_personne) VALUES (?,?, ?)")->execute([$contenu, $anonyme,$_SESSION['id']]);
+    $id_personne = $_SESSION['id']; // Id de l'utilisateur connecté
+
+    $stmt = $mysqli->prepare("INSERT INTO forum (contenu, anonyme, id_personne) VALUES (?, ?, ?)");
+    $stmt->bind_param("sii", $contenu, $anonyme, $id_personne);
+    $stmt->execute();
+    $stmt->close();
+
     header("Location: index.php");
     exit;
 }
 
 // Gérer les likes (AJAX)
 if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = $_POST['id_forum'];
+    $id_forum = (int) $_POST['id_forum'];
     $id_personne = 1; // À modifier pour l'utilisateur connecté
 
-    $check = $pdo->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
-    $check->execute([$id_forum, $id_personne]);
+    // Vérifier si l'utilisateur a déjà aimé ce post
+    $check = $mysqli->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
+    $check->bind_param("ii", $id_forum, $id_personne);
+    $check->execute();
+    $check_result = $check->get_result();
 
-    if ($check->rowCount() == 0) {
-        $pdo->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)")->execute([$id_forum, $id_personne]);
+    if ($check_result->num_rows == 0) {
+        // Ajouter un like
+        $insert = $mysqli->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)");
+        $insert->bind_param("ii", $id_forum, $id_personne);
+        $insert->execute();
+        $insert->close();
     } else {
-        $pdo->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?")->execute([$id_forum, $id_personne]);
+        // Retirer un like
+        $delete = $mysqli->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?");
+        $delete->bind_param("ii", $id_forum, $id_personne);
+        $delete->execute();
+        $delete->close();
     }
 
     // Retourner le nouveau nombre de likes
-    $likes = $pdo->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
-    $likes->execute([$id_forum]);
-    echo json_encode(["success" => true, "likes" => $likes->fetchColumn()]);
+    $likes = $mysqli->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
+    $likes->bind_param("i", $id_forum);
+    $likes->execute();
+    $likes_result = $likes->get_result();
+    $likes_count = $likes_result->fetch_row()[0];
+
+    echo json_encode(["success" => true, "likes" => $likes_count]);
     exit;
 }
+
+// Fermer la connexion à la base de données
+$mysqli->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -65,9 +92,7 @@ if (isset($_POST['id_forum']) && isset($_POST['like'])) {
         body {
             background-color: #F8F4ED;
         }
-        .navbar {
-            background-color: #f4ede4;
-        }
+        
         .card {
             border-radius: 8px;
             background-color: #fff;

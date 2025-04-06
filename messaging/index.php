@@ -67,7 +67,7 @@ if (isset($_GET['id_messagerie'])) {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
+            width: 97%;
             height: 8vh;
             padding: 0 2%;
             background-color: #F3EEE5;
@@ -100,8 +100,17 @@ if (isset($_GET['id_messagerie'])) {
         nav span a:hover {
             color: #f4a836;
         }
+ 
+        .nav-center a,
+  .nav-right a {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    margin-left: 1vw;
+  }
 
-        body {
+
+        .content {
             display: flex;
             height: 90vh;
             background-color: #f8f5eb;
@@ -247,18 +256,33 @@ if (isset($_GET['id_messagerie'])) {
 
     </style>
 </head>
-<body>
-<nav>
+<body><div class="content">
+    <?php include('../nav/index.php'); ?>
+
+<!-- <nav>
+<div class="nav-left">
     <a href="#">
-        <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
+      <img src="../assets/logo.png" alt="Logo">
     </a>
-    <span>
-        <a href="../search/index.php">Rechercher</a>
-        <a href="../forum/index.php">Forum</a>
-        <a href="../messaging/index.php">Discuter</a>
-    </span>
-    <a><img src="./assets/Male User.png" alt="Account" style="width: 3vw !important;"></a>
-</nav>
+  </div>
+
+  <div class="nav-center">
+    <a href="../search/index.php">Rechercher</a>
+    <a href="../forum/index.php">Forum</a>
+    <a href="../messaging/index.php">Discuter</a>
+  </div>
+
+  <div class="nav-right">
+    <a href="../Profile/index.php">
+      <img src="../assets/Male User.png" alt="Profil">
+    </a>
+    <?php if (isset($_SESSION['id'])): ?>
+      <a href="../auth/Logout.php">Déconnexion</a>
+    <?php else: ?>
+      <a href="../auth/login.php">Connexion</a>
+    <?php endif; ?>
+  </div>
+</nav> -->
 
 <div class="sidebar">
     <h2>Discussions</h2>
@@ -322,7 +346,7 @@ if (isset($_GET['id_messagerie'])) {
         <button id="sendBtn">Envoyer</button>
     </div>
 </div>
-
+</div>
 <script>
     const idMessagerie = <?php echo $id_messagerie; ?>;
 
@@ -353,7 +377,7 @@ if (isset($_GET['id_messagerie'])) {
 
     setInterval(fetchMessages, 1000);
 
-
+    
     
 </script>
 <script>
@@ -389,6 +413,7 @@ myInput.addEventListener("blur", function() {
         document.getElementById("myUL").style.display = "none";
     }, 200); // Delay to allow click events on list items
 });
+
 </script>
 </body>
 </html>

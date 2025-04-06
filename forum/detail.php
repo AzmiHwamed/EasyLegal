@@ -81,7 +81,7 @@ $user = $result->fetch_object();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum Juridique</title>
     <style>
-        <style>
+        
         body {
     font-family: Arial, sans-serif;
     background-color: #F8F4ED;
@@ -89,37 +89,7 @@ $user = $result->fetch_object();
     padding: 0;
 }
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F3EEE5;
-    padding: 10px 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
 
-nav a img {
-    width: 50px;
-}
-
-nav span {
-    display: flex;
-    gap: 20px;
-}
-
-nav span a {
-    text-decoration: none;
-    font-weight: bold;
-    color: black;
-    transition: color 0.3s;
-}
-
-nav span a:hover {
-    color: #E7A63D; /* Changer la couleur au survol */
-}
 
 .container {
     display: flex;
@@ -314,15 +284,8 @@ nav span a:hover {
 </head>
 <body>
 
-<nav>
-    <a href="#"><img src="../assets/logo.png" alt="Logo"></a>
-    <span>
-        <a href="../search/result.php">Rechercher</a>
-        <a href="../forum/index.php">Forum</a>
-        <a href="#">Discuter</a>
-    </span>
-    <a href="#"><img src="../assets/Male User.png" alt="Compte"></a>
-</nav>
+<?php include('../nav/index.php'); ?>
+
 
 <div class="container">
     <div class="sidebar">
