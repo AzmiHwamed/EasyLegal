@@ -79,15 +79,13 @@ if (isset($_GET['id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mise à jour de l'Expert</title>
     
-    <!-- CSS personnalisé -->
     <style>
-     <style>
-       /* Réinitialisation et styles globaux */
+/* Réinitialisation + base typographique */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 body {
@@ -95,35 +93,31 @@ body {
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color:#f0e6d6;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Barre latérale */
+/* Sidebar */
 .sidebar {
-    width: 280px;
-    background: linear-gradient(135deg,#e8a043,#e8a043);
+    width: 260px;
+    background: linear-gradient(135deg, #e89d3f, #e8a043);
     color: white;
-    height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 40px 30px;
-    box-shadow: 4px 0 15px #f0e6d6;
-    transition: width 0.3s ease;
+    height: 100vh;
+    padding: 40px 25px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
 }
 
 .sidebar h2 {
-    margin-bottom: 40px;
-    font-size: 24px;
-    font-weight: 700;
+    margin-bottom: 35px;
+    font-size: 1.4rem;
     text-align: center;
-    letter-spacing: 1px;
-    color: #f0e6d6;
 }
 
 .sidebar nav ul {
     list-style: none;
-    padding: 0;
 }
 
 .sidebar nav ul li {
@@ -131,43 +125,90 @@ body {
 }
 
 .sidebar nav ul li a {
-    color: #ecf0f1;
+    color: white;
     text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px;
+    font-size: 1rem;
+    padding: 10px 16px;
     display: block;
     border-radius: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: background 0.3s, padding-left 0.3s;
 }
 
 .sidebar nav ul li a:hover {
-    background-color:rgb(203, 173, 38);
-    color: white;
-    padding-left: 30px;
-    box-shadow: 2px 2px 10px #f0e6d6;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 28px;
 }
 
 /* Contenu principal */
 .main-content {
-    margin-left: 280px;
+    margin-left: 260px;
     padding: 40px;
-    width: calc(100% - 280px);
-    background-color: white;
+    width: calc(100% - 260px);
+    background-color: #fff;
     min-height: 100vh;
-    transition: margin-left 0.3s ease;
 }
 
-h1 {
-    font-size: 40px;
-    margin-bottom:30px;
-    font-weight: bold;
+.main-content h1 {
+    font-size: 2rem;
+    margin-bottom: 25px;
 }
 
-/* Media Queries pour écrans mobiles */
+/* Formulaire */
+.card {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
+
+.card input,
+.card select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.card button {
+    background-color: #e89d3f;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.card button:hover {
+    background-color: #d88828;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Responsive */
 @media screen and (max-width: 768px) {
     .sidebar {
-        width: 100%;
         position: relative;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
         padding: 20px;
     }
 
@@ -177,6 +218,8 @@ h1 {
         padding: 20px;
     }
 }
+</style>
+
 
     </style>
     
@@ -227,41 +270,33 @@ h1 {
             </ul>
         </nav>
     </div>
-
-    <!-- Main content -->
     <div class="main-content">
-        <h1>Mise à jour de l'Expert</h1>
+    <h1>Mise à jour de l'Expert</h1>
 
-        <?php if (isset($_SESSION['error_message'])): ?>
-            <div class="alert alert-danger">
-                <?= $_SESSION['error_message']; unset($_SESSION['error_message']); ?>
-            </div>
-        <?php endif; ?>
-        <?php if (isset($_SESSION['success_message'])): ?>
-            <div class="alert alert-success">
-                <?= $_SESSION['success_message']; unset($_SESSION['success_message']); ?>
-            </div>
-        <?php endif; ?>
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?></div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="alert alert-success"><?= htmlspecialchars($_SESSION['success_message']); unset($_SESSION['success_message']); ?></div>
+    <?php endif; ?>
 
-        <!-- Formulaire de mise à jour de l'utilisateur spécifique -->
-        <div class="card mt-3">
-            <div class="card-header">Mise à jour du profil</div>
-            <div class="card-body">
-                <form method="POST" name="updateForm" onsubmit="return validateForm() && confirmUpdate();">
-                    <input type="hidden" name="id" value="<?= $utilisateur['id'] ?>">
-                    <input type="text" name="nom" class="form-control" value="<?= $utilisateur['nom'] ?>" required>
-                    <input type="email" name="Email" class="form-control" value="<?= $utilisateur['Email'] ?>" required>
-                    <input type="password" name="motdepasse" class="form-control" placeholder="Mot de passe (laisser vide pour ne pas changer)">
-                    <input type="text" name="telephone" class="form-control" value="<?= $utilisateur['telephone'] ?>" required>
-                    <select name="role" class="form-select" required>
-                        <option value="utilisateur" <?= ($utilisateur['role'] == 'utilisateur') ? 'selected' : '' ?>>Utilisateur</option>
-                        <option value="expert" <?= ($utilisateur['role'] == 'expert') ? 'selected' : '' ?>>Expert</option>
-                    </select>
-                    <button type="submit" name="update" class="btn btn-primary mt-2">Mettre à jour</button>
-                </form>
-            </div>
-        </div>
+    <div class="card">
+        <form method="POST" name="updateForm" onsubmit="return validateForm() && confirmUpdate();">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($utilisateur['id']) ?>">
+            <input type="text" name="nom" placeholder="Nom complet" value="<?= htmlspecialchars($utilisateur['nom']) ?>" required>
+            <input type="email" name="Email" placeholder="Adresse email" value="<?= htmlspecialchars($utilisateur['Email']) ?>" required>
+            <input type="password" name="motdepasse" placeholder="Nouveau mot de passe (laisser vide pour ne pas changer)">
+            <input type="text" name="telephone" placeholder="Téléphone" value="<?= htmlspecialchars($utilisateur['telephone']) ?>" required>
+            <select name="role" required>
+                <option value="">-- Sélectionner un rôle --</option>
+                <option value="utilisateur" <?= ($utilisateur['role'] === 'utilisateur') ? 'selected' : '' ?>>Utilisateur</option>
+                <option value="expert" <?= ($utilisateur['role'] === 'expert') ? 'selected' : '' ?>>Expert</option>
+            </select>
+            <button type="submit" name="update">Mettre à jour</button>
+        </form>
     </div>
+</div>
+
 
 </body>
 </html>

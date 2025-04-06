@@ -62,52 +62,7 @@ if (isset($_GET['id_messagerie'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messagerie Dynamique</title>
     <style>
-        nav {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            width: 97%;
-            height: 8vh;
-            padding: 0 2%;
-            background-color: #F3EEE5;
-            box-shadow: 4px 10px 10px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            z-index: 10;
-        }
-
-        nav a img {
-            width: 4vw;
-            max-height: 100%;
-            min-height: 100%;
-        }
-
-        nav span {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            width: 30%;
-        }
-
-        nav span a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bolder;
-            transition: color 0.3s;
-        }
-
-        nav span a:hover {
-            color: #f4a836;
-        }
- 
-        .nav-center a,
-  .nav-right a {
-    text-decoration: none;
-    color: #000;
-    font-weight: bold;
-    margin-left: 1vw;
-  }
+      
 
 
         .content {
@@ -115,7 +70,7 @@ if (isset($_GET['id_messagerie'])) {
             height: 85vh;
             background-color: #f8f5eb;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
         }
 
         .sidebar {
@@ -259,30 +214,7 @@ if (isset($_GET['id_messagerie'])) {
 <?php include('../nav/index.php'); ?>
 <div class="content">
 
-<!-- <nav>
-<div class="nav-left">
-    <a href="#">
-      <img src="../assets/logo.png" alt="Logo">
-    </a>
-  </div>
 
-  <div class="nav-center">
-    <a href="../search/index.php">Rechercher</a>
-    <a href="../forum/index.php">Forum</a>
-    <a href="../messaging/index.php">Discuter</a>
-  </div>
-
-  <div class="nav-right">
-    <a href="../Profile/index.php">
-      <img src="../assets/Male User.png" alt="Profil">
-    </a>
-    <?php if (isset($_SESSION['id'])): ?>
-      <a href="../auth/Logout.php">Déconnexion</a>
-    <?php else: ?>
-      <a href="../auth/login.php">Connexion</a>
-    <?php endif; ?>
-  </div>
-</nav> -->
 
 <div class="sidebar">
     <h2>Discussions</h2>

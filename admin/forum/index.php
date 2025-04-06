@@ -28,179 +28,179 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
-    <style>
-        * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    <!-- CSS personnalisé -->
+<style>
+    /* Reset + police */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f6f9;
-    display: flex;
-    min-height: 100vh;
-    overflow-x: hidden;
-    color: #333;
-}
+    body {
+        display: flex;
+        background-color: #f4f6f9;
+        color: #333;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
-/* Sidebar */
-.sidebar {
-    width: 280px;
-    background: linear-gradient(135deg, #34495e, #2c3e50);
-    color: white;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 40px 30px;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.7);
-    transition: width 0.3s ease;
-}
-
-.sidebar h2 {
-    margin-bottom: 40px;
-    font-size: 24px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 1px;
-    color: #ecf0f1;
-}
-
-.sidebar nav ul {
-    padding-left: 0;
-    list-style: none;
-}
-
-.sidebar nav ul li {
-    margin: 25px 0;
-}
-
-.sidebar nav ul li a {
-    color: #ecf0f1;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px;
-    display: block;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-}
-
-.sidebar nav ul li a:hover {
-    background-color: #1abc9c;
-    color: white;
-    padding-left: 25px;
-    transform: translateX(10px);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Main Content */
-.main-content {
-    margin-left: 280px;
-    padding: 40px;
-    width: calc(100% - 280px);
-    background-color: #fff;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-
-h1 {
-    color: #2c3e50;
-    font-size: 28px;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-
-/* Add Button */
-.add-btn {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.add-btn:hover {
-    background: #2980b9;
-    transform: scale(1.05);
-}
-
-/* Posts Container */
-.posts-container {
-    margin-top: 20px;
-    text-align: left;
-}
-
-.post {
-    background: #f9fafc;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-}
-
-.post:hover {
-    transform: translateY(-2px);
-}
-
-.post p {
-    margin: 0;
-    color: #333;
-    font-size: 14px;
-    flex: 1;
-    padding-right: 10px;
-}
-
-/* Delete Button */
-.delete-btn {
-    background: #e74c3c;
-    border: none;
-    color: white;
-    padding: 7px 12px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: 0.3s ease;
-}
-
-.delete-btn:hover {
-    background: #c0392b;
-    transform: scale(1.1);
-}
-
-/* Responsiveness */
-@media screen and (max-width: 768px) {
+    /* Sidebar */
     .sidebar {
-        width: 100%;
-        position: relative;
-        padding: 15px;
+        width: 260px;
+        background: linear-gradient(135deg, #e89d3f, #e8a043);
+        color: white;
+        padding: 40px 25px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        transition: width 0.3s ease;
     }
 
-    .main-content {
-        margin-left: 0;
-        padding: 20px;
-    }
-
-    .add-btn {
-        width: 100%;
+    .sidebar h2 {
+        margin-bottom: 35px;
+        font-size: 22px;
+        font-weight: 600;
         text-align: center;
+        color: #fffdd0;
+    }
+
+    .sidebar nav ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .sidebar nav ul li {
+        margin: 20px 0;
+    }
+
+    .sidebar nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 18px;
+        display: block;
+        font-size: 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar nav ul li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding-left: 28px;
+    }
+
+    /* Main Content */
+    .main-content {
+        margin-left: 260px;
+        padding: 40px;
+        width: calc(100% - 260px);
+        background-color: #fff;
+        min-height: 100vh;
+    }
+
+    .main-content h1 {
+        font-size: 34px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    /* Add Button */
+    .add-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .add-btn:hover {
+        background: #2980b9;
+        transform: scale(1.05);
+    }
+
+    /* Posts Container */
+    .posts-container {
+        margin-top: 20px;
+        text-align: left;
     }
 
     .post {
-        flex-direction: column;
-        align-items: flex-start;
+        background: #f9fafc;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
     }
-}
 
-    </style>
+    .post:hover {
+        transform: translateY(-2px);
+    }
+
+    .post p {
+        margin: 0;
+        color: #333;
+        font-size: 14px;
+        flex: 1;
+        padding-right: 10px;
+    }
+
+    /* Delete Button */
+    .delete-btn {
+        background: #e74c3c;
+        border: none;
+        color: white;
+        padding: 7px 12px;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+        transform: scale(1.1);
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            box-shadow: none;
+            padding: 20px;
+        }
+
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .add-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .post {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
 </head>
 <body>
     

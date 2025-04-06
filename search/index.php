@@ -212,6 +212,8 @@ h3{
                     <option value="avis">Avis</option>
                     <option value="lois">Lois</option>
                     <option value="arretes">Arrêtés</option>
+                    <option value="arretes">Decret-Loi</option>
+
                 </select>
                 
                 <input type="date" name="date">

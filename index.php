@@ -29,11 +29,29 @@ session_start();
         
 
         .features {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            font-weight: bold;
-        }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.features a {
+    text-decoration: none;
+    color: #333;
+    background-color: #f0f0f0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.features a:hover {
+    background-color: #dcdcdc;
+    transform: translateY(-2px);
+    color: #000;
+}
+
 
         .info {
             padding: 20px;
@@ -50,7 +68,7 @@ session_start();
 
         .highlight {
             color: #e8a043;
-            text-align :left ;
+            text-align :center ;
         }
 
         .explore {
@@ -78,7 +96,7 @@ session_start();
             margin-top: 20px;
         }
         p{
-            text-align:left ;
+            text-align:center ;
             size: 20px ;
         }
     </style>
@@ -95,9 +113,12 @@ session_start();
     <img src="./assets/logo.png" alt="Icône de la justice" class="hero-image">
     <div class="features">
         <span>
-            <a href="./search/index.php">Rechercher</a>
-            <a href="./forum/index.php">Forum</a>
-            <a href="./messaging/index.php">Discuter</a>
+        <div class="features">
+    <a href="./search/index.php">Rechercher</a>
+    <a href="./forum/index.php">Forum</a>
+    <a href="./messaging/index.php">Discuter</a>
+</div>
+
         </span>
     </div>
 </section>

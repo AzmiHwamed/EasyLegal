@@ -40,158 +40,179 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     <title>Ajouter un Post</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Styles généraux */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #ecf0f1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    /* Réinitialisation + police moderne */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', 'Arial', sans-serif;
+    }
 
-        /* Sidebar */
+    body {
+        background-color: #f4f6f9;
+        display: flex;
+        min-height: 100vh;
+        color: #333;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background: linear-gradient(135deg, #e89d3f, #e8a043);
+        color: white;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 40px 25px;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        transition: width 0.3s ease;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 35px;
+        font-size: 22px;
+        font-weight: 600;
+        text-align: center;
+        color: #fffdd0;
+        letter-spacing: 1px;
+    }
+
+    .sidebar nav ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .sidebar nav ul li {
+        margin: 20px 0;
+    }
+
+    .sidebar nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 18px;
+        display: block;
+        font-size: 16px;
+        border-radius: 8px;
+        transition: background 0.3s, padding-left 0.3s;
+    }
+
+    .sidebar nav ul li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        padding-left: 28px;
+    }
+
+    /* Conteneur principal */
+    .main-content {
+        margin-left: 280px;
+        padding: 40px;
+        width: calc(100% - 280px);
+        background-color: #fff;
+        min-height: 100vh;
+        transition: margin-left 0.3s ease;
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    /* Message de confirmation ou d'erreur */
+    .message {
+        background: #dff0d8;
+        color: #3c763d;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        text-align: center;
+        display: <?php echo empty($message) ? 'none' : 'block'; ?>;
+    }
+
+    .message.error {
+        background: #f2dede;
+        color: #a94442;
+    }
+
+    /* Styles du textarea */
+    textarea {
+        width: 100%;
+        height: 120px;
+        padding: 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        resize: none;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+        transition: border-color 0.3s;
+    }
+
+    textarea:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    /* Styles du bouton publier */
+    .btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    .btn:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+    }
+
+    /* Message d'erreur */
+    .error {
+        color: red;
+        font-size: 14px;
+        display: none;
+    }
+
+    .back {
+        display: block;
+        margin-top: 20px;
+        color: #3498db;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    .back:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsivité */
+    @media screen and (max-width: 768px) {
         .sidebar {
-            width: 280px;
-            background-color:hsl(42, 98.50%, 74.10%);
-            color: white;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 40px 30px;
-            box-shadow: 2px 0 20px hsla(49, 77.50%, 68.60%, 0.70);
-        }
-
-        .sidebar h2 {
-            margin-bottom: 40px;
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-            letter-spacing: 1px;
-            color: #ecf0f1;
-        }
-
-        .sidebar nav ul {
-            padding-left: 0;
-            list-style: none;
-        }
-
-        .sidebar nav ul li {
-            margin: 25px 0;
-        }
-
-        .sidebar nav ul li a {
-            color: #ecf0f1;
-            text-decoration: none;
-            font-size: 18px;
-            padding: 12px 20px;
-            display: block;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar nav ul li a:hover {
-            background-color: #1abc9c;
-            color: white;
-            padding-left: 25px;
-            transform: translateX(10px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        /* Message de confirmation ou d'erreur */
-        .message {
-            background: #dff0d8;
-            color: #3c763d;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            display: <?php echo empty($message) ? 'none' : 'block'; ?>;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        .message.error {
-            background: #f2dede;
-            color: #a94442;
-        }
-
-        /* Styles du textarea */
-        textarea {
+            position: relative;
             width: 100%;
-            height: 120px;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: none;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            transition: border-color 0.3s;
+            height: auto;
+            box-shadow: none;
+            padding: 20px;
         }
 
-        textarea:focus {
-            border-color: #3498db;
-            outline: none;
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 20px;
         }
-
-        /* Styles du bouton publier */
-        .btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, transform 0.2s;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-            transform: scale(1.05);
-        }
-
-        /* Message d'erreur */
-        .error {
-            color: red;
-            font-size: 14px;
-            display: none;
-        }
-
-        .back {
-            display: block;
-            margin-top: 20px;
-            color: #3498db;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .back:hover {
-            text-decoration: underline;
-        }
-
+    }
     </style>
 </head>
 <body>
-    
+
     <!-- Sidebar intégrée -->
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
@@ -202,7 +223,6 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
                 <li><a href="../text/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les textes juridiques">Gérer les textes juridiques</a></li>
                 <li><a href="../expert/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les experts">Gérer les experts</a></li>
                 <li><a href="../adminnav/index.php">Accueil</a></li>
-
             </ul>
         </nav>
     </div>

@@ -44,8 +44,8 @@
 
 <nav>
   <div class="nav-left">
-    <a href="#">
-      <img src="../assets/logo.png" alt="Logo">
+  <a href="http://127.0.0.1/pfe/EASYLEGAL/index.php">
+  <img src="http://127.0.0.1/pfe/EASYLEGAL/assets/logo.png" alt="Logo">
     </a>
   </div>
 

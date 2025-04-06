@@ -30,48 +30,47 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     
     <!-- CSS personnalisé -->
     <style>
-       /* Réinitialisation et styles globaux */
+    /* Reset + police */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 body {
-    background-color: #f4f6f9;
     display: flex;
+    background-color: #f4f6f9;
+    color: #333;
     min-height: 100vh;
     overflow-x: hidden;
-    color:#f0e6d6;
 }
 
 /* Barre latérale */
 .sidebar {
-    width: 280px;
-    background: linear-gradient(135deg,#e8a043,#e8a043);
+    width: 260px;
+    background: linear-gradient(135deg, #e89d3f, #e8a043);
     color: white;
-    height: 100vh;
+    padding: 40px 25px;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 40px 30px;
-    box-shadow: 4px 0 15px #f0e6d6;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
 }
 
 .sidebar h2 {
-    margin-bottom: 40px;
-    font-size: 24px;
-    font-weight: 700;
+    margin-bottom: 35px;
+    font-size: 22px;
+    font-weight: 600;
     text-align: center;
-    letter-spacing: 1px;
-    color: #f0e6d6;
+    color: #fffdd0;
 }
 
 .sidebar nav ul {
     list-style: none;
-    padding: 0;
+    padding-left: 0;
 }
 
 .sidebar nav ul li {
@@ -79,43 +78,108 @@ body {
 }
 
 .sidebar nav ul li a {
-    color: #ecf0f1;
+    color: #fff;
     text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px;
+    padding: 12px 18px;
     display: block;
+    font-size: 16px;
     border-radius: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease;
 }
 
 .sidebar nav ul li a:hover {
-    background-color:rgb(203, 173, 38);
-    color: white;
-    padding-left: 30px;
-    box-shadow: 2px 2px 10px #f0e6d6;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 28px;
 }
 
 /* Contenu principal */
 .main-content {
-    margin-left: 280px;
+    margin-left: 260px;
     padding: 40px;
-    width: calc(100% - 280px);
-    background-color: white;
+    width: calc(100% - 260px);
+    background-color: #fff;
     min-height: 100vh;
-    transition: margin-left 0.3s ease;
 }
 
-h1 {
-    font-size: 40px;
-    margin-bottom:30px;
-    font-weight: bold;
+.main-content h1 {
+    font-size: 34px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #222;
 }
 
-/* Media Queries pour écrans mobiles */
+/* Bouton Ajouter */
+.add-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.add-btn:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Conteneur des posts */
+.posts-container {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.post {
+    background: #f9fafc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.post:hover {
+    transform: translateY(-2px);
+}
+
+.post p {
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+    flex: 1;
+    padding-right: 10px;
+}
+
+/* Bouton Supprimer */
+.delete-btn {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 7px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.3s ease;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+/* Responsive */
 @media screen and (max-width: 768px) {
     .sidebar {
-        width: 100%;
         position: relative;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
         padding: 20px;
     }
 
@@ -124,7 +188,18 @@ h1 {
         width: 100%;
         padding: 20px;
     }
+
+    .add-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .post {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
+
 
     </style>
     <!-- JavaScript personnalisé -->

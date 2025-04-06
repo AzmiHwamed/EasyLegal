@@ -72,13 +72,12 @@ if (isset($_GET['id'])) {
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-      <style>
-       /* Réinitialisation et styles globaux */
+      /* Réinitialisation et styles globaux */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 body {
@@ -86,30 +85,30 @@ body {
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color:#f0e6d6;
+    color: #333;
+    line-height: 1.6;
 }
 
 /* Barre latérale */
 .sidebar {
-    width: 280px;
-    background: linear-gradient(135deg,#e8a043,#e8a043);
+    width: 260px;
+    background: linear-gradient(135deg, #e89d3f, #e8a043);
     color: white;
-    height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 40px 30px;
-    box-shadow: 4px 0 15px #f0e6d6;
+    height: 100vh;
+    padding: 40px 25px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
     transition: width 0.3s ease;
 }
 
 .sidebar h2 {
-    margin-bottom: 40px;
-    font-size: 24px;
-    font-weight: 700;
+    margin-bottom: 35px;
+    font-size: 1.4rem;
+    font-weight: 600;
     text-align: center;
-    letter-spacing: 1px;
-    color: #f0e6d6;
+    color: #fffdd0;
 }
 
 .sidebar nav ul {
@@ -122,43 +121,94 @@ body {
 }
 
 .sidebar nav ul li a {
-    color: #ecf0f1;
+    color: white;
     text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px;
+    font-size: 1rem;
+    padding: 12px 18px;
     display: block;
     border-radius: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: background 0.3s, padding-left 0.3s;
 }
 
 .sidebar nav ul li a:hover {
-    background-color:rgb(203, 173, 38);
-    color: white;
-    padding-left: 30px;
-    box-shadow: 2px 2px 10px #f0e6d6;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 28px;
 }
 
 /* Contenu principal */
 .main-content {
-    margin-left: 280px;
+    margin-left: 260px;
     padding: 40px;
-    width: calc(100% - 280px);
-    background-color: white;
+    width: calc(100% - 260px);
+    background-color: #fff;
     min-height: 100vh;
-    transition: margin-left 0.3s ease;
 }
 
-h1 {
-    font-size: 40px;
-    margin-bottom:30px;
-    font-weight: bold;
+.main-content h1 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #222;
 }
 
-/* Media Queries pour écrans mobiles */
+/* Formulaire */
+.card {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
+
+.card input,
+.card select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.card button {
+    background-color: #e89d3f;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.card button:hover {
+    background-color: #d88828;
+}
+
+/* Alertes */
+.alert {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Responsive */
 @media screen and (max-width: 768px) {
     .sidebar {
-        width: 100%;
         position: relative;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
         padding: 20px;
     }
 
@@ -168,6 +218,7 @@ h1 {
         padding: 20px;
     }
 }
+
 
     </style>
 </head>

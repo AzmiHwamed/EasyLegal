@@ -37,14 +37,14 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suppression de Post</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-    <style>
-       /* Réinitialisation et styles globaux */
+ /* Réinitialisation + police moderne */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 body {
@@ -52,30 +52,31 @@ body {
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
-    color:#f0e6d6;
+    color: #333;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Barre latérale */
 .sidebar {
-    width: 280px;
-    background: linear-gradient(135deg,#e8a043,#e8a043);
+    width: 260px;
+    background: linear-gradient(135deg, #e89d3f, #e8a043);
     color: white;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    padding: 40px 30px;
-    box-shadow: 4px 0 15px #f0e6d6;
+    padding: 40px 25px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
 }
 
 .sidebar h2 {
-    margin-bottom: 40px;
-    font-size: 24px;
-    font-weight: 700;
+    margin-bottom: 35px;
+    font-size: 22px;
+    font-weight: 600;
     text-align: center;
-    letter-spacing: 1px;
-    color: #f0e6d6;
+    color: #fff;
 }
 
 .sidebar nav ul {
@@ -88,43 +89,95 @@ body {
 }
 
 .sidebar nav ul li a {
-    color: #ecf0f1;
+    color: #fff;
     text-decoration: none;
-    font-size: 18px;
-    padding: 12px 20px;
+    padding: 12px 18px;
     display: block;
+    font-size: 16px;
     border-radius: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: background 0.3s, padding-left 0.3s;
 }
 
 .sidebar nav ul li a:hover {
-    background-color:rgb(203, 173, 38);
-    color: white;
-    padding-left: 30px;
-    box-shadow: 2px 2px 10px #f0e6d6;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 28px;
 }
 
 /* Contenu principal */
 .main-content {
-    margin-left: 280px;
+    margin-left: 260px;
     padding: 40px;
-    width: calc(100% - 280px);
-    background-color: white;
+    width: calc(100% - 260px);
+    background-color: #fff;
     min-height: 100vh;
     transition: margin-left 0.3s ease;
 }
 
-h1 {
-    font-size: 40px;
-    margin-bottom:30px;
-    font-weight: bold;
+.main-content h1 {
+    font-size: 34px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #222;
 }
 
-/* Media Queries pour écrans mobiles */
+/* Messages */
+.message {
+    background-color: #f2f2f2;
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.message.error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+/* Boutons */
+.btn {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    border: none;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+/* Lien de retour */
+.back {
+    display: block;
+    margin-top: 20px;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.back:hover {
+    text-decoration: underline;
+}
+
+/* Responsive design */
 @media screen and (max-width: 768px) {
     .sidebar {
         width: 100%;
+        height: auto;
         position: relative;
+        box-shadow: none;
         padding: 20px;
     }
 
@@ -138,19 +191,16 @@ h1 {
     </style>
 </head>
 <body>
-    
-
-    <!-- Sidebar intégrée -->
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>Bienvenue, <?php echo htmlspecialchars($nom_utilisateur); ?> 👋</h2>
         <nav role="navigation">
             <ul>
-                <li><a href="../user/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les utilisateurs">Gérer les utilisateurs</a></li>
-                <li><a href="../forum/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer le forum">Gérer le forum</a></li>
-                <li><a href="../text/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les textes juridiques">Gérer les textes juridiques</a></li>
-                <li><a href="../expert/index.php" onclick="return confirmNavigation(this.href);" aria-label="Gérer les experts">Gérer les experts</a></li>
+                <li><a href="../user/index.php" onclick="return confirmNavigation(this.href);">Gérer les utilisateurs</a></li>
+                <li><a href="../forum/index.php" onclick="return confirmNavigation(this.href);">Gérer le forum</a></li>
+                <li><a href="../text/index.php" onclick="return confirmNavigation(this.href);">Gérer les textes juridiques</a></li>
+                <li><a href="../expert/index.php" onclick="return confirmNavigation(this.href);">Gérer les experts</a></li>
                 <li><a href="../adminnav/index.php">Accueil</a></li>
-
             </ul>
         </nav>
     </div>
@@ -158,22 +208,25 @@ h1 {
     <!-- Contenu principal -->
     <div class="main-content">
         <h1>Suppression de Post</h1>
-        
-        <div class="container">
-            <h2>Suppression de Post</h2>
-            <div class="message"><?php echo $message; ?></div>
 
-            <button class="btn" onclick="confirmDeletion()">Confirmer la suppression</button>
-            <a href="index.php" class="back">Retour au forum</a>
+        <div class="message <?php echo strpos($message, 'Erreur') !== false ? 'error' : 'success'; ?>">
+            <?php echo $message; ?>
         </div>
+
+        <form method="post" onsubmit="return confirmDeletion()">
+            <button type="submit" class="btn">Confirmer la suppression</button>
+        </form>
+        
+        <a href="index.php" class="back">Retour au forum</a>
     </div>
 
     <script>
         function confirmDeletion() {
-            if (confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
-                document.querySelector('.btn').disabled = true;
-                window.location.href = "index.php";
+            if (!confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
+                event.preventDefault();
+                return false;
             }
+            return true;
         }
 
         function confirmNavigation(url) {
@@ -183,6 +236,5 @@ h1 {
             return false;
         }
     </script>
-
 </body>
 </html>
