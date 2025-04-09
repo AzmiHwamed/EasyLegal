@@ -11,20 +11,16 @@ $emailError = $passwordError = $loginError = "";
         $result = $stmt->get_result();
 
         if ($result->num_rows == 0) {
-            echo"3";
             $loginError = "Utilisateur non trouvé";
         } else {
-            echo"4";
             $user = $result->fetch_object();
             if ($_POST['motdepasse'] == $user->motdepasse) {
-                echo"5";
                 $_SESSION['id'] = $user->id;
                 $_SESSION['role'] = $user->role;
                 header('Location: ../'.$user->role.'/index.php');
                 exit;
 
             } else {
-                echo"6";
                 // Mot de passe incorrect
                 $loginError = "Mot de passe incorrect";
             }

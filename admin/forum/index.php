@@ -27,7 +27,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum</title>
+    <title>gestion de Forum</title>
     <!-- CSS personnalisé -->
 <style>
     /* Reset + police */

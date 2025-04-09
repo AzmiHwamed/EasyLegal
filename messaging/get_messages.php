@@ -58,7 +58,17 @@ while ($row = $result->fetch_assoc()) {
     
     echo "<div class='message'>";
     echo "<strong>$nom $roleMessage :</strong> $contenu<br>";
-    echo "<em>Envoyé le $created_at</em>";
+    // echo "<em>Envoyé le ".date_format(date(Y-m-d H-i-s,strtotime($created_at)),"Y/m/d H:i:s")."</em>";
+    // echo $created_at->getTimestamp();
+    $date = DateTime::createFromFormat('Y-m-d H:i:s.u', $created_at);
+
+    if ($date) {
+        echo $date->format('Y/n/j G:i:s'); 
+    } else {
+        echo "Invalid date format.";
+    }    
+     
+
     echo "</div>";
 }
 

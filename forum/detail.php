@@ -79,7 +79,7 @@ $user = $result->fetch_object();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum Juridique</title>
+    <title>Forum de Discussion</title>
     <style>
         
         body {

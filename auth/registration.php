@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
+include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $Email = $_POST['Email'];
         $motdepasse =$_POST['motdepasse']; 
 
-        // Préparer et exécuter la requête sécurisée
+        // Préparer et exécuter la requête sécurisée
         $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
 
@@ -29,6 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     } else {
         //TODO : les champs
     }
+    $matricule = isset($_POST['matricule']) ? $_POST['matricule'] : null;
+
+if ($role === 'expert' && empty($matricule)) {
+    // Gérer l'erreur si matricule est requis mais vide
+    echo "<script>alert('Le matricule est obligatoire pour les experts');</script>";
+    exit();
+}
+
+$stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse, matricule) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssss", $nom, $telephone, $role, $Email, $motdepasse, $matricule);
+
 }
 
 $conn->close();
@@ -67,7 +78,7 @@ $conn->close();
         }
 
         /* Formulaire et champs de saisie */
-        input[type="text"], input[type="password"], input[type="number"] {
+        input[type="text"], input[type="password"], input[type="tel"] ,select{
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -239,9 +250,13 @@ $conn->close();
             </div>
 
             <div class="input-group">
-                <label for="role">Role:</label>
-                <input type="text" id="role" name="role">
-                <div class="error-message" id="roleError">Veuillez entrer votre rôle.</div>
+              <label for="role">Rôle :</label>
+                    <select id="role" name="role" required>
+                    <option value="">-- Sélectionnez un rôle --</option>
+                    <option value="user">User</option>
+                    <option value="expert">Expert</option>
+                     </select>
+            <div class="error-message" id="roleError">Veuillez sélectionner votre rôle.</div>
             </div>
 
             <div class="input-group">
@@ -267,20 +282,26 @@ $conn->close();
 
             <div class="input-group">
                 <label for="phone">Téléphone:</label>
-                <input type="number" id="phone" name="telephone">
+                <input type="tel" id="phone" name="telephone"   maxlength="8" required>
                 <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
             </div>
+            <div class="input-group" id="matriculeGroup" style="display: none;">
+    <label for="matricule">Matricule :</label>
+    <input type="text" id="matricule" name="matricule">
+    <div class="error-message" id="matriculeError">Veuillez entrer un matricule.</div>
+</div>
+
 
             <button type="submit">S'inscrire</button>
         </form>
 
         <br>
-        <a href="login.php">Déjà un compte ? Connectez-vous</a>
+        <a href="login.php">Déjà un compte ? Connectez-vous</a>
     </div>
 
-    <!-- Alerte personnalisée -->
+    <!-- Alerte personnalisée -->
     <div id="customAlert" class="custom-alert">
-        ✅ Inscription réussie !
+        ✅ Inscription réussie !
         <button onclick="closeCustomAlert()">✖</button>
     </div>
 
@@ -304,8 +325,23 @@ $conn->close();
                 }
             });
         });
+        document.addEventListener("DOMContentLoaded", function () {
+    // ... ton code existant pour mot de passe ...
 
-        // Afficher l'alerte personnalisée
+    const roleSelect = document.getElementById("role");
+    const matriculeGroup = document.getElementById("matriculeGroup");
+
+    roleSelect.addEventListener("change", function () {
+        if (this.value === "expert") {
+            matriculeGroup.style.display = "block";
+        } else {
+            matriculeGroup.style.display = "none";
+        }
+    });
+});
+
+
+        // Afficher l'alerte personnalisée
         function showCustomAlert() {
             const alertBox = document.getElementById("customAlert");
             alertBox.classList.add("show");
@@ -313,7 +349,7 @@ $conn->close();
             setTimeout(closeCustomAlert, 3000);
         }
 
-        // Fermer l'alerte personnalisée
+        // Fermer l'alerte personnalisée
         function closeCustomAlert() {
             const alertBox = document.getElementById("customAlert");
             alertBox.classList.remove("show");

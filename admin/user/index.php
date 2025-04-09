@@ -15,20 +15,25 @@ if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
 }   
 
-// Récupérer les utilisateurs
-$result_users = $conn->query("SELECT * FROM personne LIMIT 50");
-$utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+// Récupérer uniquement les utilisateurs
+$result_users = $conn->query("SELECT * FROM personne WHERE role = 'user' LIMIT 50");
+
+if ($result_users) {
+    $utilisateurs = $result_users->fetch_all(MYSQLI_ASSOC);
+} else {
+    echo "Erreur lors de la récupération des utilisateurs : " . $conn->error;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Utilisateurs</title>
+    <title>Gestion des Utilisateurs</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        /* Réinitialisation + police moderne */
 * {
     margin: 0;
     padding: 0;
@@ -125,13 +130,13 @@ body {
 }
 
     </style>
-    <script>
+    <!-- <script>
         function confirmDelete(userId) {
             if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
                 window.location.href = "delete.php?id=" + userId;
             }
         }
-    </script>
+    </script> -->
 </head>
 <body>
     
@@ -159,9 +164,7 @@ body {
             <?php unset($_SESSION['error_message']); ?>
         <?php endif; ?>
 
-        <div class="d-flex justify-content-end mb-3">
-            <a href="create.php" class="btn btn-primary">Ajouter</a>
-        </div>
+       
 
         <div class="card mt-3">
             <div class="card-header">Liste des utilisateurs</div>
@@ -186,9 +189,9 @@ body {
                             <td><?= htmlspecialchars($user['role']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
                             <td>
-                                <button type="button" onclick="confirmDelete(<?= htmlspecialchars($user['id']) ?>)" class="btn btn-danger btn-sm">Supprimer</button>
-                                <a href="update.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Modifier</a>
+                                <a href="suspendus.php.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendus</a>
                             </td>
+                            
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

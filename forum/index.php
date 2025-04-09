@@ -123,7 +123,7 @@ $mysqli->close();
 <?php include('../nav/index.php'); ?>
 
 <div class="container mt-4">
-    <h1 class="mb-3">Forum de Discussion</h1>
+    <h1 class="mb-3">Forum </h1>
     <form method="POST" class="mb-3">
         <textarea name="contenu" class="form-control" placeholder="Écrivez votre message..." required></textarea>
         <div class="form-check mt-2">

@@ -60,155 +60,206 @@ if (isset($_GET['id_messagerie'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messagerie Dynamique</title>
+    <title>Messagerie </title>
     <style>
-      
+    * {
+    box-sizing: border-box;
+}
 
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f3ed;
+    color: #333;
+}
 
-        .content {
-            display: flex;
-            height: 85vh;
-            background-color: #f8f5eb;
-            margin: 0;
-            font-family: Arial;
-        }
+.content {
+    display: flex;
+    height: 85vh;
+    background-color: #f8f5eb;
+    padding: 10px;
+}
 
-        .sidebar {
-            width: 300px;
-            background-color: #ede0c4;
-            padding: 20px;
-            overflow-y: auto;
-            border-right: 2px solid #ccc;
-            border-radius: 10px;
-        }
+.sidebar {
+    width: 300px;
+    background-color: #ede0c4;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 2px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #4a4a4a;
-        }
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #f4a836;
+    font-size: 22px;
+    font-weight: bold;
+}
 
-        .discussion {
-            padding: 10px;
-            background-color: #dfd3b8;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border-radius: 10px;
-        }
+.discussion {
+    padding: 12px;
+    background-color: #dfd3b8;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
 
-        .discussion:hover {
-            background-color: #f4a836;
-            color: white;
-        }
+.discussion:hover {
+    background-color: #f4a836;
+    color: white;
+    transform: scale(1.02);
+}
 
-        .discussion.active {
-            background-color: #555;
-            color: white;
-        }
+.discussion.active {
+    background-color: #555;
+    color: white;
+}
 
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #fdfaf3;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-left: 10px;
-        }
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fdfaf3;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-left: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
 
-        #chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+#chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
 
-        .message {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            max-width: 60%;
-            word-wrap: break-word;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        }
+.message {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    max-width: 65%;
+    word-wrap: break-word;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.08);
+    font-size: 14px;
+}
 
-        .sent {
-            align-self: flex-end;
-            background-color: #d1f0d1;
-        }
+.sent {
+    align-self: flex-end;
+    background-color: #d1f0d1;
+}
 
-        .received {
-            align-self: flex-start;
-            background-color: white;
-        }
+.received {
+    align-self: flex-start;
+    background-color: #ffffff;
+}
 
-        .input-area {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: white;
-            border-top: 2px solid #ccc;
-        }
+.input-area {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: white;
+    border-top: 2px solid #ccc;
+}
 
-        .input-area input {
-            flex: 1;
-            padding: 10px;
-            border-radius: 20px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-        }
+.input-area input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 25px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
 
-        .input-area button {
-            padding: 10px 20px;
-            background-color: #f4a836;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+.input-area button {
+    padding: 10px 20px;
+    background-color: #f4a836;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
 
-        .input-area button:hover {
-            background-color: #d98e25;
-        }
-        #myInput {
-  background-image: url('/css/searchicon.png'); /* Add a search icon to input */
-  background-position: 10px 12px; /* Position the search icon */
-  background-repeat: no-repeat; /* Do not repeat the icon image */
-  width: 100%; /* Full-width */
-  font-size: 16px; /* Increase font-size */
-  padding: 12px 20px 12px 40px; /* Add some padding */
-  border: 1px solid #ddd; /* Add a grey border */
-  margin-bottom: 12px; /* Add some space below the input */
+.input-area button:hover {
+    background-color: #d98e25;
+}
+
+#myInput {
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    background-repeat: no-repeat;
+    background-position: 10px 12px;
 }
 
 #myUL {
-  /* Remove default list styling */
-  list-style-type: none;
-  padding: 0;
-  display:none;
-  margin: 0;
+    list-style-type: none;
+    padding: 0;
+    display: none;
+    margin: 0;
 }
 
 #myUL li a {
-  border: 1px solid #ddd; /* Add a border to all links */
-  margin-top: -1px; /* Prevent double borders */
-  background-color: #f6f6f6; /* Grey background color */
-  padding: 12px; /* Add some padding */
-  text-decoration: none; /* Remove default text underline */
-  font-size: 18px; /* Increase the font-size */
-  color: black; /* Add a black text color */
-  display: block; /* Make it into a block element to fill the whole list */
+    border: 1px solid #ddd;
+    margin-top: -1px;
+    background-color: #f6f6f6;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #d98e25;
+    display: block;
 }
 
 #myUL li a:hover:not(.header) {
-  background-color: #eee; /* Add a hover effect to all links, except for headers */
+    background-color: #eee;
 }
 
-    </style>
+form.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 300px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px 10px;
+}
+
+.upload-form input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.upload-form button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.upload-form button:hover {
+    background-color: #0056b3;
+}
+</style>
 </head>
 <body>
 <?php include('../nav/index.php'); ?>
@@ -277,6 +328,14 @@ if (isset($_GET['id_messagerie'])) {
         <input type="text" id="message" placeholder="Aa...">
         <button id="sendBtn">Envoyer</button>
     </div>
+    <form action="uploads.php" method="post" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="fileToUpload" id="fileToUpload" required>
+    <input type="hidden" name="id_messagerie" value="<?php echo $id_messagerie; ?>">
+    <button type="submit">Envoyer un fichier</button>
+</form>
+
+</form>
+
 </div>
 </div>
 <script>

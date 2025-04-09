@@ -225,6 +225,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
                 </div>
 
                 <button type="submit" name="update" class="update-btn">Mettre à jour</button>
+                <button type="button" class="update-btn" onclick="window.location.href='../index.php'">Annuler</button>
+
             </form>
         </div>
     </div>

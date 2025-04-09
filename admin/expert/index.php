@@ -156,9 +156,7 @@ body {
             <?php unset($_SESSION['error_message']); ?>
         <?php endif; ?>
         
-        <div class="d-flex justify-content-end mb-3">
-            <a href="create.php" class="btn btn-primary">Ajouter</a>
-        </div>
+        
         
         <div class="card mt-3">
             <div class="card-header">Liste des Experts</div>
@@ -181,8 +179,7 @@ body {
                             <td><?= htmlspecialchars($user['Email']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
                             <td>
-                                <button type="button" onclick="confirmDelete(<?= htmlspecialchars($user['id']) ?>)" class="btn btn-danger btn-sm">Supprimer</button>
-                                <a href="update.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Modifier</a>
+                                <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendus</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
