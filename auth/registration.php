@@ -9,13 +9,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         $nom = $_POST['nom'];
         $telephone = $_POST['telephone'];
-        $role = $_POST['role'];
+        $role = $_POST['role'];//if(test)
         $Email = $_POST['Email'];
         $motdepasse =$_POST['motdepasse']; 
+
+        //verif expert 
 
         // Préparer et exécuter la requête sécurisée
         $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
+
 
         if ($stmt->execute()) {
             echo "<script>alert('done')</script>";
@@ -286,7 +289,7 @@ $conn->close();
                 <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
             </div>
             <div class="input-group" id="matriculeGroup" style="display: none;">
-    <label for="matricule">Matricule :</label>
+    <label for="matricule"> matricule:</label>
     <input type="text" id="matricule" name="matricule">
     <div class="error-message" id="matriculeError">Veuillez entrer un matricule.</div>
 </div>
