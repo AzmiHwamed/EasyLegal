@@ -1,12 +1,13 @@
 <?php
 function isAuthentiacted(){
-    
-    session_start(); // Démarrer la session si elle n'est pas encore démarrée
-    
+    session_start(); 
+    echo $_SESSION['id'];
     if (!isset($_SESSION['id'])) {
     header("Location: ../auth/login.php");//
     exit();
     }
+    echo $_SESSION['id'];
+
     
     
 }
