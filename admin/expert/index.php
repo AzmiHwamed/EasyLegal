@@ -179,7 +179,8 @@ body {
                             <td><?= htmlspecialchars($user['Email']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
                             <td>
-                                <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendus</a>
+                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm" 
+   onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet expert ?');">Suspendre</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

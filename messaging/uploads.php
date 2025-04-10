@@ -1,83 +1,75 @@
 <?php
-// Démarre la session pour utiliser la variable session si nécessaire
 session_start();
 
-// Vérifie si le formulaire a été soumis
+// On peut pré-remplir ici une valeur d'exemple pour id_messagerie si besoin
+// Exemple pour test : $id_messagerie = 1;
+$id_messagerie = isset($_GET['id_messagerie']) ? $_GET['id_messagerie'] : '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Paramètres de destination du fichier uploadé
-    $targetDir = "uploads/"; // Dossier où les fichiers seront sauvegardés
+    $targetDir = "uploads/";
     $fileName = basename($_FILES["fileToUpload"]["name"]);
     $targetFile = $targetDir . $fileName;
     $uploadOk = 1;
     $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-    
-    // Vérifie si le fichier n'a pas d'erreur de téléchargement
+
     if ($_FILES["fileToUpload"]["error"] !== UPLOAD_ERR_OK) {
-        echo "Désolé, une erreur est survenue lors du téléchargement du fichier. Code d'erreur : " . $_FILES["fileToUpload"]["error"];
+        echo "Erreur lors du téléchargement du fichier. Code erreur : " . $_FILES["fileToUpload"]["error"];
         $uploadOk = 0;
     }
 
-    // Vérifie si le fichier est une image ou un autre type de fichier valide
     if (isset($_POST["submit"])) {
         $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
         if ($check !== false) {
-            echo "Le fichier est une image - " . $check["mime"] . ".";
-            $uploadOk = 1;
+            echo "Fichier image détecté : " . $check["mime"] . ".";
         } else {
             echo "Le fichier n'est pas une image.";
             $uploadOk = 0;
         }
     }
 
-    // Vérifie la taille du fichier (limite de 5MB ici)
     if ($_FILES["fileToUpload"]["size"] > 5000000) {
-        echo "Désolé, le fichier est trop volumineux.";
+        echo "Fichier trop volumineux (max 5 Mo).";
         $uploadOk = 0;
     }
 
-    // Limiter les types de fichiers autorisés
-    if ($fileType != "jpg" && $fileType != "png" && $fileType != "jpeg" && $fileType != "gif" && $fileType != "pdf") {
-        echo "Désolé, seuls les fichiers JPG, JPEG, PNG, GIF et PDF sont autorisés.";
+    if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'gif', 'pdf'])) {
+        echo "Type de fichier non autorisé.";
         $uploadOk = 0;
     }
 
-    // Vérifie si $uploadOk est défini sur 0 en cas d'erreur
-    if ($uploadOk == 0) {
-        echo "Désolé, votre fichier n'a pas pu être téléchargé.";
-    } else {
-        // Renommage du fichier pour éviter des conflits
+    if ($uploadOk == 1) {
         $newFileName = uniqid('file_', true) . '.' . $fileType;
         $newTargetFile = $targetDir . $newFileName;
 
-        // Déplace le fichier vers le dossier de destination
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $newTargetFile)) {
-            echo "Le fichier " . htmlspecialchars($fileName) . " a été téléchargé avec succès.";
+            echo "Fichier " . htmlspecialchars($fileName) . " uploadé avec succès.<br>";
 
-            // Si nécessaire, enregistrer les informations du fichier dans la base de données
-            $id_messagerie = $_POST['id_messagerie']; // Le ID de la messagerie envoyée via le formulaire
+            $id_messagerie = $_POST['id_messagerie'];
 
-            // Connexion à la base de données
-            $conn = new mysqli("localhost", "username", "password", "dbname");
+            // Connexion à la base de données "64"
+            $conn = new mysqli("localhost", "root", "", "64");
 
             if ($conn->connect_error) {
-                die("Échec de la connexion : " . $conn->connect_error);
+                die("Échec connexion : " . $conn->connect_error);
             }
 
-            // Requête d'insertion dans la table uploads (assurez-vous que cette table existe)
-            $sql = "INSERT INTO uploads (file_name, file_path, file_size, file_type, id_messagerie)
-                    VALUES ('$newFileName', '$newTargetFile', '" . $_FILES["fileToUpload"]["size"] . "', '$fileType', '$id_messagerie')";
+            $stmt = $conn->prepare("INSERT INTO uploads (file_name, file_path, file_size, file_type, id_messagerie)
+                                    VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssisi", $newFileName, $newTargetFile, $_FILES["fileToUpload"]["size"], $fileType, $id_messagerie);
 
-            if ($conn->query($sql) === TRUE) {
-                echo "Les informations du fichier ont été enregistrées dans la base de données.";
+            if ($stmt->execute()) {
+                echo "Infos du fichier enregistrées dans la base.";
             } else {
-                echo "Erreur : " . $sql . "<br>" . $conn->error;
+                echo "Erreur d'enregistrement : " . $stmt->error;
             }
 
-            // Fermeture de la connexion
+            $stmt->close();
             $conn->close();
         } else {
-            echo "Désolé, une erreur est survenue lors du téléchargement de votre fichier.";
+            echo "Erreur de déplacement du fichier.";
         }
+    } else {
+        echo "Fichier non téléchargé.";
     }
 }
 ?>
@@ -86,17 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload de fichier</title>
     <style>
-        /* Intégration du CSS pour le formulaire */
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
         }
-        
         .upload-container {
             display: flex;
             justify-content: center;
@@ -104,8 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             height: 100vh;
             background-color: #f8f5eb;
         }
-
-        form.upload-form {
+        .upload-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -116,28 +102,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        form.upload-form input[type="file"] {
-            padding: 8px;
-            border: 1px solid #ccc;
+        .upload-form input[type="file"],
+        .upload-form button {
+            padding: 10px;
             border-radius: 8px;
-            background-color: #fff;
-            font-size: 14px;
-            cursor: pointer;
         }
-
-        form.upload-form button {
-            padding: 10px 15px;
+        .upload-form button {
             background-color: #007BFF;
             color: white;
             border: none;
-            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
-            transition: background-color 0.3s ease;
         }
-
-        form.upload-form button:hover {
+        .upload-form button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -148,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="uploads.php" method="post" enctype="multipart/form-data" class="upload-form">
         <label for="fileToUpload">Choisir un fichier :</label>
         <input type="file" name="fileToUpload" id="fileToUpload" required>
-        <input type="hidden" name="id_messagerie" value="<?php echo isset($id_messagerie) ? $id_messagerie : ''; ?>">
+        <input type="hidden" name="id_messagerie" value="<?php echo htmlspecialchars($id_messagerie); ?>">
         <button type="submit" name="submit">Envoyer un fichier</button>
     </form>
 </div>

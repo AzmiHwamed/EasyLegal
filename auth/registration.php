@@ -1,52 +1,79 @@
 <?php
 session_start();
-include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
+include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") 
-{
-    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse'])&& !empty($_POST['role'])) 
-    {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse']) && !empty($_POST['role'])) {
         $nom = $_POST['nom'];
         $telephone = $_POST['telephone'];
-        $role = $_POST['role'];//if(test)
+        $role = $_POST['role']; // rôle (ex: 'expert')
         $Email = $_POST['Email'];
-        $motdepasse =$_POST['motdepasse']; 
+        $motdepasse = $_POST['motdepasse']; 
 
-        //verif expert 
+        // Vérification si l'expert existe déjà uniquement si le rôle est 'expert'
+        if ($role === 'expert') {
+            // Préparer la requête pour vérifier si l'expert avec ce nom, prénom, et téléphone existe déjà
+            $stmt = $conn->prepare("SELECT * FROM personne WHERE nom = ? AND telephone = ? AND role = 'expert'");
+            $stmt->bind_param("ss", $nom, $telephone);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                // L'expert existe déjà
+                echo "<script>alert('Cet expert existe déjà !');</script>";
+                exit(); // Arrêter le script
+            }
+            $stmt->close();
+        }
 
-        // Préparer et exécuter la requête sécurisée
+        // Si l'expert n'existe pas ou si le rôle n'est pas 'expert', on peut insérer les données
         $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
 
-
         if ($stmt->execute()) {
-            echo "<script>alert('done')</script>";
+            echo "<script>alert('Expert ajouté avec succès');</script>";
             header('Location: login.php');
             exit();
         } else {
+            echo "<script>alert('Erreur lors de l\'ajout de l\'expert');</script>";
             header('Location: regerreur.php');
         }
 
         $stmt->close();
     } else {
-        //TODO : les champs
+        // TODO : Vérifier si tous les champs sont remplis
+        echo "<script>alert('Tous les champs sont obligatoires');</script>";
     }
+
     $matricule = isset($_POST['matricule']) ? $_POST['matricule'] : null;
 
-if ($role === 'expert' && empty($matricule)) {
-    // Gérer l'erreur si matricule est requis mais vide
-    echo "<script>alert('Le matricule est obligatoire pour les experts');</script>";
-    exit();
-}
+    if ($role === 'expert' && empty($matricule)) {
+        // Gérer l'erreur si matricule est requis mais vide
+        echo "<script>alert('Le matricule est obligatoire pour les experts');</script>";
+        exit();
+    }
 
-$stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse, matricule) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssss", $nom, $telephone, $role, $Email, $motdepasse, $matricule);
+    // Ajout du matricule si nécessaire pour un expert
+    if ($role === 'expert' && !empty($matricule)) {
+        $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse, matricule) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $nom, $telephone, $role, $Email, $motdepasse, $matricule);
 
+        if ($stmt->execute()) {
+            echo "<script>alert('Expert ajouté avec matricule');</script>";
+            header('Location: login.php');
+            exit();
+        } else {
+            echo "<script>alert('Erreur lors de l\'ajout de l\'expert avec matricule');</script>";
+            header('Location: regerreur.php');
+        }
+
+        $stmt->close();
+    }
 }
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

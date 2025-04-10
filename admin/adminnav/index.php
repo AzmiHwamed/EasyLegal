@@ -51,6 +51,22 @@ while ($row = $result_evolution->fetch_assoc()) {
 $labels = json_encode(array_keys($evolutionData));
 $userData = json_encode(array_column($evolutionData, 'user'));
 $expertData = json_encode(array_column($evolutionData, 'expert'));
+// Statistiques par type de texte juridique
+$sql_types = "SELECT type, COUNT(*) AS total FROM textjuridique GROUP BY type";
+$result_types = $conn->query($sql_types);
+
+$typeLabels = [];
+$typeData = [];
+
+if ($result_types) {
+    while ($row = $result_types->fetch_assoc()) {
+        $typeLabels[] = $row['type'];
+        $typeData[] = $row['total'];
+    }
+}
+
+$typeLabelsJson = json_encode($typeLabels);
+$typeDataJson = json_encode($typeData);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -239,30 +255,30 @@ $expertData = json_encode(array_column($evolutionData, 'expert'));
         <h2>Évolution des inscriptions</h2>
         <canvas id="evolutionChart"></canvas>
     </div>
+    <div class="chart-container" style="margin-top: 40px;">
+    <h2>Répartition des textes juridiques</h2>
+    <canvas id="typeChart"></canvas>
+</div>
+
 </main>
 
 <script>
+    // Évolution des inscriptions
     const ctx = document.getElementById('evolutionChart').getContext('2d');
     const evolutionChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: <?= $labels ?>,
             datasets: [
                 {
                     label: 'Utilisateurs',
                     data: <?= $userData ?>,
-                    borderColor: '#4e73df',
-                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                    fill: true,
-                    tension: 0.4
+                    backgroundColor: '#4e73df'
                 },
                 {
                     label: 'Experts',
                     data: <?= $expertData ?>,
-                    borderColor: '#e89d3f',
-                    backgroundColor: 'rgba(232, 157, 63, 0.1)',
-                    fill: true,
-                    tension: 0.4
+                    backgroundColor: '#e89d3f'
                 }
             ]
         },
@@ -281,7 +297,42 @@ $expertData = json_encode(array_column($evolutionData, 'expert'));
             }
         }
     });
+
+    // Répartition des textes juridiques
+    const ctx2 = document.getElementById('typeChart').getContext('2d');
+    const typeChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: <?= $typeLabelsJson ?>,
+            datasets: [{
+                data: <?= $typeDataJson ?>,
+                backgroundColor: [
+                    '#4e73df', // lois
+                    '#1cc88a', // décrets
+                    '#f6c23e', // décret-lois
+                    '#e74a3b'  // avis
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.parsed} textes`;
+                        }
+                    }
+                }
+            }
+        }
+    });
 </script>
+
 
 </body>
 </html>

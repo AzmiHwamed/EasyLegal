@@ -130,13 +130,7 @@ body {
 }
 
     </style>
-    <!-- <script>
-        function confirmDelete(userId) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
-                window.location.href = "delete.php?id=" + userId;
-            }
-        }
-    </script> -->
+    
 </head>
 <body>
     
@@ -189,8 +183,8 @@ body {
                             <td><?= htmlspecialchars($user['role']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
                             <td>
-                                <a href="suspendus.php.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendus</a>
-                            </td>
+                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet user ?');">Suspendre</a>
+                            </td>                          
                             
                         </tr>
                         <?php endforeach; ?>
