@@ -12,16 +12,13 @@ if (!isset($_SESSION['id']) || !isset($_SESSION['role'])) {
 }
 
 $user_id = $_SESSION['id'];
-$role = $_SESSION['role']; // Récupération du rôle de l'utilisateur (user ou expert)
+$role = $_SESSION['role'];
 $messagerie_id = isset($_POST['id_messagerie']) ? (int)$_POST['id_messagerie'] : 0;
-$message = isset($_POST['message']) ? trim($_POST['message']) : "";
+$message = isset($_POST['message']) ? $_POST['message'] : "";
 
-// Si le message est vide, on arrête l'exécution
 if (empty($message)) {
     die("Le message est vide");
 }
-
-// Vérification si l'utilisateur a accès à la messagerie
 $stmt = $conn->prepare("SELECT id_personne, participant_expert_id FROM messagerie WHERE id = ?");
 $stmt->bind_param("i", $messagerie_id);
 $stmt->execute();
@@ -49,8 +46,8 @@ if ($role === 'user') {
 }
 
 // Insertion du message dans la base de données
-$sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne, isImage) 
-        VALUES (?, NOW(), ?, ?,false)"; 
+$sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne , isImage) 
+        VALUES (?, NOW(), ?, ? , true)"; 
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sii", $message, $messagerie_id, $user_id);

@@ -1,64 +1,69 @@
 <?php
 session_start();
-include('../dbconfig/index.php'); // Assurez-vous que la connexion est bien établie
+include('../dbconfig/index.php');
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse']) && !empty($_POST['role'])) {
         $nom = $_POST['nom'];
         $telephone = $_POST['telephone'];
-        $role = $_POST['role']; // rôle (ex: 'expert')
+        $role = $_POST['role'];
         $Email = $_POST['Email'];
-        $motdepasse = $_POST['motdepasse']; 
+        $motdepasse = $_POST['motdepasse'];
+        $found = true;
+        if($role === 'expert'){ 
+            $filename = "./datavocat.csv";
+        $found = false;
+        if (file_exists($filename) && is_readable($filename) && ($handle = fopen($filename, "r")) !== false) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+                if (isset($data[0], $data[2]) && $data[0] == $nom && $data[2] == $telephone) {
+                    echo "<script>alert('Nom et téléphone déjà existants dans le fichier.');</script>";
+                    $found = true;
+                }
+            }
+            if (!$found) {
+                echo "<script>alert('vos essayer de sinscrire en tant que ewxpert , verifer vos donnée ou changer votre type dutilisateur');</script>";
+            }
+            fclose($handle);
+        } else {
+            echo "Failed to open the file.";
+        }
+        }
 
-        // Vérification si l'expert existe déjà uniquement si le rôle est 'expert'
-        if ($role === 'expert') {
-            // Préparer la requête pour vérifier si l'expert avec ce nom, prénom, et téléphone existe déjà
-            $stmt = $conn->prepare("SELECT * FROM personne WHERE nom = ? AND telephone = ? AND role = 'expert'");
-            $stmt->bind_param("ss", $nom, $telephone);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows > 0) {
-                // L'expert existe déjà
-                echo "<script>alert('Cet expert existe déjà !');</script>";
-                exit(); // Arrêter le script
+        if($found){
+        $s = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+        $s->bind_param("s",$Email);
+        $s->execute();
+        $r = $s->get_result();
+        if($r->num_rows > 0){
+            echo "<script>alert('email deja utilisé');</script>";
+
+        }else{
+            $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
+    
+            if ($stmt->execute()) {
+                echo "<script>alert('done')</script>";
+                header('Location: login.php');
+                exit();
+            } else {
+                header('Location: regerreur.php');
             }
             $stmt->close();
         }
-
-        // Si l'expert n'existe pas ou si le rôle n'est pas 'expert', on peut insérer les données
-        $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('Expert ajouté avec succès');</script>";
-            header('Location: login.php');
-            exit();
-        } else {
-            echo "<script>alert('Erreur lors de l\'ajout de l\'expert');</script>";
-            header('Location: regerreur.php');
-        }
-
-        $stmt->close();
-    } else {
-        // TODO : Vérifier si tous les champs sont remplis
-        echo "<script>alert('Tous les champs sont obligatoires');</script>";
-    }
-
-    $matricule = isset($_POST['matricule']) ? $_POST['matricule'] : null;
-
-    if ($role === 'expert' && empty($matricule)) {
-        // Gérer l'erreur si matricule est requis mais vide
-        echo "<script>alert('Le matricule est obligatoire pour les experts');</script>";
-        exit();
-    }
+            
+        
 
     
+    }
+    } else {
+        // TODO: Handle empty fields
+    }
+
 }
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -93,7 +98,7 @@ $conn->close();
         }
 
         /* Formulaire et champs de saisie */
-        input[type="text"], input[type="password"], input[type="tel"] ,select{
+        input[type="text"], input[type="password"], input[type="tel"] ,select , input[type="email"]{
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -276,7 +281,7 @@ $conn->close();
 
             <div class="input-group">
                 <label for="email">Email:</label>
-                <input type="text" id="email" name="Email">
+                <input type="email" id="email" name="Email">
                 <div class="error-message" id="emailError">Veuillez entrer une adresse e-mail valide.</div>
             </div>
 
@@ -340,20 +345,6 @@ $conn->close();
                 }
             });
         });
-        document.addEventListener("DOMContentLoaded", function () {
-    // ... ton code existant pour mot de passe ...
-
-    const roleSelect = document.getElementById("role");
-    const matriculeGroup = document.getElementById("matriculeGroup");
-
-    roleSelect.addEventListener("change", function () {
-        if (this.value === "expert") {
-            matriculeGroup.style.display = "block";
-        } else {
-            matriculeGroup.style.display = "none";
-        }
-    });
-});
 
 
         // Afficher l'alerte personnalisée

@@ -1,89 +1,48 @@
 <?php
+// Démarre la session pour utiliser la variable session si nécessaire
 session_start();
 
-// On peut pré-remplir ici une valeur d'exemple pour id_messagerie si besoin
-// Exemple pour test : $id_messagerie = 1;
-$id_messagerie = isset($_GET['id_messagerie']) ? $_GET['id_messagerie'] : '';
+// Vérifie si le formulaire a été soumis
+if ($_SERVER['REQUEST_METHOD'] == 'POST'&& isset($_FILES['fileToUpload'])) {
+    $fileTmpPath = $_FILES['fileToUpload']['tmp_name'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $targetDir = "uploads/";
-    $fileName = basename($_FILES["fileToUpload"]["name"]);
-    $targetFile = $targetDir . $fileName;
-    $uploadOk = 1;
-    $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    if (file_exists($fileTmpPath)) {
+        // Read the file content
+        $fileContent = file_get_contents($fileTmpPath);
 
-    if ($_FILES["fileToUpload"]["error"] !== UPLOAD_ERR_OK) {
-        echo "Erreur lors du téléchargement du fichier. Code erreur : " . $_FILES["fileToUpload"]["error"];
-        $uploadOk = 0;
-    }
+        // Encode to base64
+        $base64 = base64_encode($fileContent);
 
-    if (isset($_POST["submit"])) {
-        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-        if ($check !== false) {
-            echo "Fichier image détecté : " . $check["mime"] . ".";
-        } else {
-            echo "Le fichier n'est pas une image.";
-            $uploadOk = 0;
-        }
-    }
+        // Optional: get the file type to construct a data URI
+        $fileType = mime_content_type($fileTmpPath);
+        $base64WithMime = 'data:' . $fileType . ';base64,' . $base64;
 
-    if ($_FILES["fileToUpload"]["size"] > 5000000) {
-        echo "Fichier trop volumineux (max 5 Mo).";
-        $uploadOk = 0;
-    }
+        echo "<p>Base64 Encoded:</p>";
+        echo "<textarea rows='10' cols='80'>{$base64WithMime}</textarea>";
+        echo "<img src='$base64WithMime' alt='Decoded Image' style='max-width:300px;'>";
 
-    if (!in_array($fileType, ['jpg', 'jpeg', 'png', 'gif', 'pdf'])) {
-        echo "Type de fichier non autorisé.";
-        $uploadOk = 0;
-    }
-
-    if ($uploadOk == 1) {
-        $newFileName = uniqid('file_', true) . '.' . $fileType;
-        $newTargetFile = $targetDir . $newFileName;
-
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $newTargetFile)) {
-            echo "Fichier " . htmlspecialchars($fileName) . " uploadé avec succès.<br>";
-
-            $id_messagerie = $_POST['id_messagerie'];
-
-            // Connexion à la base de données "64"
-            $conn = new mysqli("localhost", "root", "", "64");
-
-            if ($conn->connect_error) {
-                die("Échec connexion : " . $conn->connect_error);
-            }
-
-            $stmt = $conn->prepare("INSERT INTO uploads (file_name, file_path, file_size, file_type, id_messagerie)
-                                    VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssisi", $newFileName, $newTargetFile, $_FILES["fileToUpload"]["size"], $fileType, $id_messagerie);
-
-            if ($stmt->execute()) {
-                echo "Infos du fichier enregistrées dans la base.";
-            } else {
-                echo "Erreur d'enregistrement : " . $stmt->error;
-            }
-
-            $stmt->close();
-            $conn->close();
-        } else {
-            echo "Erreur de déplacement du fichier.";
-        }
     } else {
-        echo "Fichier non téléchargé.";
+        echo "File upload failed.";
     }
 }
+    
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload de fichier</title>
     <style>
+        /* Intégration du CSS pour le formulaire */
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
         }
+        
         .upload-container {
             display: flex;
             justify-content: center;
@@ -91,7 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             height: 100vh;
             background-color: #f8f5eb;
         }
-        .upload-form {
+
+        form.upload-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -102,18 +62,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .upload-form input[type="file"],
-        .upload-form button {
-            padding: 10px;
+
+        form.upload-form input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 8px;
+            background-color: #fff;
+            font-size: 14px;
+            cursor: pointer;
         }
-        .upload-form button {
+
+        form.upload-form button {
+            padding: 10px 15px;
             background-color: #007BFF;
             color: white;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
         }
-        .upload-form button:hover {
+
+        form.upload-form button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -124,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="uploads.php" method="post" enctype="multipart/form-data" class="upload-form">
         <label for="fileToUpload">Choisir un fichier :</label>
         <input type="file" name="fileToUpload" id="fileToUpload" required>
-        <input type="hidden" name="id_messagerie" value="<?php echo htmlspecialchars($id_messagerie); ?>">
+        <input type="hidden" name="id_messagerie" value="<?php echo isset($id_messagerie) ? $id_messagerie : ''; ?>">
         <button type="submit" name="submit">Envoyer un fichier</button>
     </form>
 </div>

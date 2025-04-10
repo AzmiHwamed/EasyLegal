@@ -328,13 +328,11 @@ form.upload-form {
         <input type="text" id="message" placeholder="Aa...">
         <button id="sendBtn">Envoyer</button>
     </div>
-    <form action="uploads.php" method="post" enctype="multipart/form-data" class="upload-form">
-    <input type="file" name="fileToUpload" id="fileToUpload" required>
-    <input type="hidden" name="id_messagerie" value="<?php echo $id_messagerie; ?>">
-    <button type="submit">Envoyer un fichier</button>
-</form>
+    <input type="file" name="fileToUpload" id="fileInput" required>
 
-</form>
+    <button id="sendimg">Envoyer un fichier</button>
+
+
 
 </div>
 </div>
@@ -342,6 +340,7 @@ form.upload-form {
     const idMessagerie = <?php echo $id_messagerie; ?>;
 
     document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    document.getElementById("sendimg").addEventListener("click", sendFile);
 
     function sendMessage() {
         const message = document.getElementById("message").value.trim();
@@ -353,6 +352,34 @@ form.upload-form {
         xhr.send(`message=${encodeURIComponent(message)}&id_messagerie=${idMessagerie}`);
 
         document.getElementById("message").value = "";
+    }
+
+
+
+
+    function sendFile() {
+    
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file first.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function () {
+        const base64String = reader.result;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "send_image.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(`message=${encodeURIComponent(base64String)}&id_messagerie=${idMessagerie}`);
+        document.getElementById("message").value = "";
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = ""; // Clear the file input after sending
     }
 
     function fetchMessages() {

@@ -38,7 +38,7 @@ if (($role === 'user' && $id_personne != $user_id) ||
 }
 
 // Construction de la requête SQL pour récupérer les messages
-$sql = "SELECT m.contenu, m.created_at, p.nom, p.role 
+$sql = "SELECT m.contenu, m.created_at, p.nom, p.role  , m.isImage
         FROM message m 
         JOIN personne p ON m.id_personne = p.id
         WHERE m.id_messagerie = ?
@@ -51,15 +51,31 @@ $result = $stmt->get_result();
 
 // Affichage des messages
 while ($row = $result->fetch_assoc()) {
-    $nom = htmlspecialchars($row['nom']);
+    if($row['isImage']){
+        $nom = htmlspecialchars($row['nom']);
+        $contenu = htmlspecialchars($row['contenu']);
+        $created_at = $row['created_at'];
+        $roleMessage = $row['role'] === 'expert' ? '(Expert)' : '(Utilisateur)';
+        echo "<div class='message'>";
+    echo "<strong>$nom $roleMessage :</strong><br>";
+    echo "<img src='".$contenu . "' alt='Image' style='max-width:300px;'><br>";
+    echo "</div>";
+        
+    $date = DateTime::createFromFormat('Y-m-d H:i:s.u', $created_at);
+
+    if ($date) {
+        echo $date->format('Y/n/j G:i:s'); 
+    } else {
+        echo "Invalid date format.";
+    }    
+    }else{
+        $nom = htmlspecialchars($row['nom']);
     $contenu = htmlspecialchars($row['contenu']);
     $created_at = $row['created_at'];
     $roleMessage = $row['role'] === 'expert' ? '(Expert)' : '(Utilisateur)';
     
     echo "<div class='message'>";
     echo "<strong>$nom $roleMessage :</strong> $contenu<br>";
-    // echo "<em>Envoyé le ".date_format(date(Y-m-d H-i-s,strtotime($created_at)),"Y/m/d H:i:s")."</em>";
-    // echo $created_at->getTimestamp();
     $date = DateTime::createFromFormat('Y-m-d H:i:s.u', $created_at);
 
     if ($date) {
@@ -70,6 +86,7 @@ while ($row = $result->fetch_assoc()) {
      
 
     echo "</div>";
+    }
 }
 
 $stmt->close();
