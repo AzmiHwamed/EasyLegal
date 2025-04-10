@@ -32,18 +32,18 @@ $row = $result->fetch_assoc();
 $id_personne = $row['id_personne'];
 $participant_expert_id = $row['participant_expert_id'];
 
-// Vérification de l'accès selon le rôle
-if ($role === 'user') {
-    if ($id_personne != $user_id) {
-        die("Vous n'avez pas accès à cette discussion.");
-    }
-} elseif ($role === 'expert') {
-    if ($participant_expert_id != $user_id) {
-        die("Vous n'avez pas accès à cette discussion.");
-    }
-} else {
-    die("Rôle utilisateur non reconnu.");
-}
+// // Vérification de l'accès selon le rôle
+// if ($role === 'user') {
+//     if ($id_personne != $user_id) {
+//         die("Vous n'avez pas accès à cette discussion.");
+//     }
+// } elseif ($role === 'expert') {
+//     if ($participant_expert_id != $user_id) {
+//         die("Vous n'avez pas accès à cette discussion.");
+//     }
+// } else {
+//     die("Rôle utilisateur non reconnu.");
+// }
 
 // Insertion du message dans la base de données
 $sql = "INSERT INTO message (contenu, created_at, id_messagerie, id_personne , isImage) 

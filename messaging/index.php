@@ -371,7 +371,6 @@ form.upload-form {
 
     reader.onload = function () {
         const base64String = reader.result;
-
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "send_image.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
