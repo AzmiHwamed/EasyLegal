@@ -53,22 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Ajout du matricule si nécessaire pour un expert
-    if ($role === 'expert' && !empty($matricule)) {
-        $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse, matricule) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $nom, $telephone, $role, $Email, $motdepasse, $matricule);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('Expert ajouté avec matricule');</script>";
-            header('Location: login.php');
-            exit();
-        } else {
-            echo "<script>alert('Erreur lors de l\'ajout de l\'expert avec matricule');</script>";
-            header('Location: regerreur.php');
-        }
-
-        $stmt->close();
-    }
+    
 }
 
 $conn->close();

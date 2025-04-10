@@ -292,7 +292,7 @@ body {
                                 <?php if ($user['statut'] === 'actif'): ?>
                                     <form method="POST" style="display:inline;" onsubmit="return confirmSuspend();">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
-                                        <button type="submit" name="suspendre_utilisateur" class="btn btn-warning btn-sm">Suspendre</button>
+                                        <button type="submit" name="suspendre_utilisateur" class="btn btn-warning btn-sm">Confirmer</button>
                                     </form>
                                 <?php elseif ($user['statut'] === 'suspendu'): ?>
                                     <form method="POST" style="display:inline;" onsubmit="return confirmAnnuler();">
