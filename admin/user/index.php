@@ -167,7 +167,7 @@ body {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nom</th>
+                            <th>Noms</th>
                             <th>Email</th>
                             <th>Rôle</th>
                             <th>Téléphone</th>
