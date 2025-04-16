@@ -3,34 +3,37 @@ session_start();
 include('../dbconfig/index.php');
 include('../validateur.php');
 $emailError = $passwordError = $loginError = "";
-    if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
 
-        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $stmt->bind_param('s', $_POST['Email']);
-        $stmt->execute();
-        $result = $stmt->get_result();
+if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
 
-        if ($result->num_rows == 0) {
-            $loginError = "Utilisateur non trouvé";
-        } else {
-            $user = $result->fetch_object();
-            if ($_POST['motdepasse'] == $user->motdepasse) {
-                $_SESSION['id'] = $user->id;
-                $_SESSION['role'] = $user->role;
-                header('Location: ../'.$user->role.'/index.php');
-                exit;
+    $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+    $stmt->bind_param('s', $_POST['Email']);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-            } else {
-                // Mot de passe incorrect
-                $loginError = "Mot de passe incorrect";
-            }
-        }
+    if ($result->num_rows == 0) {
+        $loginError = "Utilisateur non trouvé";
     } else {
-        $emailError = "Veuillez entrer un email valide.";
-        $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
-    }
+        $user = $result->fetch_object();
 
+        // Vérifier si l'utilisateur est suspendu
+        if ($user->statut === 'suspendu') {
+            $loginError = "Votre compte est suspendu. Veuillez contacter l'administration.";
+        } elseif ($_POST['motdepasse'] == $user->motdepasse) {
+            $_SESSION['id'] = $user->id;
+            $_SESSION['role'] = $user->role;
+            header('Location: ../' . $user->role . '/index.php');
+            exit;
+        } else {
+            $loginError = "Mot de passe incorrect";
+        }
+    }
+} else {
+    $emailError = "Veuillez entrer un email valide.";
+    $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
+}
 ?>
+
 
 
 <!DOCTYPE html>
@@ -71,6 +74,7 @@ h2 {
 
 input[type="text"], input[type="password"] {
     width: 90%;
+    text-align: center;
     padding: 12px;
     margin: 10px 0;
     border: 1px solid #ccc;

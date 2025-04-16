@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['suspendre_utilisateur']) && isset($_POST['id'])) {
         $id = intval($_POST['id']); // S'assurer que l'ID est un entier
         if (suspendreUsers($id)) {
-            $message = "Expert suspendu avec succès.";
+            $message = "Utilisateur suspendu avec succès.";
         } else {
-            $message = "Erreur lors de la suspension de l'user.";
+            $message = "Erreur lors de la suspension de l'Utilisateur.";
         }
     }
 
@@ -188,7 +188,7 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 
         .message.success {
             background-color: #dff0d8;
-            color: #3c763d;
+            color:rgb(0, 0, 0);
         }
 
         .message.error {

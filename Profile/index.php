@@ -53,114 +53,190 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modification du Profil</title>
     <style>
-        body {
-            margin: 0;
-            padding-top: 70px;
-            font-family: Arial, sans-serif;
-            background: #f8f4ef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    :root {
+    --primary-color: #e8a043;
+    --primary-hover: #d18f38;
+    --bg-color: #f8f4ef;
+    --white: #ffffff;
+    --border-color: #ddd;
+    --input-border: #ccc;
+    --success-color: #4CAF50;
+    --cancel-color: #e0e0e0;
+    --cancel-hover: #cacaca;
+    --font-family: 'Arial', sans-serif;
+}
 
-        .container {
-            display: flex;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 800px;
-            width: 100%;
-        }
+body {
+    margin: 0;
+    padding-top: 70px;
+    font-family: var(--font-family);
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
 
-        .profile-card {
-            width: 250px;
-            text-align: center;
-            padding: 20px;
-            border-right: 1px solid #ddd;
-        }
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+    width: 90%;
+    transition: all 0.3s ease-in-out;
+}
 
-        .profile-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-        }
+.profile-card {
+    flex: 0 0 250px;
+    text-align: center;
+    padding: 20px;
+    border-right: 1px solid var(--border-color);
+}
 
-        .profile-card button {
-            background: #e8a043;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
+.profile-card img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-        .profile-card button:hover {
-            background: #d18f38;
-        }
+.profile-card button {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
 
-        .edit-profile {
-            flex: 1;
-            padding: 20px;
-        }
+.profile-card button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
 
-        .edit-profile h2 {
-            margin-bottom: 10px;
-        }
+.edit-profile {
+    flex: 1;
+    padding: 20px;
+}
 
-        .form-group {
-            margin-bottom: 10px;
-        }
+.edit-profile h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
 
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+.form-group {
+    margin-bottom: 16px;
+}
 
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
 
-        .update-btn {
-            background: #e8a043;
-            color: white;
-            padding: 10px;
-            width: 100%;
-            border: none;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            cursor: pointer;
-        }
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s ease;
+}
 
-        .update-btn:hover {
-            background: #d18f38;
-        }
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
 
-        .custom-alert {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4CAF50;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-    </style>
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.update-btn,
+.cancel-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mettre à jour */
+.update-btn {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.update-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.03);
+}
+
+/* Annuler */
+.cancel-btn {
+    background: var(--cancel-color);
+    color: #333;
+}
+
+.cancel-btn:hover {
+    background: var(--cancel-hover);
+    transform: scale(1.03);
+}
+
+.custom-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--success-color);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: none;
+    font-weight: bold;
+    z-index: 999;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .profile-card {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .update-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+}
+</style>
+
 </head>
 <body>
     
@@ -225,7 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
                 </div>
 
                 <button type="submit" name="update" class="update-btn">Mettre à jour</button>
-                <button type="button" class="update-btn" onclick="window.location.href='../index.php'">Annuler</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='../index.php'">Annuler</button>
 
             </form>
         </div>

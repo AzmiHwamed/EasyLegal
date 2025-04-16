@@ -87,7 +87,7 @@ body {
     overflow-y: auto;
     border-right: 2px solid #ccc;
     border-radius: 12px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 2px 0 8px rgba(247, 220, 144, 0.74);
 }
 
 .sidebar h2 {
@@ -103,7 +103,7 @@ body {
     background-color: #dfd3b8;
     margin-bottom: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     border-radius: 10px;
 }
 
@@ -245,20 +245,7 @@ form.upload-form {
     cursor: pointer;
 }
 
-.upload-form button {
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: background-color 0.3s ease;
-}
 
-.upload-form button:hover {
-    background-color: #0056b3;
-}
 </style>
 </head>
 <body>
@@ -313,7 +300,7 @@ form.upload-form {
 
             while ($row = $result->fetch_assoc()) {
 
-            $activeClass = ($row['id'] == $id_messagerie) ? 'style="background-color: #555;"' : '';
+            $activeClass = ($row['id'] == $id_messagerie) ? 'style="background-color: #d98e25;"' : '';
             echo "<div class='discussion' $activeClass onclick=\"window.location.href='index.php?id_messagerie={$row['id']}'\">{$row['nom']}</div>";
         }
 

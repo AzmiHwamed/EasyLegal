@@ -84,6 +84,10 @@ $conn->close();
             align-items: center;
             height: 100vh;
         }
+        h2 {
+    color: #d38d2c;
+    margin-bottom: 15px;
+}
 
         /* Conteneur d'inscription */
         .registration-container {
@@ -99,24 +103,28 @@ $conn->close();
 
         /* Formulaire et champs de saisie */
         input[type="text"], input[type="password"], input[type="tel"] ,select , input[type="email"]{
-            width: 100%;
+            width: 90%;
             padding: 12px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 16px;
             transition: border 0.3s ease-in-out;
+            text-align: center;
+
+            
         }
 
         input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus {
             border-color: #d38d2c;
             outline: none;
             box-shadow: 0px 0px 6px rgba(211, 141, 44, 0.5);
+
         }
 
         .input-group {
             position: relative;
-            text-align: left;
+            text-align: center;
         }
 
         .error-message {
@@ -264,7 +272,7 @@ $conn->close();
         <form id="registrationForm" autocomplete="off" method="post" action="#">
 
             <div class="input-group">
-                <label for="name">Nom:</label>
+                <label for="name">Nom et Prenom:</label>
                 <input type="text" id="nom" name="nom">
                 <div class="error-message" id="nameError">Veuillez entrer votre nom.</div>
             </div>
@@ -304,11 +312,7 @@ $conn->close();
                 <label for="phone">Téléphone:</label>
                 <input type="tel" id="phone" name="telephone"   maxlength="8" required>
                 <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
-            </div>
-            <div class="input-group" id="matriculeGroup" style="display: none;">
-    <label for="matricule"> matricule:</label>
-    <input type="text" id="matricule" name="matricule">
-    <div class="error-message" id="matriculeError">Veuillez entrer un matricule.</div>
+            
 </div>
 
 

@@ -154,11 +154,13 @@ $user = $result->fetch_object();
 
     .sidebar h3 {
         font-size: 1.1em; /* Réduction de la taille du texte sur petits écrans */
+        
     }
 
     .sidebar ul li {
         font-size: 1em; /* Réduction de la taille du texte sur petits écrans */
         padding: 10px 0; /* Espacement réduit sur les petits écrans */
+        
     }
 }
 
@@ -291,15 +293,15 @@ $user = $result->fetch_object();
     <div class="sidebar">
         <h3>Utilisateur TOP 5:</h3>
         <ul>
-            <li>1. Anonyme 12581</li>
-            <li>2. Anonyme 1247</li>
-            <li>3. Anonyme 52474</li>
+            <li>1. Anonyme 1</li>
+            <li>2. Anonyme 12</li>
+            <li>3. Anonyme 5</li>
         </ul>
 
         <h3>Expert TOP 5:</h3>
         <ul>
-            <li>1. Expert 1024</li>
-            <li>2. Expert 1027</li>
+            <li>1. Expert 10</li>
+            <li>2. Expert 14</li>
         </ul>
     </div>
 

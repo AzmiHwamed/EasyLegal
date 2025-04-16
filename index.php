@@ -28,7 +28,7 @@ session_start();
 
         
 
-        .features {
+    .features {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -117,11 +117,10 @@ session_start();
     <a href="./search/index.php">Rechercher</a>
     <a href="./forum/index.php">Forum</a>
     <a href="./messaging/index.php">Discuter</a>
-</div>
-
-        </span>
     </div>
-</section>
+     </span>
+     </div>
+    </section>
 
     <!-- end of hero section  -->
     <!-- information boxes  -->

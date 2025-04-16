@@ -58,6 +58,7 @@ while ($row = $result->fetch_assoc()) {
         $roleMessage = $row['role'] === 'expert' ? '(Expert)' : '(Utilisateur)';
         echo "<div class='message'>";
     echo "<strong>$nom $roleMessage :</strong><br>";
+    echo "<script> alert('".$contenu."')</script>";
     echo "<img src='".$contenu . "' alt='Image' style='max-width:300px;'><br>";
     echo "</div>";
         
