@@ -2,35 +2,45 @@
 session_start();
 include('../dbconfig/index.php');
 include('../validateur.php');
+
 $emailError = $passwordError = $loginError = "";
+$email = "";
 
-if (isset($_POST['Email']) && isset($_POST['motdepasse'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['Email'] ?? '');
+    $motdepasse = $_POST['motdepasse'] ?? '';
 
-    $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-    $stmt->bind_param('s', $_POST['Email']);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    if (empty($email)) {
+        $emailError = "Veuillez entrer un email valide.";
+    }
 
-    if ($result->num_rows == 0) {
-        $loginError = "Utilisateur non trouvé";
-    } else {
-        $user = $result->fetch_object();
+    if (strlen($motdepasse) < 6) {
+        $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
+    }
 
-        // Vérifier si l'utilisateur est suspendu
-        if ($user->statut === 'suspendu') {
-            $loginError = "Votre compte est suspendu. Veuillez contacter l'administration.";
-        } elseif ($_POST['motdepasse'] == $user->motdepasse) {
-            $_SESSION['id'] = $user->id;
-            $_SESSION['role'] = $user->role;
-            header('Location: ../' . $user->role . '/index.php');
-            exit;
+    if (empty($emailError) && empty($passwordError)) {
+        $stmt = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 0) {
+            $loginError = "Utilisateur non trouvé";
         } else {
-            $loginError = "Mot de passe incorrect";
+            $user = $result->fetch_object();
+
+            if ($user->statut === 'suspendu') {
+                $loginError = "Votre compte est suspendu. Veuillez contacter l'administration.";
+            } elseif ($motdepasse === $user->motdepasse) {
+                $_SESSION['id'] = $user->id;
+                $_SESSION['role'] = $user->role;
+                header('Location: ../' . $user->role . '/index.php');
+                exit;
+            } else {
+                $loginError = "Mot de passe incorrect";
+            }
         }
     }
-} else {
-    $emailError = "Veuillez entrer un email valide.";
-    $passwordError = "Le mot de passe doit contenir au moins 6 caractères.";
 }
 ?>
 
@@ -168,17 +178,40 @@ a:hover {
             </div>
 
             <div>
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="motdepasse">
-                <?php if (!empty($passwordError)): ?>
-                    <div class="error-message"><?php echo $passwordError; ?></div>
-                <?php endif; ?>
-            </div>
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" name="motdepasse">
+    <div id="password-length-error" class="error-message" style="display: none;">
+        Le mot de passe doit contenir au moins 6 caractères.
+    </div>
+    <?php if (!empty($passwordError)): ?>
+        <div class="error-message"><?php echo $passwordError; ?></div>
+    <?php endif; ?>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const passwordInput = document.getElementById('password');
+    const errorDiv = document.getElementById('password-length-error');
+
+    passwordInput.addEventListener('input', function () {
+        if (passwordInput.value.length > 0 && passwordInput.value.length < 6) {
+            errorDiv.style.display = 'block';
+        } else {
+            errorDiv.style.display = 'none';
+        }
+    });
+});
+</script>
+
+            
 
             <button type="submit">Se connecter</button>
         </form>
         <br>
         <a href="registration.php">Créer un compte</a>
     </div>
+    
+    
+ 
+
 </body>
 </html>

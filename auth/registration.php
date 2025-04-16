@@ -12,19 +12,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $motdepasse = $_POST['motdepasse'];
         $found = true;
         if($role === 'expert'){ 
-            $filename = "./datavocat.csv";
-        $found = false;
-        if (file_exists($filename) && is_readable($filename) && ($handle = fopen($filename, "r")) !== false) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                if (isset($data[0], $data[2]) && $data[0] == $nom && $data[2] == $telephone) {
-                    echo "<script>alert('Nom et téléphone déjà existants dans le fichier.');</script>";
-                    $found = true;
-                }
-            }
+            $stmt = $conn->prepare("SELECT * FROM refrenceexpert WHERE Nom = ? AND telephone = ?");
+            $stmt->bind_param("ss", $_POST['nom'], $_POST['telephone']); // both as strings
+            
+            // Execute and get result
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $found = ($result->num_rows > 0);
             if (!$found) {
                 echo "<script>alert('vos essayer de sinscrire en tant que ewxpert , verifer vos donnée ou changer votre type dutilisateur');</script>";
             }
-            fclose($handle);
         } else {
             echo "Failed to open the file.";
         }
@@ -60,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // TODO: Handle empty fields
     }
 
-}
+
 
 $conn->close();
 ?>
@@ -294,19 +291,50 @@ $conn->close();
             </div>
 
             <div class="input-group password-container">
-                <label for="password">Mot de passe:</label>
-                <input type="password" id="password" name="motdepasse">
-                <span class="toggle-password" id="togglePassword">
-                    <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="2" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
-                        <circle cx="12" cy="12" r="3" stroke-width="2"/>
-                    </svg>
-                    <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
-                        <path stroke-width="2" d="M3 3l18 18M10.584 10.586A2 2 0 0112 12a2 2 0 002 2m3.3-1.3c.7-.8 1.3-1.7 1.7-2.7-1.4-3.3-4.6-6-8.9-6a9.77 9.77 0 00-4.9 1.4"/>
-                        <path stroke-width="2" d="M9.88 9.88a3 3 0 014.24 4.24M6.7 6.7C5.5 7.9 4.6 9.3 4 10.9c1.4 3.3 4.6 6 8.9 6 1.6 0 3.1-.4 4.4-1.1"/>
-                    </svg>
-                </span>
-            </div>
+    <label for="password">Mot de passe:</label>
+    <input type="password" id="password" name="motdepasse" oninput="validatePassword()">
+    <span class="toggle-password" id="togglePassword" onclick="togglePasswordVisibility()">
+        <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-width="2" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
+            <circle cx="12" cy="12" r="3" stroke-width="2"/>
+        </svg>
+        <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+            <path stroke-width="2" d="M3 3l18 18M10.584 10.586A2 2 0 0112 12a2 2 0 002 2m3.3-1.3c.7-.8 1.3-1.7 1.7-2.7-1.4-3.3-4.6-6-8.9-6a9.77 9.77 0 00-4.9 1.4"/>
+            <path stroke-width="2" d="M9.88 9.88a3 3 0 014.24 4.24M6.7 6.7C5.5 7.9 4.6 9.3 4 10.9c1.4 3.3 4.6 6 8.9 6 1.6 0 3.1-.4 4.4-1.1"/>
+        </svg>
+    </span>
+    <small id="passwordError" style="color: red; display: none;">Le mot de passe doit contenir au moins 6 caractères.</small>
+</div>
+
+<script>
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById("password");
+    const eyeOpen = document.getElementById("eyeOpen");
+    const eyeClosed = document.getElementById("eyeClosed");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeOpen.style.display = "none";
+        eyeClosed.style.display = "inline";
+    } else {
+        passwordInput.type = "password";
+        eyeOpen.style.display = "inline";
+        eyeClosed.style.display = "none";
+    }
+}
+
+function validatePassword() {
+    const passwordInput = document.getElementById("password");
+    const errorText = document.getElementById("passwordError");
+
+    if (passwordInput.value.length < 6) {
+        errorText.style.display = "block";
+    } else {
+        errorText.style.display = "none";
+    }
+}
+</script>
+
 
             <div class="input-group">
                 <label for="phone">Téléphone:</label>

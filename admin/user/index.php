@@ -48,6 +48,27 @@ body {
     overflow-x: hidden;
     color: #333;
 }
+.btn-warning.btn-sm {
+    background-color: #ff9800;
+    border: none;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-warning.btn-sm:hover {
+    background-color: #e68900;
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.btn-warning.btn-sm:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.4);
+}
 
 /* Barre latérale */
 .sidebar {
@@ -183,7 +204,7 @@ body {
                             <td><?= htmlspecialchars($user['role']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
                             <td>
-                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet user ?');">Suspendre</a>
+                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendre</a>
                             </td>                          
                             
                         </tr>

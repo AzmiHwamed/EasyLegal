@@ -213,9 +213,7 @@ body {
             <?php echo $message; ?>
         </div>
 
-        <form method="post" onsubmit="return confirmDeletion()">
-            <button type="submit" class="btn">Confirmer la suppression</button>
-        </form>
+        
         
         <a href="index.php" class="back">Retour au forum</a>
     </div>

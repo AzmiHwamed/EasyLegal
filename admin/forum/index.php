@@ -110,7 +110,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
     /* Add Button */
     .add-btn {
-        background: #3498db;
+        background-color: #ff9800;
         color: white;
         border: none;
         padding: 12px 20px;
@@ -123,7 +123,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 
     .add-btn:hover {
-        background: #2980b9;
+        background-color: #ff9800;
         transform: scale(1.05);
     }
 
@@ -159,7 +159,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
     /* Delete Button */
     .delete-btn {
-        background: #e74c3c;
+        background-color: #ff9800;
         border: none;
         color: white;
         padding: 7px 12px;
@@ -169,7 +169,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 
     .delete-btn:hover {
-        background: #c0392b;
+        background-color: #ff9800;
         transform: scale(1.1);
     }
 
@@ -230,7 +230,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                     <p><?= htmlspecialchars($post['contenu']) ?></p>
                     <form action="delete.php" method="post">
                         <input type="hidden" name="id" value="<?= $post['id'] ?>">
-                        <button type="submit" class="delete-btn">🗑 Supprimer</button>
+                        <button type="submit" class="delete-btn">Supprimer</button>
                     </form>
                 </div>
             <?php endforeach; ?>

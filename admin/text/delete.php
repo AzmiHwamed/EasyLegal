@@ -142,17 +142,17 @@ body {
 
 .message.success {
     background-color: #dff0d8;
-    color: #3c763d;
+    background-color: #ff9800;
 }
 
 .message.error {
     background-color: #f2dede;
-    color: #a94442;
+    background-color: #ff9800;
 }
 
 /* Boutons */
 .btn {
-    background-color: #3498db;
+    background-color: #ff9800;
     color: white;
     padding: 12px 25px;
     border-radius: 5px;
@@ -163,7 +163,7 @@ body {
 }
 
 .btn:hover {
-    background-color: #2980b9;
+    background-color: #ff9800;
     transform: scale(1.05);
 }
 
@@ -171,7 +171,7 @@ body {
 .back {
     display: block;
     margin-top: 20px;
-    color: #3498db;
+    background-color: #ff9800;
     text-decoration: none;
     font-size: 16px;
 }
@@ -247,7 +247,7 @@ body {
                             <td>
                                 <form method="POST" style="display:inline;" onsubmit="return confirmDelete();">
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($texte['id']) ?>">
-                                    <button type="submit" name="supprimer_texte" class="btn btn-danger btn-sm">Supprimer</button>
+                                    <button type="submit" name="supprimer_texte" class="btn btn-danger btn-sm">Confirmer</button>
                                 </form>
                                 <a href="index.php" class="btn btn-primary btn-sm">Annuler</a>
                             </td>
