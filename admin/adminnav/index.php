@@ -9,65 +9,73 @@ $dbname = "easylegal";
 // Connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Connexion échouée : " . $conn->connect_error);
 }
 
 $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 
-// Statistiques globales
-$sql = "SELECT role, COUNT(*) AS total FROM personne GROUP BY role";
-$result = $conn->query($sql);
+// Nombre d'utilisateurs
+$sql_user = "SELECT COUNT(*) AS total FROM personne WHERE role = 'user'";
+$nb_users = ($result_user = $conn->query($sql_user)) && ($row_user = $result_user->fetch_assoc()) ? $row_user['total'] : 0;
 
-$stats = ['user' => 0, 'expert' => 0];
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        if ($row['role'] === 'user') {
-            $stats['user'] = $row['total'];
-        } elseif ($row['role'] === 'expert') {
-            $stats['expert'] = $row['total'];
-        }
+// Nombre d'experts
+$sql_expert = "SELECT COUNT(*) AS total FROM refrenceexpert";
+$nb_experts = ($result_expert = $conn->query($sql_expert)) && ($row_expert = $result_expert->fetch_assoc()) ? $row_expert['total'] : 0;
+
+// Initialisation tableau des mois
+$evolutionData = [];
+for ($m = 1; $m <= 12; $m++) {
+    $monthName = DateTime::createFromFormat('!m', $m)->format('F');
+    $evolutionData[$monthName] = ['user' => 0, 'expert' => 0];
+}
+
+// Données mensuelles - utilisateurs
+$sql_users_monthly = "SELECT MONTH(date_inscription) AS month, COUNT(*) AS user
+                      FROM personne
+                      WHERE role = 'user' AND YEAR(date_inscription) = YEAR(CURRENT_DATE)
+                      GROUP BY MONTH(date_inscription)";
+if ($result_users_monthly = $conn->query($sql_users_monthly)) {
+    while ($row = $result_users_monthly->fetch_assoc()) {
+        $monthName = DateTime::createFromFormat('!m', $row['month'])->format('F');
+        $evolutionData[$monthName]['user'] = (int)$row['user'];
     }
 }
 
-// Requête pour récupérer les données mensuelles
-$sql_evolution = "SELECT MONTH(date_inscription) AS month, 
-                          COUNT(CASE WHEN role = 'user' THEN 1 END) AS user,
-                          COUNT(CASE WHEN role = 'expert' THEN 1 END) AS expert
-                  FROM personne
-                  WHERE YEAR(date_inscription) = YEAR(CURRENT_DATE)
-                  GROUP BY MONTH(date_inscription)
-                  ORDER BY month ASC";
-$result_evolution = $conn->query($sql_evolution);
-
-$evolutionData = [];
-while ($row = $result_evolution->fetch_assoc()) {
-    $monthName = DateTime::createFromFormat('!m', $row['month'])->format('F');
-    $evolutionData[$monthName] = [
-        'user' => (int)$row['user'],
-        'expert' => (int)$row['expert']
-    ];
+// Données mensuelles - experts
+$sql_experts_monthly = "SELECT MONTH(date_inscription) AS month, COUNT(*) AS expert
+                        FROM refrenceexpert
+                        WHERE YEAR(date_inscription) = YEAR(CURRENT_DATE)
+                        GROUP BY MONTH(date_inscription)";
+if ($result_experts_monthly = $conn->query($sql_experts_monthly)) {
+    while ($row = $result_experts_monthly->fetch_assoc()) {
+        $monthName = DateTime::createFromFormat('!m', $row['month'])->format('F');
+        $evolutionData[$monthName]['expert'] = (int)$row['expert'];
+    }
 }
 
+// Données graphique évolution
 $labels = json_encode(array_keys($evolutionData));
 $userData = json_encode(array_column($evolutionData, 'user'));
 $expertData = json_encode(array_column($evolutionData, 'expert'));
-// Statistiques par type de texte juridique
-$sql_types = "SELECT type, COUNT(*) AS total FROM textjuridique GROUP BY type";
-$result_types = $conn->query($sql_types);
 
+// Répartition des textes juridiques
 $typeLabels = [];
 $typeData = [];
 
-if ($result_types) {
+$sql_types = "SELECT type, COUNT(*) AS total FROM textjuridique GROUP BY type";
+if ($result_types = $conn->query($sql_types)) {
     while ($row = $result_types->fetch_assoc()) {
         $typeLabels[] = $row['type'];
-        $typeData[] = $row['total'];
+        $typeData[] = (int)$row['total'];
     }
 }
 
 $typeLabelsJson = json_encode($typeLabels);
 $typeDataJson = json_encode($typeData);
+
+$conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -158,14 +166,20 @@ $typeDataJson = json_encode($typeData);
         }
 
         .stat-card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-            width: 220px;
-            text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    width: 220px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
 
         .stat-card:hover {
             transform: translateY(-5px);
@@ -217,6 +231,19 @@ $typeDataJson = json_encode($typeData);
                 justify-content: center;
             }
         }
+        @media screen and (max-width: 768px) {
+    .stats-box {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-card {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -237,18 +264,18 @@ $typeDataJson = json_encode($typeData);
 <main class="main-content">
     <h1>Tableau de bord</h1>
     <p>Bienvenue dans votre espace administrateur.</p>
-
-    <!-- Cartes statistiques -->
     <div class="stats-box">
-        <div class="stat-card">
-            <h3>Utilisateurs</h3>
-            <p><?= $stats['user'] ?></p>
-        </div>
-        <div class="stat-card">
-            <h3>Experts</h3>
-            <p><?= $stats['expert'] ?></p>
-        </div>
+    <div class="stat-card">
+        <h3>Utilisateurs</h3>
+        <p><?= $nb_users ?></p>
     </div>
+    <div class="stat-card">
+        <h3>Experts</h3>
+        <p><?= $nb_experts ?></p>
+    </div>
+</div>
+
+
 
     <!-- Courbe -->
     <div class="chart-container">

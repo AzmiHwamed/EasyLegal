@@ -2,7 +2,6 @@
 session_start();
 include('../dbconfig/index.php');
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_POST['nom']) && !empty($_POST['telephone']) && !empty($_POST['Email']) && !empty($_POST['motdepasse']) && !empty($_POST['role'])) {
         $nom = $_POST['nom'];
@@ -11,56 +10,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Email = $_POST['Email'];
         $motdepasse = $_POST['motdepasse'];
         $found = true;
-        if($role === 'expert'){ 
+
+        if ($role === 'expert') {
             $stmt = $conn->prepare("SELECT * FROM refrenceexpert WHERE Nom = ? AND telephone = ?");
-            $stmt->bind_param("ss", $_POST['nom'], $_POST['telephone']); // both as strings
-            
-            // Execute and get result
+            $stmt->bind_param("ss", $_POST['nom'], $_POST['telephone']);
             $stmt->execute();
             $result = $stmt->get_result();
             $found = ($result->num_rows > 0);
+            $stmt->close(); // Close statement here
             if (!$found) {
                 echo "<script>alert('vos essayer de sinscrire en tant que ewxpert , verifer vos donnée ou changer votre type dutilisateur');</script>";
             }
         } else {
             echo "Failed to open the file.";
         }
-        }
 
-        if($found){
-        $s = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
-        $s->bind_param("s",$Email);
-        $s->execute();
-        $r = $s->get_result();
-        if($r->num_rows > 0){
-            echo "<script>alert('email deja utilisé');</script>";
-
-        }else{
-            $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
-    
-            if ($stmt->execute()) {
-                echo "<script>alert('done')</script>";
-                header('Location: login.php');
-                exit();
+        if ($found) {
+            $s = $conn->prepare("SELECT * FROM personne WHERE Email = ?");
+            $s->bind_param("s", $Email);
+            $s->execute();
+            $r = $s->get_result();
+            if ($r->num_rows > 0) {
+                echo "<script>alert('email deja utilisé');</script>";
             } else {
-                header('Location: regerreur.php');
+                $stmt = $conn->prepare("INSERT INTO personne (nom, telephone, role, Email, motdepasse) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $nom, $telephone, $role, $Email, $motdepasse);
+                if ($stmt->execute()) {
+                    $stmt->close(); // Close after insert
+                    $s->close(); // Close select statement
+                    $conn->close();
+                    echo "<script>alert('done')</script>";
+                    header('Location: login.php');
+                    exit();
+                } else {
+                    $stmt->close(); // Close even if insert fails
+                    $s->close();
+                    $conn->close();
+                    header('Location: regerreur.php');
+                    exit();
+                }
             }
-            $stmt->close();
+            $s->close(); // Close after checking email (if email exists case)
         }
-            
-        
-
-    
-    }
     } else {
         // TODO: Handle empty fields
     }
-
-
+}
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
