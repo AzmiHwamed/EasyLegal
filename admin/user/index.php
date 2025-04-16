@@ -185,31 +185,40 @@ body {
             <div class="card-header">Liste des utilisateurs</div>
             <div class="card-body">
                 <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Noms</th>
-                            <th>Email</th>
-                            <th>Rôle</th>
-                            <th>Téléphone</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($utilisateurs as $user): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($user['id']) ?></td>
-                            <td><?= htmlspecialchars($user['nom']) ?></td>
-                            <td><?= htmlspecialchars($user['Email']) ?></td>
-                            <td><?= htmlspecialchars($user['role']) ?></td>
-                            <td><?= htmlspecialchars($user['telephone']) ?></td>
-                            <td>
-                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendre</a>
-                            </td>                          
-                            
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+          
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Noms</th>
+        <th>Email</th>
+        <th>Rôle</th>
+        <th>Téléphone</th>
+        <th>Statut</th> <!-- Ajout ici -->
+        <th>Action</th>
+    </tr>
+</thead>
+<tbody>
+    <?php foreach ($utilisateurs as $user): ?>
+    <tr>
+        <td><?= htmlspecialchars($user['id']) ?></td>
+        <td><?= htmlspecialchars($user['nom']) ?></td>
+        <td><?= htmlspecialchars($user['Email']) ?></td>
+        <td><?= htmlspecialchars($user['role']) ?></td>
+        <td><?= htmlspecialchars($user['telephone']) ?></td>
+        <td>
+            <?php if (isset($user['statut']) && $user['statut'] === 'suspendu'): ?>
+                <span class="badge bg-danger">Suspendu</span>
+            <?php else: ?>
+                <span class="badge bg-success">Actif</span>
+            <?php endif; ?>
+        </td>
+        <td>
+            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendre</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+</tbody>
+
                 </table>
             </div>
         </div>

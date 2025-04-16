@@ -13,9 +13,15 @@ if ($conn->connect_error) {
 }
 
 // Récupérer les utilisateurs avec le rôle "expert"
-$sql = "SELECT * FROM personne WHERE role = 'expert' LIMIT 50";
-$result_users = $conn->query($sql);
-$experts = $result_users->fetch_all(MYSQLI_ASSOC);
+// Liste des experts
+$sql_experts = "SELECT * FROM refrenceexpert"; // Correction : on sélectionne tous les experts
+$result_experts = $conn->query($sql_experts);
+$experts = ($result_experts && $result_experts->num_rows > 0) ? $result_experts->fetch_all(MYSQLI_ASSOC) : [];
+
+// Nombre d'experts
+$sql_expert_count = "SELECT COUNT(*) AS total FROM refrenceexpert";
+$result_expert_count = $conn->query($sql_expert_count);
+$experts_count = ($result_expert_count && $row_expert_count = $result_expert_count->fetch_assoc()) ? $row_expert_count['total'] : 0;
 
 $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 ?>
@@ -187,8 +193,8 @@ body {
                         <tr>
                             <th>ID</th>
                             <th>Nom</th>
-                            <th>Email</th>
                             <th>Téléphone</th>
+                            <th>Adresse</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -196,9 +202,10 @@ body {
                         <?php foreach ($experts as $user): ?>
                         <tr>
                             <td><?= htmlspecialchars($user['id']) ?></td>
-                            <td><?= htmlspecialchars($user['nom']) ?></td>
-                            <td><?= htmlspecialchars($user['Email']) ?></td>
+                            <td><?= htmlspecialchars($user['Nom']) ?></td>
                             <td><?= htmlspecialchars($user['telephone']) ?></td>
+                            <td><?= htmlspecialchars($user['adresse']) ?></td>
+
                             <td>
                             <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm" 
    onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet expert ?');">Suspendre</a>
