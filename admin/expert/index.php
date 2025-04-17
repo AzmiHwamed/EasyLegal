@@ -200,17 +200,23 @@ body {
                     </thead>
                     <tbody>
                         <?php foreach ($experts as $user): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($user['id']) ?></td>
-                            <td><?= htmlspecialchars($user['Nom']) ?></td>
-                            <td><?= htmlspecialchars($user['telephone']) ?></td>
-                            <td><?= htmlspecialchars($user['adresse']) ?></td>
-
-                            <td>
-                            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm" 
-   onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet expert ?');">Suspendre</a>
-                            </td>
-                        </tr>
+                            <tr>
+        <td><?= htmlspecialchars($user['id']) ?></td>
+        <td><?= htmlspecialchars($user['nom']) ?></td>
+        <td><?= htmlspecialchars($user['Email']) ?></td>
+        <td><?= htmlspecialchars($user['role']) ?></td>
+        <td><?= htmlspecialchars($user['telephone']) ?></td>
+        <td>
+            <?php if (isset($user['statut']) && $user['statut'] === 'suspendu'): ?>
+                <span class="badge bg-danger">Suspendu</span>
+            <?php else: ?>
+                <span class="badge bg-success">Actif</span>
+            <?php endif; ?>
+        </td>
+        <td>
+            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm"><?php echo  $user['statut'] ==='suspendu'? 'anuler suspension' :  'suspendre' ?></a>
+        </td>
+    </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>

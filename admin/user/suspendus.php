@@ -1,70 +1,71 @@
 <?php
-session_start();
+// session_start();
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "easylegal";
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Échec de la connexion : " . $conn->connect_error);
-}
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "easylegal";
+// $conn = new mysqli($servername, $username, $password, $dbname);
+// if ($conn->connect_error) {
+//     die("Échec de la connexion : " . $conn->connect_error);
+// }
 
-function getUsers($limit = 50, $offset = 0) {
-    global $conn;
-    $sql = "SELECT * FROM personne WHERE role = 'user' LIMIT ? OFFSET ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $limit, $offset);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
+// function getUsers($limit = 50, $offset = 0) {
+//     global $conn;
+//     $sql = "SELECT * FROM personne WHERE role = 'user' LIMIT ? OFFSET ?";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param("ii", $limit, $offset);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+//     return $result->fetch_all(MYSQLI_ASSOC);
+// }
 
-function suspendreUsers($id) {
-    global $conn;
-    $sql = "UPDATE personne SET statut = 'suspendu' WHERE id = ? AND role = 'user'";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
+// function suspendreUsers($id) {
+//     global $conn;
+//     $sql = "UPDATE personne SET statut = 'suspendu' WHERE id = ? AND role = 'user'";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param("i", $id);
+//     return $stmt->execute();
+// }
 
-function annulerSuspension($id) {
-    global $conn;
-    $sql = "UPDATE personne SET statut = 'actif' WHERE id = ? AND role = 'user'";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-    return $stmt->execute();
-}
+// function annulerSuspension($id) {
+//     global $conn;
+//     $sql = "UPDATE personne SET statut = 'actif' WHERE id = ? AND role = 'user'";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param("i", $id);
+//     return $stmt->execute();
+// }
 
-// Traitement AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
-    $id = intval($_POST['id']);
-    $action = $_POST['action'];
+// // Traitement AJAX
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
+//     $id = intval($_POST['id']);
+//     $action = $_POST['action'];
 
-    if ($action === 'suspendre') {
-        $success = suspendreUsers($id);
-        echo json_encode([
-            'success' => $success,
-            'newStatut' => $success ? 'suspendu' : null,
-            'message' => $success ? "Utilisateur suspendu." : "Erreur lors de la suspension."
-        ]);
-    } elseif ($action === 'annuler') {
-        $success = annulerSuspension($id);
-        echo json_encode([
-            'success' => $success,
-            'newStatut' => $success ? 'actif' : null,
-            'message' => $success ? "Suspension annulée." : "Erreur lors de l'annulation."
-        ]);
-    }
-    exit;
-}
+//     if ($action === 'suspendre') {
+//         $success = suspendreUsers($id);
+//         echo json_encode([
+//             'success' => $success,
+//             'newStatut' => $success ? 'suspendu' : null,
+//             'message' => $success ? "Utilisateur suspendu." : "Erreur lors de la suspension."
+//         ]);
+//     } elseif ($action === 'annuler') {
+//         $success = annulerSuspension($id);
+//         echo json_encode([
+//             'success' => $success,
+//             'newStatut' => $success ? 'actif' : null,
+//             'message' => $success ? "Suspension annulée." : "Erreur lors de l'annulation."
+//         ]);
+//     }
+//     exit;
+// }
 
-// Données initiales
-$limit = 50;
-$offset = isset($_GET['page']) && is_numeric($_GET['page']) ? ($_GET['page'] - 1) * $limit : 0;
-$users = getUsers($limit, $offset);
+// // Données initiales
+// $limit = 50;
+// $offset = isset($_GET['page']) && is_numeric($_GET['page']) ? ($_GET['page'] - 1) * $limit : 0;
+// $users = getUsers($limit, $offset);
 $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
-?>
+//
+ ?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -168,42 +169,54 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     </div>
 
     <div class="main-content">
-        <h1>Suspendre des Utilisateurs</h1>
+    <?php
+$pdo = new PDO('mysql:host=localhost;dbname=easylegal', 'root', '');
 
-        <div id="alert-container"></div>
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm']) && isset($_POST['id'])) {
+    $id = $_POST['id'];
 
-        <div class="card">
-            <div class="card-header">Liste des Utilisateurs</div>
-            <div class="card-body">
-                <table class="table table-bordered" id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Email</th>
-                            <th>Téléphone</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($users as $user): ?>
-                        <tr id="user-row-<?= $user['id'] ?>">
-                            <td><?= htmlspecialchars($user['id']) ?></td>
-                            <td><?= htmlspecialchars($user['nom']) ?></td>
-                            <td><?= htmlspecialchars($user['Email']) ?></td>
-                            <td><?= htmlspecialchars($user['telephone']) ?></td>
-                            <td>
-                                <button class="btn btn-sm" 
-                                    onclick="changerStatut(<?= $user['id'] ?>, '<?= $user['statut'] === 'actif' ? 'suspendre' : 'annuler' ?>')">
-                                    <?= $user['statut'] === 'actif' ? 'Confirmer' : 'Annuler Suspension' ?>
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+    // Get current statut
+    $stmt = $pdo->prepare("SELECT statut FROM personne WHERE id = ?");
+    $stmt->execute([$id]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        $newstatut = $user['statut'] === 'actif' ? 'suspendu' : 'actif';
+
+        // Update statut
+        $update = $pdo->prepare("UPDATE personne SET statut = ? WHERE id = ?");
+        $update->execute([$newstatut, $id]);
+
+        header("Location: index.php");
+        exit;
+    }
+} elseif (isset($_GET['id'])) {
+    $id = $_GET['id'];
+
+    $stmt = $pdo->prepare("SELECT statut FROM personne WHERE id = ?");
+    $stmt->execute([$id]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        $action = $user['statut'] === 'actif' ? 'suspendre' : 'activer';
+        ?>
+        <div class="container mt-5">
+            <h4>Êtes-vous sûr de vouloir <?= htmlspecialchars($action) ?> cet utilisateur ?</h4>
+            <form method="POST" action="suspendus.php">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($id) ?>">
+                <input type="hidden" name="confirm" value="1">
+                <button class="btn btn-primary" type="submit">Oui</button>
+                <a href="index.php" class="btn btn-secondary">Non</a>
+            </form>
         </div>
+        <?php
+    } else {
+        echo "Utilisateur introuvable.";
+    }
+}
+?>
+
+
     </div>
 
 <script>

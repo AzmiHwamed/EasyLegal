@@ -237,7 +237,7 @@ body {
             <?php endif; ?>
         </td>
         <td>
-            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendre</a>
+            <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm"><?php echo  $user['statut'] ==='suspendu'? 'anuler suspension' :  'suspendre' ?></a>
         </td>
     </tr>
 <?php endforeach; ?>
