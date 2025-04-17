@@ -149,6 +149,30 @@ body {
         padding: 20px;
     }
 }
+.badge-statut {
+    background-color: #ff9800;
+    border: none;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    color: white;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.badge-statut:hover {
+    background-color: #e68900;
+    transform: scale(1.05);
+    cursor: default;
+}
+
+.badge-statut:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.4);
+}
+
+
 
     </style>
     
@@ -198,7 +222,7 @@ body {
     </tr>
 </thead>
 <tbody>
-    <?php foreach ($utilisateurs as $user): ?>
+<?php foreach ($utilisateurs as $user): ?>
     <tr>
         <td><?= htmlspecialchars($user['id']) ?></td>
         <td><?= htmlspecialchars($user['nom']) ?></td>
@@ -207,17 +231,18 @@ body {
         <td><?= htmlspecialchars($user['telephone']) ?></td>
         <td>
             <?php if (isset($user['statut']) && $user['statut'] === 'suspendu'): ?>
-                <span class="badge bg-danger">Suspendu</span>
+                <span class="badge-statut">Suspendu</span>
             <?php else: ?>
-                <span class="badge bg-success">Actif</span>
+                <span class="badge-statut">Actif</span>
             <?php endif; ?>
         </td>
         <td>
             <a href="suspendus.php?id=<?= htmlspecialchars($user['id']) ?>" class="btn btn-warning btn-sm">Suspendre</a>
         </td>
     </tr>
-    <?php endforeach; ?>
+<?php endforeach; ?>
 </tbody>
+
 
                 </table>
             </div>
