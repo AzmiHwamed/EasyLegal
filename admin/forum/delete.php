@@ -133,17 +133,17 @@ body {
 
 .message.success {
     background-color: #dff0d8;
-    color: #3c763d;
+    color: #e89d3f;
 }
 
 .message.error {
     background-color: #f2dede;
-    color: #a94442;
+    color: #e89d3f;
 }
 
 /* Boutons */
 .btn {
-    background-color: #3498db;
+    background-color: #e89d3f;
     color: white;
     padding: 12px 25px;
     border-radius: 5px;
@@ -154,7 +154,7 @@ body {
 }
 
 .btn:hover {
-    background-color: #2980b9;
+    background-color: #e89d3f;
     transform: scale(1.05);
 }
 
@@ -162,7 +162,7 @@ body {
 .back {
     display: block;
     margin-top: 20px;
-    color: #3498db;
+    color: #e89d3f;
     text-decoration: none;
     font-size: 16px;
 }

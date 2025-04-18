@@ -1,5 +1,8 @@
-<?php
+<?php 
 session_start();
+session_regenerate_id(true);
+
+$nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 
 // Connexion à la base de données
 $servername = "localhost";
@@ -10,20 +13,16 @@ $dbname = "easylegal";
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Échec de la connexion : " . $conn->connect_error);
+}   
+
+// Récupérer uniquement les utilisateurs
+$result_experts = $conn->query("SELECT * FROM personne WHERE role = 'expert' LIMIT 50");
+
+if ($result_experts) {
+    $utilisateurs = $result_experts->fetch_all(MYSQLI_ASSOC);
+} else {
+    echo "Erreur lors de la récupération des utilisateurs : " . $conn->error;
 }
-
-// Récupérer les utilisateurs avec le rôle "expert"
-// Liste des experts
-$sql_experts = "SELECT * FROM refrenceexpert"; // Correction : on sélectionne tous les experts
-$result_experts = $conn->query($sql_experts);
-$experts = ($result_experts && $result_experts->num_rows > 0) ? $result_experts->fetch_all(MYSQLI_ASSOC) : [];
-
-// Nombre d'experts
-$sql_expert_count = "SELECT COUNT(*) AS total FROM refrenceexpert";
-$result_expert_count = $conn->query($sql_expert_count);
-$experts_count = ($result_expert_count && $row_expert_count = $result_expert_count->fetch_assoc()) ? $row_expert_count['total'] : 0;
-
-$nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 ?>
 
 <!DOCTYPE html>
@@ -34,8 +33,7 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     <title>Gestion des Experts</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-    /* Réinitialisation + police moderne */
-* {
+        * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -82,6 +80,7 @@ body {
     left: 0;
     padding: 40px 25px;
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
 }
 
 .sidebar h2 {
@@ -89,6 +88,7 @@ body {
     font-size: 22px;
     font-weight: 600;
     text-align: center;
+    color: #fff;
 }
 
 .sidebar nav ul {
@@ -122,6 +122,7 @@ body {
     width: calc(100% - 260px);
     background-color: #fff;
     min-height: 100vh;
+    transition: margin-left 0.3s ease;
 }
 
 .main-content h1 {
@@ -147,6 +148,29 @@ body {
         padding: 20px;
     }
 }
+.badge-statut {
+    background-color: #ff9800;
+    border: none;
+    padding: 10px 22px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    color: white;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.badge-statut:hover {
+    background-color: #e68900;
+    transform: scale(1.05);
+    cursor: default;
+}
+
+.badge-statut:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.4);
+}
+
 </style>
 
     <script>
@@ -191,26 +215,28 @@ body {
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Téléphone</th>
-                            <th>Adresse</th>
-                            <th>Action</th>
+                        <th>ID</th>
+        <th>Noms</th>
+        <th>Email</th>
+        <th>Rôle</th>
+        <th>Téléphone</th>
+        <th>Statut</th> <!-- Ajout ici -->
+        <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($experts as $user): ?>
+                        <?php foreach ($utilisateurs  as $user): ?>
                             <tr>
-        <td><?= htmlspecialchars($user['id']) ?></td>
+                            <td><?= htmlspecialchars($user['id']) ?></td>
         <td><?= htmlspecialchars($user['nom']) ?></td>
         <td><?= htmlspecialchars($user['Email']) ?></td>
         <td><?= htmlspecialchars($user['role']) ?></td>
         <td><?= htmlspecialchars($user['telephone']) ?></td>
         <td>
             <?php if (isset($user['statut']) && $user['statut'] === 'suspendu'): ?>
-                <span class="badge bg-danger">Suspendu</span>
+                <span class="badge-statut">Suspendu</span>
             <?php else: ?>
-                <span class="badge bg-success">Actif</span>
+                <span class="badge-statut">Actif</span>
             <?php endif; ?>
         </td>
         <td>

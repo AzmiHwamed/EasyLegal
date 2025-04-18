@@ -63,6 +63,7 @@
 // $limit = 50;
 // $offset = isset($_GET['page']) && is_numeric($_GET['page']) ? ($_GET['page'] - 1) * $limit : 0;
 // $users = getUsers($limit, $offset);
+
 $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
 //
  ?>
@@ -75,7 +76,7 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
       
-            body {
+      body {
             background-color: #f4f6f9;
             display: flex;
             min-height: 100vh;
@@ -102,7 +103,6 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
         .sidebar nav ul {
             list-style: none;
             padding: 0;
-            
         }
         .sidebar nav ul li {
             margin: 20px 0;
@@ -152,9 +152,21 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
             transform: scale(1.05);
             color: white;
         }
+        .alert {
+            margin-top: 20px;
+            padding: 10px;
+        }
+        .message.success {
+            background-color: #dff0d8;
+            color: #ff9800;
+        }
+        .message.error {
+            background-color: #f2dede;
+            color: #ff9800;
+        }
     </style>
 </head>
-<body>
+<body> 
     <div class="sidebar">
         <h2>Bienvenue, <?= htmlspecialchars($nom_utilisateur); ?> 👋</h2>
         <nav>
@@ -169,33 +181,41 @@ $nom_utilisateur = isset($_SESSION['nom']) ? $_SESSION['nom'] : "Admin";
     </div>
 
     <div class="main-content">
-    <?php
-$pdo = new PDO('mysql:host=localhost;dbname=easylegal', 'root', '');
+<?php
+$conn = mysqli_connect('localhost', 'root', '', 'easylegal');
+if (!$conn) {
+    die("Erreur de connexion : " . mysqli_connect_error());
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm']) && isset($_POST['id'])) {
-    $id = $_POST['id'];
+    $id = intval($_POST['id']);
 
     // Get current statut
-    $stmt = $pdo->prepare("SELECT statut FROM personne WHERE id = ?");
-    $stmt->execute([$id]);
-    $user = $stmt->fetch();
+    $stmt = mysqli_prepare($conn, "SELECT statut FROM personne WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
     if ($user) {
         $newstatut = $user['statut'] === 'actif' ? 'suspendu' : 'actif';
 
         // Update statut
-        $update = $pdo->prepare("UPDATE personne SET statut = ? WHERE id = ?");
-        $update->execute([$newstatut, $id]);
+        $update = mysqli_prepare($conn, "UPDATE personne SET statut = ? WHERE id = ?");
+        mysqli_stmt_bind_param($update, "si", $newstatut, $id);
+        mysqli_stmt_execute($update);
 
         header("Location: index.php");
         exit;
     }
 } elseif (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = intval($_GET['id']);
 
-    $stmt = $pdo->prepare("SELECT statut FROM personne WHERE id = ?");
-    $stmt->execute([$id]);
-    $user = $stmt->fetch();
+    $stmt = mysqli_prepare($conn, "SELECT statut FROM personne WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
     if ($user) {
         $action = $user['statut'] === 'actif' ? 'suspendre' : 'activer';
@@ -215,8 +235,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm']) && isset($
     }
 }
 ?>
-
-
     </div>
 
 <script>

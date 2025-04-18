@@ -124,7 +124,7 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     /* Message de confirmation ou d'erreur */
     .message {
         background: #dff0d8;
-        color: #3c763d;
+        color: #e89d3f;
         padding: 12px;
         border-radius: 5px;
         margin-bottom: 15px;
@@ -135,7 +135,7 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
 
     .message.error {
         background: #f2dede;
-        color: #a94442;
+        color: #e89d3f;
     }
 
     /* Styles du textarea */
@@ -153,13 +153,13 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     }
 
     textarea:focus {
-        border-color: #3498db;
+        border-color: #e89d3f;
         outline: none;
     }
 
     /* Styles du bouton publier */
     .btn {
-        background-color: #3498db;
+        background-color: #e89d3f;
         color: white;
         border: none;
         padding: 12px 25px;
@@ -170,7 +170,7 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     }
 
     .btn:hover {
-        background-color: #2980b9;
+        background-color: #e89d3f;
         transform: scale(1.05);
     }
 
@@ -184,7 +184,7 @@ $nom_utilisateur = isset($_SESSION['nom_utilisateur']) ? $_SESSION['nom_utilisat
     .back {
         display: block;
         margin-top: 20px;
-        color: #3498db;
+        color: #e89d3f;
         text-decoration: none;
         font-size: 16px;
     }

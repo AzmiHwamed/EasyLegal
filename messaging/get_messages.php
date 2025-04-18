@@ -61,7 +61,6 @@ while ($row = $result->fetch_assoc()) {
     echo "<script> alert('".$contenu."')</script>";
     echo "<img src='".$contenu . "' alt='Image' style='max-width:300px;'><br>";
     echo "</div>";
-        
     $date = DateTime::createFromFormat('Y-m-d H:i:s.u', $created_at);
 
     if ($date) {
