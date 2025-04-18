@@ -137,7 +137,7 @@ $mysqli->close();
 }
 
 .chat-header {
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   padding: 15px 20px;
   border-top-left-radius: 15px;
@@ -181,7 +181,7 @@ $mysqli->close();
   font-family: "Poppins", sans-serif;
   padding: 10px 20px;
   border: none;
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   border-radius: 12px;
   margin-left: 10px;
@@ -190,7 +190,7 @@ $mysqli->close();
 }
 
 #send-btn:hover {
-  background-color: #0074cc;
+  background-color: #e8a043;
 }
 
 .user-message {
@@ -214,7 +214,7 @@ $mysqli->close();
   right: -20px;
   margin-bottom: 7px;
   font-size: 20px;
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   border-radius: 50%;
   width: 30px;
@@ -226,7 +226,7 @@ $mysqli->close();
 }
 
 .bot-message {
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   padding: 14px;
   border-radius: 15px;
@@ -247,7 +247,7 @@ $mysqli->close();
   left: -14px;
   margin-bottom: 4px;
   font-size: 20px;
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   border-radius: 50%;
   width: 30px;
@@ -267,7 +267,7 @@ $mysqli->close();
 .button-container button {
   padding: 10px 50px;
   border: none;
-  background-color: #1087ff;
+  background-color: #e8a043;
   color: #fff;
   border-radius: 10px;
   cursor: pointer;
@@ -275,7 +275,7 @@ $mysqli->close();
 }
 
 .button-container button:hover {
-  background-color: #0074cc;
+  background-color: #e8a043;
 }
 
         
@@ -429,17 +429,18 @@ Question :  ${m}
 
 
 </script>
+</script>
 <!-- debut de code chat html -->
-<button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://cdn1.iconfinder.com/data/icons/social-media-hexagon-1/1024/whatsapp-512.png" width="50" height="50" alt="buttonpng" /></button>
-<div class="chatbot-popup" id="chatbot-popup">
+<button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://www2.stardust-testing.com/hs-fs/hubfs/banner-robot-service.png?width=1463&height=731&name=banner-robot-service.png"  style="border-radius:25px" width="50" height="50" alt="buttonpng" /></button>
+<div class="chatbot-popup" id="chatbot-popup" style="display:none;">
   <div class="chat-header">
     <span>Chatbot | <a href="#" target="_blank"> EasyLegal</a></span>
-    <button id="close-btn">&times;</button>
+    <button id="close-btn" onclick="toggleChatbot()">&times;</button>
   </div>
   <div class="chat-box" id="chat-box"></div>
   <div class="chat-input">
     <input type="text" id="user-input" placeholder="Type a message...">
-    <button id="send-btn" onclick="sendMessage()">Send</button>
+    <button id="send-btn" onclick="sendMessage()">Envoyer</button>
   </div>
   <div class="copyright">
   </div>
