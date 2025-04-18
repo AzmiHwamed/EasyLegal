@@ -245,5 +245,7 @@ $posts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             return false;
         }
     </script>
+    
 </body>
+
 </html>

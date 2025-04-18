@@ -92,6 +92,192 @@ $mysqli->close();
         body {
             background-color: #F8F4ED;
         }
+
+        
+/* debut de code chat en js */
+.chat-header a {
+  text-decoration: none;
+  color: white;
+}
+
+.copyright {
+  font-size: 12px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.copyright a {
+  text-decoration: none;
+  color: #343c41;
+}
+
+#chatbot-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1001; /* Ensure the button is above the chatbot popup */
+}
+
+.chatbot-popup {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  max-width: 90%;
+  z-index: 1000;
+}
+
+.chat-header {
+  background-color: #1087ff;
+  color: #fff;
+  padding: 15px 20px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#close-btn {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat-box {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 15px 20px;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-top: 1px solid #ddd;
+}
+
+#user-input {
+  font-family: "Poppins";
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  outline: none;
+}
+
+#send-btn {
+  font-family: "Poppins", sans-serif;
+  padding: 10px 20px;
+  border: none;
+  background-color: #1087ff;
+  color: #fff;
+  border-radius: 12px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#send-btn:hover {
+  background-color: #0074cc;
+}
+
+.user-message {
+  background-color: #f3f3f3;
+  color: #333;
+  padding: 14px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  margin-left: 10px; /* Push user message to the left */
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse; /* Move user message to the right */
+}
+
+.user-message::before {
+  content: "\1F468"; /* Man emoji */
+  position: absolute;
+  bottom: -17px;
+  right: -20px;
+  margin-bottom: 7px;
+  font-size: 20px;
+  background-color: #1087ff;
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.bot-message {
+  background-color: #1087ff;
+  color: #fff;
+  padding: 14px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  align-self: flex-start; /* Move bot message to the left */
+  margin-right: 10px; /* Push bot message to the right */
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column; /* Adjust for button placement */
+}
+
+.bot-message::before {
+  content: "\1F916"; /* Robot emoji */
+  position: absolute;
+  bottom: -17px;
+  left: -14px;
+  margin-bottom: 4px;
+  font-size: 20px;
+  background-color: #1087ff;
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.button-container button {
+  padding: 10px 50px;
+  border: none;
+  background-color: #1087ff;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+  background-color: #0074cc;
+}
+
         
         .card {
             border-radius: 8px;
@@ -115,7 +301,7 @@ $mysqli->close();
             border-radius: 8px;
             
         }
-
+/* fin de code chat en js */
     </style>
 </head>
 <body>
@@ -170,7 +356,94 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-</script>
 
+// debut de code chat en js
+function toggleChatbot() {
+  const chatbotPopup = document.getElementById("chatbot-popup");
+  chatbotPopup.style.display =
+    chatbotPopup.style.display === "none" ? "block" : "none";
+}
+
+
+
+
+async function runGeminiQuery(m) {
+      const apiKey = "AIzaSyCTmf2trLBuQqqLwMacvI3hJ0AHUj6zkdc";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+      const prompt = `Veuillez répondre à la question suivante en francais, à condition qu'elle relève du domaine des droits des femmes ou des lois relatives aux femmes en Tunisie uniquement. 
+      vous pouvez aussi repondre au salutations et autre greetings. 
+Si la question sort du cadre de ce sujet, veuillez répondre par la phrase : « Ceci sort du cadre de mon sujet. »
+
+Question :  ${m}
+      `;
+
+      const requestBody = {
+        contents: [
+          {
+            parts: [{ text: prompt }],
+            role: "user"
+          }
+        ]
+      };
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        const data = await res.json();
+        const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
+        appendMessage("bot",output);
+    } catch (error) {
+        console.error("Error:", error);
+        appendMessage("bot",error);
+          }
+    }
+
+
+    function sendMessage(){
+     const m = document.getElementById('user-input').value;
+     appendMessage("user",m);
+     runGeminiQuery(m);
+     document.getElementById('user-input').value = '';
+
+    }
+
+    function appendMessage(sender, message) {
+  const chatBox = document.getElementById("chat-box");
+  const messageElement = document.createElement("div");
+  messageElement.classList.add(
+    sender === "user" ? "user-message" : "bot-message"
+  );
+  messageElement.innerHTML = message;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// fin de code chat en js
+
+
+</script>
+<!-- debut de code chat html -->
+<button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://cdn1.iconfinder.com/data/icons/social-media-hexagon-1/1024/whatsapp-512.png" width="50" height="50" alt="buttonpng" /></button>
+<div class="chatbot-popup" id="chatbot-popup">
+  <div class="chat-header">
+    <span>Chatbot | <a href="#" target="_blank"> EasyLegal</a></span>
+    <button id="close-btn">&times;</button>
+  </div>
+  <div class="chat-box" id="chat-box"></div>
+  <div class="chat-input">
+    <input type="text" id="user-input" placeholder="Type a message...">
+    <button id="send-btn" onclick="sendMessage()">Send</button>
+  </div>
+  <div class="copyright">
+  </div>
+</div>
+<!-- fin de code chat html -->
 </body>
 </html>
