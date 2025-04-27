@@ -61,7 +61,7 @@ $user_id = $_SESSION['id_personne']; // Important: was missing
 
         <ul id="myUL">
         <?php
-        
+
 $role = $_SESSION['role'];
 
 if ($role == "expert") {
@@ -176,7 +176,7 @@ $stmt->close();
 
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="Type your message...">
-            <button onclick="sendMessage()">Send</button>
+            <button onclick="sendMessage()">Send Message</button>
         </div>
 
         <form class="upload-form">
