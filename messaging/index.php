@@ -11,7 +11,16 @@ if (!isset($_SESSION['id_personne'])) {
 }
 
 if (!isset($_GET['id_messagerie'])) {
-    die("Missing id_messagerie");
+    $stmt = $conn->prepare("SELECT id FROM messagerie WHERE id_personne = ? OR participant_expert_id = ? LIMIT 1");
+    $stmt->bind_param("ii", $_SESSION['id_personne'], $_SESSION['id_personne']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        header("Location: index.php?id_messagerie=" . $row['id']);
+        exit;
+    } else {
+        die("No messagerie found");
+    }
 }
 $id_messagerie = (int)$_GET['id_messagerie'];
 $user_id = $_SESSION['id_personne']; // Important: was missing
