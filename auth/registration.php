@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $found = ($result->num_rows > 0);
             $stmt->close(); // Close statement here
             if (!$found) {
-                echo "<script>alert('vos essayer de sinscrire en tant que ewxpert , verifer vos donnée ou changer votre type dutilisateur');</script>";
+                echo "<script>alert('vos essayer de sinscrire en tant que expert , verifer vos donnée ou changer votre type d'utilisateur');</script>";
             }
         } else {
             echo "Failed to open the file.";

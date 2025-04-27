@@ -43,39 +43,40 @@ if (isset($_POST['contenu'])) {
 
 // Gérer les likes (AJAX)
 if (isset($_POST['id_forum']) && isset($_POST['like'])) {
-    $id_forum = (int) $_POST['id_forum'];
-    $id_personne = 1; // À modifier pour l'utilisateur connecté
+  $id_forum = (int) $_POST['id_forum'];
+  $id_personne = $_SESSION['id']; // Utilisateur connecté
 
-    // Vérifier si l'utilisateur a déjà aimé ce post
-    $check = $mysqli->prepare("SELECT * FROM aime WHERE id_forum = ? AND id_personne = ?");
-    $check->bind_param("ii", $id_forum, $id_personne);
-    $check->execute();
-    $check_result = $check->get_result();
+  // Vérifier si l'utilisateur a déjà aimé ce post
+  $check = $mysqli->prepare("SELECT id FROM aime WHERE id_forum = ? AND id_personne = ?");
+  $check->bind_param("ii", $id_forum, $id_personne);
+  $check->execute();
+  $check_result = $check->get_result();
 
-    if ($check_result->num_rows == 0) {
-        // Ajouter un like
-        $insert = $mysqli->prepare("INSERT INTO aime (id_forum, id_personne) VALUES (?, ?)");
-        $insert->bind_param("ii", $id_forum, $id_personne);
-        $insert->execute();
-        $insert->close();
-    } else {
-        // Retirer un like
-        $delete = $mysqli->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?");
-        $delete->bind_param("ii", $id_forum, $id_personne);
-        $delete->execute();
-        $delete->close();
-    }
+  if ($check_result->num_rows === 0) {
+      // Ajouter un like
+      $insert = $mysqli->prepare("INSERT INTO aime (id_forum, id_personne, liked_at) VALUES (?, ?, NOW())");
+      $insert->bind_param("ii", $id_forum, $id_personne);
+      $insert->execute();
+      $insert->close();
+  } else {
+      // Retirer un like
+      $delete = $mysqli->prepare("DELETE FROM aime WHERE id_forum = ? AND id_personne = ?");
+      $delete->bind_param("ii", $id_forum, $id_personne);
+      $delete->execute();
+      $delete->close();
+  }
 
-    // Retourner le nouveau nombre de likes
-    $likes = $mysqli->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
-    $likes->bind_param("i", $id_forum);
-    $likes->execute();
-    $likes_result = $likes->get_result();
-    $likes_count = $likes_result->fetch_row()[0];
+  // Retourner le nouveau nombre de likes
+  $likes = $mysqli->prepare("SELECT COUNT(*) FROM aime WHERE id_forum = ?");
+  $likes->bind_param("i", $id_forum);
+  $likes->execute();
+  $likes_result = $likes->get_result();
+  $likes_count = $likes_result->fetch_row()[0];
 
-    echo json_encode(["success" => true, "likes" => $likes_count]);
-    exit;
+  echo json_encode(["success" => true, "likes" => $likes_count]);
+  exit;
 }
+
 
 // Fermer la connexion à la base de données
 $mysqli->close();
@@ -332,6 +333,7 @@ $mysqli->close();
             </div>
         </div>
     <?php endforeach; ?>
+    
 </div>
 
 <script>

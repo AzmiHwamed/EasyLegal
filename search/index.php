@@ -599,22 +599,23 @@ Question :  ${m}
 
 // fin de code chat en js
 
-    </script>
-    <!-- debut de code chat html -->
-<button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://cdn1.iconfinder.com/data/icons/social-media-hexagon-1/1024/whatsapp-512.png" width="50" height="50" alt="buttonpng" /></button>
-<div class="chatbot-popup" id="chatbot-popup">
+</script>
+<!-- debut de code chat html -->
+<button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://www2.stardust-testing.com/hs-fs/hubfs/banner-robot-service.png?width=1463&height=731&name=banner-robot-service.png"  style="border-radius:25px" width="50" height="50" alt="buttonpng" /></button>
+<div class="chatbot-popup" id="chatbot-popup" style="display:none;">
   <div class="chat-header">
     <span>Chatbot | <a href="#" target="_blank"> EasyLegal</a></span>
-    <button id="close-btn">&times;</button>
+    <button id="close-btn" onclick="toggleChatbot()">&times;</button>
   </div>
   <div class="chat-box" id="chat-box"></div>
   <div class="chat-input">
     <input type="text" id="user-input" placeholder="Type a message...">
-    <button id="send-btn" onclick="sendMessage()">Send</button>
+    <button id="send-btn" onclick="sendMessage()">Envoyer</button>
   </div>
   <div class="copyright">
   </div>
 </div>
 <!-- fin de code chat html -->
+ <script>
 </body>
 </html>
