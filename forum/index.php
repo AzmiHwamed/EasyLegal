@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('../dbconfig/index.php');
 include('../validateur.php');
 isAuthentiacted();
@@ -24,6 +25,9 @@ if (isset($_POST['contenu'])) {
     exit;
 }
 
+// Gérer les likes (requête AJAX)
+
+
 // Récupérer les posts
 $sql = "
     SELECT forum.*, personne.nom, 
@@ -43,7 +47,6 @@ if ($result) {
 
 $mysqli->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
