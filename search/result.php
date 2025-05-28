@@ -165,7 +165,7 @@ h3{
             <h3>Trier par :</h3>
             <div class="filter-container">
                 <select name="type">
-                    <option value="">Type</option>
+                    <option value="">Tous</option>
                     <option value="avis">Avis</option>
                     <option value="lois">Lois</option>
                     <option value="arretes">Arrêtés</option>

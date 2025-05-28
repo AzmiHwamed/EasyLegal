@@ -419,11 +419,12 @@ h3{
             <h3>Trier par :</h3>
             <div class="filter-container">
                 <select name="type">
-                    <option value="">Type</option>
+                    <option value="" disabled selected>Type</option>
+                    <option value="">Tous</option>
                     <option value="avis">Avis</option>
                     <option value="lois">Lois</option>
                     <option value="arretes">Arrêtés</option>
-                    <option value="arretes">Decret-Loi</option>
+                    <option value="decret-loi">Decret-Loi</option>
 
                 </select>
                 
@@ -604,12 +605,12 @@ Question :  ${m}
 <button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://www2.stardust-testing.com/hs-fs/hubfs/banner-robot-service.png?width=1463&height=731&name=banner-robot-service.png"  style="border-radius:25px" width="50" height="50" alt="buttonpng" /></button>
 <div class="chatbot-popup" id="chatbot-popup" style="display:none;">
   <div class="chat-header">
-    <span>Chatbot | <a href="#" target="_blank"> EasyLegal</a></span>
+    <span>Chatbot  <a href="#" target="_blank"> EasyLegal</a></span>
     <button id="close-btn" onclick="toggleChatbot()">&times;</button>
   </div>
   <div class="chat-box" id="chat-box"></div>
   <div class="chat-input">
-    <input type="text" id="user-input" placeholder="Type a message...">
+    <input type="text" id="user-input" placeholder="Aaa...">
     <button id="send-btn" onclick="sendMessage()">Envoyer</button>
   </div>
   <div class="copyright">

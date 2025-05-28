@@ -3,24 +3,49 @@ session_start();
 include('../dbconfig/index.php'); // Connexion à la base de données
 
 
-function mettreAJourProfil($id, $nom, $Email, $motdepasse, $telephone) {
+// index.php  (seulement la fonction corrigée)
+function mettreAJourProfil($id, $nom, $email, $motdepasse, $telephone)
+{
     global $conn;
 
-    if (!empty($motdepasse)) {
-        
-        $sql = "UPDATE personne SET nom=?, Email=?, motdepasse=?, telephone=? WHERE id=?";
+    if (!empty($motdepasse)) {            // mot de passe modifié
+        // 1) requête = 5 paramètres
+        $sql  = "UPDATE personne SET nom = ?, Email = ?, motdepasse = ?, telephone = ? 
+                 WHERE id = ?";
+
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sssssi", $nom, $Email, $motdepasse, $telephone, $role, $id);
-    } else {
-        $sql = "UPDATE personne SET nom=?, Email=?, telephone=?  WHERE id=?";
+
+        // 2) « ssssi » = 4 strings + 1 int  (change le dernier ‘i’ en ‘s’ si id est VARCHAR)
+        mysqli_stmt_bind_param(
+            $stmt,
+            "ssssi",
+            $nom,
+            $email,
+            $motdepasse,   // → idéalement : password_hash($motdepasse, PASSWORD_DEFAULT)
+            $telephone,
+            $id
+        );
+    } else {                               // mot de passe inchangé
+        $sql  = "UPDATE personne SET nom = ?, Email = ?, telephone = ? 
+                 WHERE id = ?";
+
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "sssi", $nom, $Email, $telephone, $id);
+
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssi",
+            $nom,
+            $email,
+            $telephone,
+            $id
+        );
     }
 
-    $result = mysqli_stmt_execute($stmt);
+    $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    return $result;
+    return $ok;
 }
+
 
 
 
@@ -479,7 +504,6 @@ body {
             <img src="../assets/user.png" alt="Photo de Profil">
             <h3><?= htmlspecialchars($nom ?? '') ?></h3>
             <p><?= htmlspecialchars($Email ?? '') ?></p>
-            <button>Téléverser une nouvelle photo</button>
         </div>
         <div class="edit-profile">
             <h2>Modifier le profil</h2>
@@ -497,16 +521,68 @@ body {
                     <label for="Email">Email :</label>
                     <input type="email" id="Email" name="Email" value="<?= htmlspecialchars($Email ?? '') ?>" required>
                 </div>
+                <script>
+    const emailInput = document.getElementById('Email');
+    const emailError = document.getElementById('emailError');
 
-                <div class="form-group">
-                    <label for="telephone">Téléphone :</label>
-                    <input type="text" id="telephone" name="telephone" value="<?= htmlspecialchars($telephone ?? '') ?>" required>
-                </div>
+    emailInput.addEventListener('input', function () {
+        const emailValue = emailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-                <div class="form-group">
-                    <label for="motdepasse">Mot de passe (laisser vide pour ne pas changer) :</label>
-                    <input type="password" id="motdepasse" name="motdepasse">
-                </div>
+        if (emailRegex.test(emailValue)) {
+            emailError.style.display = 'none';
+        } else {
+            emailError.style.display = 'block';
+        }
+    });
+</script>
+<div class="form-group">
+    <label for="telephone">Téléphone :</label>
+    <input type="text" id="telephone" name="telephone" value="<?= htmlspecialchars($telephone ?? '') ?>" required maxlength="8">
+    <div class="error-message" id="telError" style="display:none; color:red;">
+        Veuillez entrer exactement 8 chiffres.
+    </div>
+</div>
+
+<script>
+    const telInput = document.getElementById('telephone');
+    const telError = document.getElementById('telError');
+
+    telInput.addEventListener('input', function () {
+        // Supprime les lettres/symboles, garde que chiffres et limite à 8 chiffres
+        telInput.value = telInput.value.replace(/\D/g, '').slice(0, 8);
+
+        // Affiche erreur si pas exactement 8 chiffres
+        if (telInput.value.length === 8) {
+            telError.style.display = 'none';
+        } else {
+            telError.style.display = 'block';
+        }
+    });
+</script>
+
+                
+
+               <div class="form-group">
+    <label for="motdepasse">Mot de passe (laisser vide pour ne pas changer) :</label>
+    <input type="password" id="motdepasse" name="motdepasse" minlength="6" placeholder="Au moins 6 caractères">
+</div>
+
+<script>
+    const form = document.querySelector('form'); // suppose que c'est dans un <form>
+    const passwordInput = document.getElementById('motdepasse');
+
+    form.addEventListener('submit', function(event) {
+        const password = passwordInput.value.trim();
+        // On accepte mot de passe vide (pas de changement), sinon minimum 6 caractères
+        if (password !== "" && password.length < 6) {
+            event.preventDefault();
+            alert("Le mot de passe doit contenir au moins 6 caractères.");
+            passwordInput.focus();
+        }
+    });
+</script>
+
 
                 <button type="submit" name="update" class="update-btn">Mettre à jour</button>
                 <button type="button" class="cancel-btn" onclick="window.location.href='../index.php'">Annuler</button>

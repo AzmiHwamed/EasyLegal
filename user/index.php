@@ -355,7 +355,7 @@ $base_url = "http://127.0.0.1/pfe/EasyLegal";
   </div>
   <div class="chat-box" id="chat-box"></div>
   <div class="chat-input">
-    <input type="text" id="user-input" placeholder="Type a message...">
+    <input type="text" id="user-input" placeholder="Aaa...">
     <button id="send-btn" onclick="sendMessage()">Envoyer</button>
   </div>
   <div class="copyright">

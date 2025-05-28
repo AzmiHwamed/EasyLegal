@@ -290,57 +290,83 @@ $conn->close();
             </div>
 
             <div class="input-group password-container">
-    <label for="password">Mot de passe:</label>
-    <input type="password" id="password" name="motdepasse" oninput="validatePassword()">
-    <span class="toggle-password" id="togglePassword" onclick="togglePasswordVisibility()">
-        <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <label>Mot de passe:</label>
+    <input type="password" name="motdepasse" class="password-input">
+    <span class="toggle-password">
+        <svg class="eye eye-open" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-width="2" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
             <circle cx="12" cy="12" r="3" stroke-width="2"/>
         </svg>
-        <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
+        <svg class="eye eye-closed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
             <path stroke-width="2" d="M3 3l18 18M10.584 10.586A2 2 0 0112 12a2 2 0 002 2m3.3-1.3c.7-.8 1.3-1.7 1.7-2.7-1.4-3.3-4.6-6-8.9-6a9.77 9.77 0 00-4.9 1.4"/>
             <path stroke-width="2" d="M9.88 9.88a3 3 0 014.24 4.24M6.7 6.7C5.5 7.9 4.6 9.3 4 10.9c1.4 3.3 4.6 6 8.9 6 1.6 0 3.1-.4 4.4-1.1"/>
         </svg>
     </span>
-    <small id="passwordError" style="color: red; display: none;">Le mot de passe doit contenir au moins 6 caractères.</small>
+    <small class="password-error" style="color: red; display: none;">Le mot de passe doit contenir au moins 6 caractères.</small>
 </div>
 
 <script>
-function togglePasswordVisibility() {
-    const passwordInput = document.getElementById("password");
-    const eyeOpen = document.getElementById("eyeOpen");
-    const eyeClosed = document.getElementById("eyeClosed");
+// Rendre la bascule du mot de passe dynamique
+document.querySelectorAll('.password-container').forEach(container => {
+    const passwordInput = container.querySelector('.password-input');
+    const toggleButton = container.querySelector('.toggle-password');
+    const eyeOpen = container.querySelector('.eye-open');
+    const eyeClosed = container.querySelector('.eye-closed');
+    const errorText = container.querySelector('.password-error');
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        eyeOpen.style.display = "none";
-        eyeClosed.style.display = "inline";
-    } else {
-        passwordInput.type = "password";
-        eyeOpen.style.display = "inline";
-        eyeClosed.style.display = "none";
-    }
-}
+    toggleButton.addEventListener('click', () => {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeOpen.style.display = 'none';
+            eyeClosed.style.display = 'inline';
+        } else {
+            passwordInput.type = 'password';
+            eyeOpen.style.display = 'inline';
+            eyeClosed.style.display = 'none';
+        }
+    });
 
-function validatePassword() {
-    const passwordInput = document.getElementById("password");
-    const errorText = document.getElementById("passwordError");
-
-    if (passwordInput.value.length < 6) {
-        errorText.style.display = "block";
-    } else {
-        errorText.style.display = "none";
-    }
-}
+    passwordInput.addEventListener('input', () => {
+        if (passwordInput.value.length < 6) {
+            errorText.style.display = 'block';
+        } else {
+            errorText.style.display = 'none';
+        }
+    });
+});
 </script>
 
 
+
             <div class="input-group">
-                <label for="phone">Téléphone:</label>
-                <input type="tel" id="phone" name="telephone"   maxlength="8" required>
-                <div class="error-message" id="phoneError">Veuillez entrer un numéro de téléphone valide.</div>
-            
+    <label for="phone">Téléphone:</label>
+    <input type="tel" id="phone" name="telephone" maxlength="8" required>
+    <div class="error-message" id="phoneError" style="display: none; color: red;">
+        Veuillez entrer exactement 8 chiffres.
+    </div>
 </div>
+
+<script>
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+
+    phoneInput.addEventListener('input', function () {
+        const value = phoneInput.value;
+
+        // Vérifie que la valeur contient uniquement des chiffres et a une longueur de 8
+        if (!/^\d{0,8}$/.test(value)) {
+            phoneInput.value = value.replace(/[^0-9]/g, '').slice(0, 8); // Corrige en temps réel
+        }
+
+        // Affiche l'erreur seulement si l'utilisateur a tapé 8 caractères invalides
+        if (/^\d{8}$/.test(phoneInput.value)) {
+            phoneError.style.display = 'none';
+        } else {
+            phoneError.style.display = 'block';
+        }
+    });
+</script>
+
 
 
             <button type="submit">S'inscrire</button>

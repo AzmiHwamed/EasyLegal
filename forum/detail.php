@@ -424,7 +424,8 @@ $user = $result->fetch_object();
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
-    align:"right";
+    
+
 }
 
 .send-btn:hover {
@@ -482,6 +483,7 @@ $user = $result->fetch_object();
     .sidebar {
         width: 100%;
         margin-right: 0;
+       
     }
 
     .content {
@@ -535,7 +537,7 @@ $user = $result->fetch_object();
             </div>
         <?php endforeach; ?>
     <?php else: ?>
-        <p>Aucun commentaire pour ce forum.</p>
+        <p>Aucun commentaire pour ce question.</p>
     <?php endif; ?>
 </div>
 
@@ -635,7 +637,7 @@ Question :  ${m}
 // fin de code chat en js
 
 </script>
-</script>
+
 <!-- debut de code chat html -->
 <button id="chatbot-toggle-btn" onclick="toggleChatbot()"><img src="https://www2.stardust-testing.com/hs-fs/hubfs/banner-robot-service.png?width=1463&height=731&name=banner-robot-service.png"  style="border-radius:25px" width="50" height="50" alt="buttonpng" /></button>
 <div class="chatbot-popup" id="chatbot-popup" style="display:none;">

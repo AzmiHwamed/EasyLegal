@@ -296,14 +296,18 @@ session_start();
         }
 
         .explore-btn {
-            background: #e8a043;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #e8a043;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.explore-btn:hover {
+    background-color:rgb(239, 197, 105);/
+}
+
 
         footer {
             background: #f0e6d6;
@@ -361,9 +365,10 @@ session_start();
     <!-- end of information boxes -->
 
     <section class="explore">
-        <h2>Plus que <span class="number">100</span> lois à explorer</h2>
-        <button class="explore-btn">Explorer maintenant</button>
-    </section>
+    <h2>Plus que <span class="number">100</span> lois à explorer</h2>
+    <a href="./search/index.php" class="explore-btn">Explorer maintenant</a>
+</section>
+
 
     <footer>
         <p>Easy legal &copy; 2025 | All rights reserved</p>
@@ -379,7 +384,7 @@ session_start();
   </div>
   <div class="chat-box" id="chat-box"></div>
   <div class="chat-input">
-    <input type="text" id="user-input" placeholder="Type a message...">
+    <input type="text" id="user-input" placeholder="Aaa...">
     <button id="send-btn" onclick="sendMessage()">Envoyer</button>
   </div>
   <div class="copyright">
